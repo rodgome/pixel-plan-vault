@@ -28,7 +28,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <MoneyPlanCard
           title="INCOME"
           amount={monthlyData.income}
@@ -51,11 +51,18 @@ const Dashboard = () => {
           bgColor="bg-orange-900/20"
         />
         <MoneyPlanCard
-          title="SAVINGS & INVESTING"
-          amount={monthlyData.savings + monthlyData.investing}
+          title="SAVINGS"
+          amount={monthlyData.savings}
           icon="🏦"
           color="text-blue-400"
           bgColor="bg-blue-900/20"
+        />
+        <MoneyPlanCard
+          title="INVESTING"
+          amount={monthlyData.investing}
+          icon="📈"
+          color="text-purple-400"
+          bgColor="bg-purple-900/20"
         />
       </div>
 

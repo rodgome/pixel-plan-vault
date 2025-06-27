@@ -25,6 +25,11 @@ const Dashboard = () => {
   const totalSpent = monthlyData.categories.reduce((sum, cat) => sum + cat.amount, 0);
   const remaining = monthlyData.income - totalSpent - monthlyData.debt;
 
+  // Filter categories for spending analysis (exclude DEBT, SAVINGS, INVESTING)
+  const spendingCategories = monthlyData.categories.filter(cat => 
+    cat.name === 'NEEDS' || cat.name === 'WANTS'
+  );
+
   return (
     <div className="space-y-6">
       {/* Status Cards */}
@@ -75,7 +80,7 @@ const Dashboard = () => {
               <span className="text-xl">📊</span>
               <h2 className="text-lg font-bold text-amber-400">SPENDING ANALYSIS</h2>
             </div>
-            <CategoryBreakdown categories={monthlyData.categories} />
+            <CategoryBreakdown categories={spendingCategories} />
           </div>
         </Card>
 

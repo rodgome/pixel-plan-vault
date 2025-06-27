@@ -25,6 +25,8 @@ const Dashboard = () => {
         name: 'Credit Card - Chase',
         balance: 3500,
         minPayment: 105,
+        plannedPayment: 200,
+        totalPaid: 150,
         interestRate: 24.99,
         type: 'credit_card' as const
       },
@@ -32,6 +34,8 @@ const Dashboard = () => {
         name: 'Student Loan',
         balance: 15000,
         minPayment: 180,
+        plannedPayment: 250,
+        totalPaid: 180,
         interestRate: 6.5,
         type: 'loan' as const
       },
@@ -39,6 +43,8 @@ const Dashboard = () => {
         name: 'Car Loan',
         balance: 12000,
         minPayment: 285,
+        plannedPayment: 350,
+        totalPaid: 285,
         interestRate: 4.2,
         type: 'loan' as const
       }

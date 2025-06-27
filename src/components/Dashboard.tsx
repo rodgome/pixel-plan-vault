@@ -8,12 +8,8 @@ import DebtBreakdown from './DebtBreakdown';
 import GoalsBreakdown from './GoalsBreakdown';
 
 const Dashboard = () => {
-  const [monthlyData] = useState({
+  const [baseData] = useState({
     income: 5000,
-    expenses: 3500,
-    savings: 1200,
-    debt: 300,
-    investing: 200,
     categories: [
       { name: 'NEEDS', amount: 2000, budget: 2500, color: 'bg-red-500' },
       { name: 'WANTS', amount: 800, budget: 1000, color: 'bg-orange-500' },
@@ -88,9 +84,42 @@ const Dashboard = () => {
     ]
   });
 
+  // Reactive calculations - all derived from base data
+  const monthlyData = {
+    income: baseData.income,
+    
+    // Calculate actual amounts from categories
+    expenses: baseData.categories.filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS')
+      .reduce((sum, cat) => sum + cat.amount, 0),
+    
+    debt: baseData.categories.find(cat => cat.name === 'DEBT')?.amount || 0,
+    savings: baseData.categories.find(cat => cat.name === 'SAVINGS')?.amount || 0,
+    investing: baseData.categories.find(cat => cat.name === 'INVESTING')?.amount || 0,
+    
+    categories: baseData.categories,
+    debts: baseData.debts,
+    goals: baseData.goals
+  };
+
+  // Reactive financial calculations
   const totalBudget = monthlyData.categories.reduce((sum, cat) => sum + cat.budget, 0);
   const totalSpent = monthlyData.categories.reduce((sum, cat) => sum + cat.amount, 0);
-  const remaining = monthlyData.income - totalSpent - monthlyData.debt;
+  const remaining = monthlyData.income - totalSpent;
+  
+  // Debt calculations
+  const totalDebtBalance = monthlyData.debts.reduce((sum, debt) => sum + debt.balance, 0);
+  const totalMinPayments = monthlyData.debts.reduce((sum, debt) => sum + debt.minPayment, 0);
+  const totalPlannedPayments = monthlyData.debts.reduce((sum, debt) => sum + (debt.plannedPayment || debt.minPayment), 0);
+  
+  // Goals calculations
+  const totalGoalsTarget = monthlyData.goals.reduce((sum, goal) => sum + goal.target, 0);
+  const totalGoalsCurrent = monthlyData.goals.reduce((sum, goal) => sum + goal.current, 0);
+  const totalGoalsContributions = monthlyData.goals.reduce((sum, goal) => sum + goal.monthlyContribution, 0);
+  
+  // Validation checks (reactive)
+  const isDebtPaymentConsistent = monthlyData.debt === totalMinPayments;
+  const isInvestingConsistent = monthlyData.investing >= totalGoalsContributions;
+  const isBudgetBalanced = totalSpent <= monthlyData.income;
 
   // Filter categories for spending analysis (exclude DEBT, SAVINGS, INVESTING)
   const spendingCategories = monthlyData.categories.filter(cat => 
@@ -99,7 +128,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Status Cards */}
+      {/* Status Cards - All reactive to base data */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <MoneyPlanCard
           title="INCOME"
@@ -138,6 +167,30 @@ const Dashboard = () => {
         />
       </div>
 
+      {/* Validation Alerts - Show inconsistencies */}
+      {(!isDebtPaymentConsistent || !isBudgetBalanced) && (
+        <Card className="bg-red-900/20 border-red-700 backdrop-blur-sm">
+          <div className="p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg">⚠️</span>
+              <h2 className="text-base font-bold text-red-400">VALIDATION ALERTS</h2>
+            </div>
+            <div className="space-y-1 text-sm">
+              {!isDebtPaymentConsistent && (
+                <div className="text-red-300">
+                  • Debt category (${monthlyData.debt}) doesn't match minimum payments (${totalMinPayments})
+                </div>
+              )}
+              {!isBudgetBalanced && (
+                <div className="text-red-300">
+                  • Total spending (${totalSpent}) exceeds income (${monthlyData.income})
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
+
       {/* Main Content Grid - Changed to 3 columns for more compact layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         {/* Spending Analysis */}
@@ -174,7 +227,7 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Savings Progress - Now full width */}
+      {/* Savings Progress - Now full width with reactive calculations */}
       <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -189,14 +242,14 @@ const Dashboard = () => {
         </div>
       </Card>
 
-      {/* Budget Overview */}
+      {/* Budget Overview - All reactive calculations */}
       <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xl">💼</span>
             <h2 className="text-lg font-bold text-amber-400">MONTHLY OVERVIEW</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-black/30 p-4 rounded border border-slate-600">
               <div className="text-xs text-slate-400 mb-1">TOTAL BUDGET</div>
               <div className="text-xl font-bold text-blue-400">${totalBudget.toLocaleString()}</div>
@@ -209,6 +262,79 @@ const Dashboard = () => {
               <div className="text-xs text-slate-400 mb-1">REMAINING</div>
               <div className={`text-xl font-bold ${remaining >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 ${remaining.toLocaleString()}
+              </div>
+            </div>
+            <div className="bg-black/30 p-4 rounded border border-slate-600">
+              <div className="text-xs text-slate-400 mb-1">BUDGET USAGE</div>
+              <div className={`text-xl font-bold ${(totalSpent/totalBudget)*100 <= 100 ? 'text-green-400' : 'text-red-400'}`}>
+                {((totalSpent/totalBudget)*100).toFixed(1)}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Financial Summary - New reactive summary */}
+      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+        <div className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xl">📋</span>
+            <h2 className="text-lg font-bold text-amber-400">FINANCIAL SUMMARY</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-black/30 p-4 rounded border border-slate-600">
+              <div className="text-xs text-slate-400 mb-2">DEBT OVERVIEW</div>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Total Balance:</span>
+                  <span className="text-red-400">${totalDebtBalance.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Min Payments:</span>
+                  <span className="text-orange-400">${totalMinPayments.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Planned Payments:</span>
+                  <span className="text-blue-400">${totalPlannedPayments.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-black/30 p-4 rounded border border-slate-600">
+              <div className="text-xs text-slate-400 mb-2">GOALS OVERVIEW</div>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Total Target:</span>
+                  <span className="text-blue-400">${totalGoalsTarget.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Current Total:</span>
+                  <span className="text-green-400">${totalGoalsCurrent.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Progress:</span>
+                  <span className="text-amber-400">{((totalGoalsCurrent/totalGoalsTarget)*100).toFixed(1)}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-black/30 p-4 rounded border border-slate-600">
+              <div className="text-xs text-slate-400 mb-2">CASH FLOW</div>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Income:</span>
+                  <span className="text-green-400">${monthlyData.income.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Total Out:</span>
+                  <span className="text-red-400">${totalSpent.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Net Flow:</span>
+                  <span className={remaining >= 0 ? 'text-green-400' : 'text-red-400'}>
+                    ${remaining.toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

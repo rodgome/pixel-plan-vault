@@ -1,10 +1,10 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import MoneyPlanCard from './MoneyPlanCard';
 import CategoryBreakdown from './CategoryBreakdown';
 import SavingsProgress from './SavingsProgress';
 import DebtBreakdown from './DebtBreakdown';
+import GoalsBreakdown from './GoalsBreakdown';
 
 const Dashboard = () => {
   const [monthlyData] = useState({
@@ -47,6 +47,42 @@ const Dashboard = () => {
         totalPaid: 285,
         interestRate: 4.2,
         type: 'loan' as const
+      }
+    ],
+    goals: [
+      {
+        name: 'Emergency Fund',
+        target: 15000,
+        current: 8500,
+        monthlyContribution: 500,
+        plannedContribution: 750,
+        type: 'emergency_fund' as const,
+        deadline: 'Dec 2025'
+      },
+      {
+        name: 'Retirement 401k',
+        target: 100000,
+        current: 35000,
+        monthlyContribution: 800,
+        plannedContribution: 1000,
+        type: 'retirement' as const
+      },
+      {
+        name: 'Vacation Fund',
+        target: 5000,
+        current: 1200,
+        monthlyContribution: 200,
+        plannedContribution: 300,
+        type: 'vacation' as const,
+        deadline: 'Jun 2025'
+      },
+      {
+        name: 'Stock Portfolio',
+        target: 25000,
+        current: 12500,
+        monthlyContribution: 400,
+        plannedContribution: 600,
+        type: 'investment' as const
       }
     ]
   });
@@ -101,8 +137,8 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Content Grid - Updated to 4 columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         {/* Spending Analysis */}
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <div className="p-6">
@@ -125,11 +161,22 @@ const Dashboard = () => {
           </div>
         </Card>
 
-        {/* Savings Progress */}
+        {/* Goals Breakdown */}
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <div className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-xl">🎯</span>
+              <h2 className="text-lg font-bold text-amber-400">GOALS TRACKER</h2>
+            </div>
+            <GoalsBreakdown goals={monthlyData.goals} />
+          </div>
+        </Card>
+
+        {/* Savings Progress */}
+        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+          <div className="p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xl">🏦</span>
               <h2 className="text-lg font-bold text-amber-400">VAULT STATUS</h2>
             </div>
             <SavingsProgress 

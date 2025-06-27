@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import CategoryBreakdown from './CategoryBreakdown';
@@ -9,9 +8,10 @@ import FinancialSummaryCards from './FinancialSummaryCards';
 import ValidationAlerts from './ValidationAlerts';
 import BudgetOverview from './BudgetOverview';
 import FinancialSummary from './FinancialSummary';
+import EditableFinancialData from './EditableFinancialData';
 
 const Dashboard = () => {
-  const [baseData] = useState({
+  const [baseData, setBaseData] = useState({
     income: 5000,
     categories: [
       { name: 'NEEDS', amount: 2000, budget: 2500, color: 'bg-red-500' },
@@ -87,6 +87,14 @@ const Dashboard = () => {
     ]
   });
 
+  const handleDataUpdate = (newData: { income: number; categories: Array<{ name: string; amount: number; budget: number; color: string; }> }) => {
+    setBaseData(prev => ({
+      ...prev,
+      income: newData.income,
+      categories: newData.categories
+    }));
+  };
+
   // Reactive calculations - all derived from base data
   const monthlyData = {
     income: baseData.income,
@@ -123,6 +131,13 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* Editable Financial Data */}
+      <EditableFinancialData
+        income={baseData.income}
+        categories={baseData.categories}
+        onUpdate={handleDataUpdate}
+      />
+
       {/* Status Cards - All reactive to base data */}
       <FinancialSummaryCards
         income={monthlyData.income}

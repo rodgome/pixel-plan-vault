@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import MoneyPlanCard from './MoneyPlanCard';
@@ -137,14 +138,14 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Main Content Grid - Updated to 4 columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+      {/* Main Content Grid - Changed to 3 columns for more compact layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         {/* Spending Analysis */}
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">📊</span>
-              <h2 className="text-lg font-bold text-amber-400">SPENDING ANALYSIS</h2>
+          <div className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">📊</span>
+              <h2 className="text-base font-bold text-amber-400">SPENDING ANALYSIS</h2>
             </div>
             <CategoryBreakdown categories={spendingCategories} />
           </div>
@@ -152,10 +153,10 @@ const Dashboard = () => {
 
         {/* Debt Breakdown */}
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">💳</span>
-              <h2 className="text-lg font-bold text-amber-400">DEBT TRACKER</h2>
+          <div className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">💳</span>
+              <h2 className="text-base font-bold text-amber-400">DEBT TRACKER</h2>
             </div>
             <DebtBreakdown debts={monthlyData.debts} />
           </div>
@@ -163,30 +164,30 @@ const Dashboard = () => {
 
         {/* Goals Breakdown */}
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">🎯</span>
-              <h2 className="text-lg font-bold text-amber-400">GOALS TRACKER</h2>
+          <div className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">🎯</span>
+              <h2 className="text-base font-bold text-amber-400">GOALS TRACKER</h2>
             </div>
             <GoalsBreakdown goals={monthlyData.goals} />
           </div>
         </Card>
-
-        {/* Savings Progress */}
-        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">🏦</span>
-              <h2 className="text-lg font-bold text-amber-400">VAULT STATUS</h2>
-            </div>
-            <SavingsProgress 
-              current={monthlyData.savings}
-              target={2000}
-              remaining={remaining}
-            />
-          </div>
-        </Card>
       </div>
+
+      {/* Savings Progress - Now full width */}
+      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+        <div className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xl">🏦</span>
+            <h2 className="text-lg font-bold text-amber-400">VAULT STATUS</h2>
+          </div>
+          <SavingsProgress 
+            current={monthlyData.savings}
+            target={2000}
+            remaining={remaining}
+          />
+        </div>
+      </Card>
 
       {/* Budget Overview */}
       <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">

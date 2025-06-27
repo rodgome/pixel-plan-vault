@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import MoneyPlanCard from './MoneyPlanCard';
@@ -33,6 +34,7 @@ const Dashboard = () => {
           icon="💰"
           color="text-green-400"
           bgColor="bg-green-900/20"
+          type="cashflow"
         />
         <MoneyPlanCard
           title="EXPENSES"
@@ -40,6 +42,7 @@ const Dashboard = () => {
           icon="💸"
           color="text-red-400"
           bgColor="bg-red-900/20"
+          type="cashflow"
         />
         <MoneyPlanCard
           title="SAVINGS"
@@ -47,6 +50,7 @@ const Dashboard = () => {
           icon="🏦"
           color="text-blue-400"
           bgColor="bg-blue-900/20"
+          type="balance"
         />
         <MoneyPlanCard
           title="DEBT"
@@ -54,6 +58,7 @@ const Dashboard = () => {
           icon="⚠️"
           color="text-orange-400"
           bgColor="bg-orange-900/20"
+          type="balance"
         />
       </div>
 

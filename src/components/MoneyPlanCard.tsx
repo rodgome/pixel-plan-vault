@@ -7,9 +7,10 @@ interface MoneyPlanCardProps {
   icon: string;
   color: string;
   bgColor: string;
+  type?: 'cashflow' | 'balance';
 }
 
-const MoneyPlanCard = ({ title, amount, icon, color, bgColor }: MoneyPlanCardProps) => {
+const MoneyPlanCard = ({ title, amount, icon, color, bgColor, type = 'cashflow' }: MoneyPlanCardProps) => {
   return (
     <Card className={`${bgColor} border-slate-700 backdrop-blur-sm hover:bg-opacity-80 transition-all duration-200 hover:scale-105`}>
       <div className="p-4">
@@ -20,11 +21,16 @@ const MoneyPlanCard = ({ title, amount, icon, color, bgColor }: MoneyPlanCardPro
         <div className={`text-2xl font-bold ${color}`}>
           ${amount.toLocaleString()}
         </div>
-        <div className="mt-2 h-1 bg-slate-700 rounded overflow-hidden">
-          <div 
-            className={`h-full ${color.replace('text-', 'bg-')} animate-pulse`}
-            style={{ width: '100%' }}
-          />
+        <div className="mt-2 flex items-center justify-between">
+          <div className="text-xs text-slate-500">
+            {type === 'cashflow' ? 'CASH FLOW' : 'BALANCE SHEET'}
+          </div>
+          <div className="h-1 flex-1 ml-2 bg-slate-700 rounded overflow-hidden">
+            <div 
+              className={`h-full ${color.replace('text-', 'bg-')} animate-pulse`}
+              style={{ width: '100%' }}
+            />
+          </div>
         </div>
       </div>
     </Card>

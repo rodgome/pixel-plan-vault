@@ -11,6 +11,7 @@ const Dashboard = () => {
     expenses: 3500,
     savings: 1200,
     debt: 300,
+    investing: 200,
     categories: [
       { name: 'NEEDS', amount: 2000, budget: 2500, color: 'bg-red-500' },
       { name: 'WANTS', amount: 800, budget: 1000, color: 'bg-orange-500' },
@@ -34,23 +35,13 @@ const Dashboard = () => {
           icon="💰"
           color="text-green-400"
           bgColor="bg-green-900/20"
-          type="cashflow"
         />
         <MoneyPlanCard
           title="EXPENSES"
-          amount={totalSpent}
+          amount={monthlyData.expenses}
           icon="💸"
           color="text-red-400"
           bgColor="bg-red-900/20"
-          type="cashflow"
-        />
-        <MoneyPlanCard
-          title="SAVINGS"
-          amount={monthlyData.savings}
-          icon="🏦"
-          color="text-blue-400"
-          bgColor="bg-blue-900/20"
-          type="balance"
         />
         <MoneyPlanCard
           title="DEBT"
@@ -58,7 +49,13 @@ const Dashboard = () => {
           icon="⚠️"
           color="text-orange-400"
           bgColor="bg-orange-900/20"
-          type="balance"
+        />
+        <MoneyPlanCard
+          title="SAVINGS & INVESTING"
+          amount={monthlyData.savings + monthlyData.investing}
+          icon="🏦"
+          color="text-blue-400"
+          bgColor="bg-blue-900/20"
         />
       </div>
 

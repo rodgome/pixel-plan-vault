@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import MoneyPlanCard from './MoneyPlanCard';
@@ -12,14 +11,11 @@ const Dashboard = () => {
     savings: 1200,
     debt: 300,
     categories: [
-      { name: 'HOUSING', amount: 1200, budget: 1500, color: 'bg-red-500' },
-      { name: 'FOOD', amount: 600, budget: 800, color: 'bg-orange-500' },
-      { name: 'TRANSPORT', amount: 400, budget: 500, color: 'bg-yellow-500' },
-      { name: 'UTILITIES', amount: 250, budget: 300, color: 'bg-blue-500' },
-      { name: 'ENTERTAINMENT', amount: 300, budget: 400, color: 'bg-purple-500' },
-      { name: 'SHOPPING', amount: 450, budget: 600, color: 'bg-pink-500' },
-      { name: 'HEALTH', amount: 200, budget: 250, color: 'bg-green-500' },
-      { name: 'OTHER', amount: 100, budget: 150, color: 'bg-gray-500' }
+      { name: 'NEEDS', amount: 2000, budget: 2500, color: 'bg-red-500' },
+      { name: 'WANTS', amount: 800, budget: 1000, color: 'bg-orange-500' },
+      { name: 'DEBT', amount: 300, budget: 400, color: 'bg-yellow-500' },
+      { name: 'SAVINGS', amount: 1200, budget: 1500, color: 'bg-green-500' },
+      { name: 'INVESTING', amount: 200, budget: 300, color: 'bg-blue-500' }
     ]
   });
 

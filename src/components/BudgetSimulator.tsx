@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,12 +8,11 @@ const BudgetSimulator = () => {
   const [baseData] = useState({
     income: 5000,
     categories: [
-      { name: 'HOUSING', amount: 1200, budget: 1500 },
-      { name: 'FOOD', amount: 600, budget: 800 },
-      { name: 'TRANSPORT', amount: 400, budget: 500 },
-      { name: 'UTILITIES', amount: 250, budget: 300 },
-      { name: 'ENTERTAINMENT', amount: 300, budget: 400 },
-      { name: 'SHOPPING', amount: 450, budget: 600 },
+      { name: 'NEEDS', amount: 2000, budget: 2500 },
+      { name: 'WANTS', amount: 800, budget: 1000 },
+      { name: 'DEBT', amount: 300, budget: 400 },
+      { name: 'SAVINGS', amount: 1200, budget: 1500 },
+      { name: 'INVESTING', amount: 200, budget: 300 }
     ]
   });
 

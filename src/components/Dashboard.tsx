@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import FinancialSummaryCards from './FinancialSummaryCards';
@@ -160,6 +159,13 @@ const Dashboard = () => {
         investing={monthlyData.investing} 
       />
 
+      {/* Monthly Overview - Moved to top */}
+      <BudgetOverview 
+        totalBudget={totalBudget} 
+        totalSpent={totalSpent} 
+        remaining={remaining} 
+      />
+
       {/* Validation Alerts - Show inconsistencies */}
       <ValidationAlerts 
         isDebtPaymentConsistent={isDebtPaymentConsistent} 
@@ -185,13 +191,6 @@ const Dashboard = () => {
       <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
         
       </Card>
-
-      {/* Budget Overview */}
-      <BudgetOverview 
-        totalBudget={totalBudget} 
-        totalSpent={totalSpent} 
-        remaining={remaining} 
-      />
 
       {/* Financial Summary */}
       <FinancialSummary 

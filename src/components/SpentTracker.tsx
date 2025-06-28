@@ -40,6 +40,8 @@ const SpentTracker = ({
       ...cat,
       amount: cat.amount + increment
     } : cat);
+    
+    // Trigger update to parent component which will update all other cards
     onUpdate({
       categories: updatedCategories
     });
@@ -50,6 +52,20 @@ const SpentTracker = ({
       ...cat,
       amount: Math.max(0, cat.amount - increment)
     } : cat);
+    
+    // Trigger update to parent component which will update all other cards
+    onUpdate({
+      categories: updatedCategories
+    });
+  };
+
+  const handleAmountChange = (itemName: string, newAmount: number) => {
+    const updatedCategories = categories.map(cat => cat.name === itemName ? {
+      ...cat,
+      amount: Math.max(0, newAmount)
+    } : cat);
+    
+    // Trigger update to parent component which will update all other cards
     onUpdate({
       categories: updatedCategories
     });
@@ -86,7 +102,7 @@ const SpentTracker = ({
                   onChange={e => setIncrement(Number(e.target.value))} 
                   className="bg-slate-700 border-slate-600 text-white" 
                 />
-                <p className="text-xs text-slate-400">Double-click any card to edit with +/- buttons</p>
+                <p className="text-xs text-slate-400">Double-click any card to edit with +/- buttons or click to enter custom amount</p>
               </div>
             </PopoverContent>
           </Popover>
@@ -107,6 +123,14 @@ const SpentTracker = ({
               onDoubleClick={e => {
                 e.stopPropagation();
                 handleDoubleClick(category.name);
+              }}
+              onClick={e => {
+                e.stopPropagation();
+                // Single click for direct amount editing
+                const newAmount = prompt(`Enter amount spent for ${category.name}:`, category.amount.toString());
+                if (newAmount !== null && !isNaN(Number(newAmount))) {
+                  handleAmountChange(category.name, Number(newAmount));
+                }
               }}
             >
               <div className="text-xs text-slate-400 mb-1">{category.name}</div>

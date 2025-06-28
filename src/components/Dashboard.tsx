@@ -128,7 +128,7 @@ const Dashboard = () => {
   // Reactive calculations - all derived from base data
   const monthlyData = {
     income: baseData.income,
-    // Calculate actual amounts from categories
+    // Calculate actual amounts from categories - this will update when spending changes
     expenses: baseData.categories.filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS').reduce((sum, cat) => sum + cat.amount, 0),
     debt: baseData.categories.find(cat => cat.name === 'DEBT')?.amount || 0,
     savings: baseData.categories.find(cat => cat.name === 'SAVINGS')?.amount || 0,
@@ -138,8 +138,8 @@ const Dashboard = () => {
     goals: baseData.goals
   };
 
-  // Reactive financial calculations
-  const totalBudget = monthlyData.income; // Use income as total budget
+  // Reactive financial calculations - these will update when spending changes
+  const totalBudget = monthlyData.income;
   const totalSpent = monthlyData.categories.reduce((sum, cat) => sum + cat.amount, 0);
   const remaining = monthlyData.income - totalSpent;
 
@@ -165,13 +165,13 @@ const Dashboard = () => {
         onUpdate={handleDataUpdate} 
       />
 
-      {/* Spent Tracker */}
+      {/* Spent Tracker - This will trigger updates to all other cards */}
       <SpentTracker 
         categories={baseData.categories} 
         onUpdate={handleSpentUpdate} 
       />
 
-      {/* Status Cards - All reactive to base data */}
+      {/* Status Cards - All reactive to base data and will update when spending changes */}
       <FinancialSummaryCards 
         income={monthlyData.income} 
         expenses={monthlyData.expenses} 
@@ -180,14 +180,14 @@ const Dashboard = () => {
         investing={monthlyData.investing} 
       />
 
-      {/* Monthly Overview - Moved to top */}
+      {/* Monthly Overview - Will update when spending changes */}
       <BudgetOverview 
         totalBudget={totalBudget} 
         totalSpent={totalSpent} 
         remaining={remaining} 
       />
 
-      {/* Validation Alerts - Show inconsistencies */}
+      {/* Validation Alerts - Will show/hide based on spending changes */}
       <ValidationAlerts 
         isDebtPaymentConsistent={isDebtPaymentConsistent} 
         isBudgetBalanced={isBudgetBalanced} 
@@ -197,7 +197,7 @@ const Dashboard = () => {
         income={monthlyData.income} 
       />
 
-      {/* Main Content Grid */}
+      {/* Main Content Grid - Will update based on spending changes */}
       <DashboardGrid 
         spendingCategories={spendingCategories}
         debts={monthlyData.debts}

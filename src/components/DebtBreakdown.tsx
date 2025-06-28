@@ -1,3 +1,4 @@
+
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
@@ -107,7 +108,7 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
                     
                     {/* Dotted line for minimum payment */}
                     <div 
-                      className="absolute top-0 h-full w-1 border-l-4 border-dashed border-orange-200"
+                      className="absolute top-0 h-full w-1 border-l-4 border-dashed border-red-500"
                       style={{ left: `${(debt.minPayment / maxPayment) * 100}%` }}
                     />
                   </div>

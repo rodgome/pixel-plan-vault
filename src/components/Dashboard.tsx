@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import FinancialSummaryCards from './FinancialSummaryCards';
@@ -124,7 +125,7 @@ const Dashboard = () => {
   };
 
   // Reactive financial calculations
-  const totalBudget = monthlyData.categories.reduce((sum, cat) => sum + cat.budget, 0);
+  const totalBudget = monthlyData.income; // Use income as total budget
   const totalSpent = monthlyData.categories.reduce((sum, cat) => sum + cat.amount, 0);
   const remaining = monthlyData.income - totalSpent;
 

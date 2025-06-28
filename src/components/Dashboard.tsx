@@ -1,14 +1,12 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import CategoryBreakdown from './CategoryBreakdown';
-import SavingsProgress from './SavingsProgress';
-import DebtBreakdown from './DebtBreakdown';
-import GoalsBreakdown from './GoalsBreakdown';
 import FinancialSummaryCards from './FinancialSummaryCards';
 import ValidationAlerts from './ValidationAlerts';
 import BudgetOverview from './BudgetOverview';
 import FinancialSummary from './FinancialSummary';
 import EditableFinancialData from './EditableFinancialData';
+import DashboardGrid from './DashboardGrid';
 
 const Dashboard = () => {
   const [baseData, setBaseData] = useState({
@@ -96,6 +94,7 @@ const Dashboard = () => {
       type: 'investment' as const
     }]
   });
+
   const handleDataUpdate = (newData: {
     income: number;
     categories: Array<{
@@ -143,86 +142,44 @@ const Dashboard = () => {
   // Filter categories for spending analysis (exclude DEBT, SAVINGS, INVESTING)
   const spendingCategories = monthlyData.categories.filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS');
   
-  return <div className="space-y-6">
+  return (
+    <div className="space-y-6">
       {/* Editable Financial Data */}
-      <EditableFinancialData income={baseData.income} categories={baseData.categories} onUpdate={handleDataUpdate} />
+      <EditableFinancialData 
+        income={baseData.income} 
+        categories={baseData.categories} 
+        onUpdate={handleDataUpdate} 
+      />
 
       {/* Status Cards - All reactive to base data */}
-      <FinancialSummaryCards income={monthlyData.income} expenses={monthlyData.expenses} debt={monthlyData.debt} savings={monthlyData.savings} investing={monthlyData.investing} />
+      <FinancialSummaryCards 
+        income={monthlyData.income} 
+        expenses={monthlyData.expenses} 
+        debt={monthlyData.debt} 
+        savings={monthlyData.savings} 
+        investing={monthlyData.investing} 
+      />
 
       {/* Validation Alerts - Show inconsistencies */}
-      <ValidationAlerts isDebtPaymentConsistent={isDebtPaymentConsistent} isBudgetBalanced={isBudgetBalanced} debtAmount={monthlyData.debt} totalMinPayments={totalMinPayments} totalSpent={totalSpent} income={monthlyData.income} />
+      <ValidationAlerts 
+        isDebtPaymentConsistent={isDebtPaymentConsistent} 
+        isBudgetBalanced={isBudgetBalanced} 
+        debtAmount={monthlyData.debt} 
+        totalMinPayments={totalMinPayments} 
+        totalSpent={totalSpent} 
+        income={monthlyData.income} 
+      />
 
-      {/* Main Content Grid - Changed to 3 columns for more compact layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-        {/* Spending Analysis */}
-        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <div className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-lg">📊</span>
-              <h2 className="text-base font-bold text-amber-400">SPENDING ANALYSIS</h2>
-            </div>
-            <CategoryBreakdown categories={spendingCategories} />
-            
-            {/* Debt Payment Progress */}
-            <div className="mt-4 pt-4 border-t border-slate-600">
-              <div className="bg-black/30 p-4 rounded border border-slate-600">
-                <div className="text-xs text-slate-400 mb-2">DEBT PAYMENTS</div>
-
-                {/* Total Payment Progress Bar */}
-                <div className="space-y-2">
-                  <div className="text-xs text-slate-400 mb-1">TOTAL PAYMENT PROGRESS</div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-orange-400">Min: ${totalMinPayments.toLocaleString()}</span>
-                    <span className="text-blue-400">Planned: ${totalPlannedPayments.toLocaleString()}</span>
-                    <span className="text-green-400">Paid: ${totalPaid.toLocaleString()}</span>
-                  </div>
-                  
-                  <div className="relative h-4 bg-slate-700 rounded overflow-hidden">
-                    {/* Min Payment Bar */}
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-orange-500/60"
-                      style={{ width: `${(totalMinPayments / maxTotalPayment) * 100}%` }}
-                    />
-                    {/* Planned Payment Bar */}
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-blue-500/60"
-                      style={{ width: `${(totalPlannedPayments / maxTotalPayment) * 100}%` }}
-                    />
-                    {/* Total Paid Bar */}
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-green-500"
-                      style={{ width: `${(totalPaid / maxTotalPayment) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Debt Breakdown */}
-        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <div className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-lg">💳</span>
-              <h2 className="text-base font-bold text-amber-400">DEBT TRACKER</h2>
-            </div>
-            <DebtBreakdown debts={monthlyData.debts} />
-          </div>
-        </Card>
-
-        {/* Goals Breakdown */}
-        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <div className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-lg">🎯</span>
-              <h2 className="text-base font-bold text-amber-400">GOALS TRACKER</h2>
-            </div>
-            <GoalsBreakdown goals={monthlyData.goals} />
-          </div>
-        </Card>
-      </div>
+      {/* Main Content Grid */}
+      <DashboardGrid 
+        spendingCategories={spendingCategories}
+        debts={monthlyData.debts}
+        goals={monthlyData.goals}
+        totalMinPayments={totalMinPayments}
+        totalPlannedPayments={totalPlannedPayments}
+        totalPaid={totalPaid}
+        maxTotalPayment={maxTotalPayment}
+      />
 
       {/* Savings Progress - Now full width with reactive calculations */}
       <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
@@ -230,11 +187,22 @@ const Dashboard = () => {
       </Card>
 
       {/* Budget Overview */}
-      <BudgetOverview totalBudget={totalBudget} totalSpent={totalSpent} remaining={remaining} />
+      <BudgetOverview 
+        totalBudget={totalBudget} 
+        totalSpent={totalSpent} 
+        remaining={remaining} 
+      />
 
       {/* Financial Summary */}
-      <FinancialSummary debts={monthlyData.debts} goals={monthlyData.goals} income={monthlyData.income} totalSpent={totalSpent} remaining={remaining} />
-    </div>;
+      <FinancialSummary 
+        debts={monthlyData.debts} 
+        goals={monthlyData.goals} 
+        income={monthlyData.income} 
+        totalSpent={totalSpent} 
+        remaining={remaining} 
+      />
+    </div>
+  );
 };
 
 export default Dashboard;

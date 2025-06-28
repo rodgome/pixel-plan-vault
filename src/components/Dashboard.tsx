@@ -6,6 +6,7 @@ import BudgetOverview from './BudgetOverview';
 import FinancialSummary from './FinancialSummary';
 import EditableFinancialData from './EditableFinancialData';
 import DashboardGrid from './DashboardGrid';
+import SpentTracker from './SpentTracker';
 
 const Dashboard = () => {
   const [baseData, setBaseData] = useState({
@@ -110,6 +111,20 @@ const Dashboard = () => {
     }));
   };
 
+  const handleSpentUpdate = (newData: {
+    categories: Array<{
+      name: string;
+      amount: number;  
+      budget: number;
+      color: string;
+    }>;
+  }) => {
+    setBaseData(prev => ({
+      ...prev,
+      categories: newData.categories
+    }));
+  };
+
   // Reactive calculations - all derived from base data
   const monthlyData = {
     income: baseData.income,
@@ -148,6 +163,12 @@ const Dashboard = () => {
         income={baseData.income} 
         categories={baseData.categories} 
         onUpdate={handleDataUpdate} 
+      />
+
+      {/* Spent Tracker */}
+      <SpentTracker 
+        categories={baseData.categories} 
+        onUpdate={handleSpentUpdate} 
       />
 
       {/* Status Cards - All reactive to base data */}

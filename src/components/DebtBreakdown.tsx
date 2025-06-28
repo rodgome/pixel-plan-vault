@@ -19,9 +19,6 @@ interface DebtBreakdownProps {
 const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
   const totalDebt = debts.reduce((sum, debt) => sum + debt.balance, 0);
   const totalMinPayments = debts.reduce((sum, debt) => sum + debt.minPayment, 0);
-  const totalPlannedPayments = debts.reduce((sum, debt) => sum + (debt.plannedPayment || debt.minPayment), 0);
-  const totalPaid = debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
-  const maxTotalPayment = Math.max(totalMinPayments, totalPlannedPayments, totalPaid);
 
   const getDebtIcon = (type: string) => {
     switch (type) {
@@ -49,36 +46,6 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
         <div className="bg-black/30 p-3 rounded border border-slate-600">
           <div className="text-xs text-slate-400 mb-1">MIN PAYMENTS</div>
           <div className="text-lg font-bold text-orange-400">${totalMinPayments.toLocaleString()}</div>
-        </div>
-      </div>
-
-      {/* Total Progress Bar */}
-      <div className="bg-black/30 p-4 rounded border border-slate-600">
-        <div className="text-xs text-slate-400 mb-3">TOTAL PAYMENT PROGRESS</div>
-        <div className="space-y-2">
-          <div className="flex justify-between text-xs mb-1">
-            <span className="text-orange-400">Min: ${totalMinPayments.toLocaleString()}</span>
-            <span className="text-blue-400">Planned: ${totalPlannedPayments.toLocaleString()}</span>
-            <span className="text-green-400">Paid: ${totalPaid.toLocaleString()}</span>
-          </div>
-          
-          <div className="relative h-6 bg-slate-700 rounded overflow-hidden">
-            {/* Min Payment Bar */}
-            <div 
-              className="absolute top-0 left-0 h-full bg-orange-500/60"
-              style={{ width: `${(totalMinPayments / maxTotalPayment) * 100}%` }}
-            />
-            {/* Planned Payment Bar */}
-            <div 
-              className="absolute top-0 left-0 h-full bg-blue-500/60"
-              style={{ width: `${(totalPlannedPayments / maxTotalPayment) * 100}%` }}
-            />
-            {/* Total Paid Bar */}
-            <div 
-              className="absolute top-0 left-0 h-full bg-green-500"
-              style={{ width: `${(totalPaid / maxTotalPayment) * 100}%` }}
-            />
-          </div>
         </div>
       </div>
 

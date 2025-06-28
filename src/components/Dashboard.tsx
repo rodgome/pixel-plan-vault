@@ -133,6 +133,9 @@ const Dashboard = () => {
 
   // Debt calculations
   const totalMinPayments = monthlyData.debts.reduce((sum, debt) => sum + debt.minPayment, 0);
+  const totalPlannedPayments = monthlyData.debts.reduce((sum, debt) => sum + (debt.plannedPayment || debt.minPayment), 0);
+  const totalPaid = monthlyData.debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
+  const maxTotalPayment = Math.max(totalMinPayments, totalPlannedPayments, totalPaid);
 
   // Validation checks (reactive)
   const isDebtPaymentConsistent = monthlyData.debt === totalMinPayments;
@@ -162,11 +165,11 @@ const Dashboard = () => {
             </div>
             <CategoryBreakdown categories={spendingCategories} />
             
-            {/* Debt Summary moved from DebtBreakdown */}
+            {/* Debt Summary */}
             <div className="mt-4 pt-4 border-t border-slate-600">
               <div className="bg-black/30 p-4 rounded border border-slate-600">
                 <div className="text-xs text-slate-400 mb-2">DEBT PAYMENTS</div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                   <div>
                     <div className="text-xs text-slate-400">TOTAL DEBT</div>
                     <div className="text-lg font-bold text-red-400">${monthlyData.debts.reduce((sum, debt) => sum + debt.balance, 0).toLocaleString()}</div>
@@ -174,6 +177,34 @@ const Dashboard = () => {
                   <div>
                     <div className="text-xs text-slate-400">MIN PAYMENTS</div>
                     <div className="text-lg font-bold text-orange-400">${totalMinPayments.toLocaleString()}</div>
+                  </div>
+                </div>
+
+                {/* Total Payment Progress Bar */}
+                <div className="space-y-2">
+                  <div className="text-xs text-slate-400 mb-1">TOTAL PAYMENT PROGRESS</div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-orange-400">Min: ${totalMinPayments.toLocaleString()}</span>
+                    <span className="text-blue-400">Planned: ${totalPlannedPayments.toLocaleString()}</span>
+                    <span className="text-green-400">Paid: ${totalPaid.toLocaleString()}</span>
+                  </div>
+                  
+                  <div className="relative h-4 bg-slate-700 rounded overflow-hidden">
+                    {/* Min Payment Bar */}
+                    <div 
+                      className="absolute top-0 left-0 h-full bg-orange-500/60"
+                      style={{ width: `${(totalMinPayments / maxTotalPayment) * 100}%` }}
+                    />
+                    {/* Planned Payment Bar */}
+                    <div 
+                      className="absolute top-0 left-0 h-full bg-blue-500/60"
+                      style={{ width: `${(totalPlannedPayments / maxTotalPayment) * 100}%` }}
+                    />
+                    {/* Total Paid Bar */}
+                    <div 
+                      className="absolute top-0 left-0 h-full bg-green-500"
+                      style={{ width: `${(totalPaid / maxTotalPayment) * 100}%` }}
+                    />
                   </div>
                 </div>
               </div>

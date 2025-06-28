@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import CategoryBreakdown from './CategoryBreakdown';
@@ -9,6 +10,7 @@ import ValidationAlerts from './ValidationAlerts';
 import BudgetOverview from './BudgetOverview';
 import FinancialSummary from './FinancialSummary';
 import EditableFinancialData from './EditableFinancialData';
+
 const Dashboard = () => {
   const [baseData, setBaseData] = useState({
     income: 5000,
@@ -138,6 +140,7 @@ const Dashboard = () => {
 
   // Filter categories for spending analysis (exclude DEBT, SAVINGS, INVESTING)
   const spendingCategories = monthlyData.categories.filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS');
+  
   return <div className="space-y-6">
       {/* Editable Financial Data */}
       <EditableFinancialData income={baseData.income} categories={baseData.categories} onUpdate={handleDataUpdate} />
@@ -158,6 +161,23 @@ const Dashboard = () => {
               <h2 className="text-base font-bold text-amber-400">SPENDING ANALYSIS</h2>
             </div>
             <CategoryBreakdown categories={spendingCategories} />
+            
+            {/* Debt Summary moved from DebtBreakdown */}
+            <div className="mt-4 pt-4 border-t border-slate-600">
+              <div className="bg-black/30 p-4 rounded border border-slate-600">
+                <div className="text-xs text-slate-400 mb-2">DEBT PAYMENTS</div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="text-xs text-slate-400">TOTAL DEBT</div>
+                    <div className="text-lg font-bold text-red-400">${monthlyData.debts.reduce((sum, debt) => sum + debt.balance, 0).toLocaleString()}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-400">MIN PAYMENTS</div>
+                    <div className="text-lg font-bold text-orange-400">${totalMinPayments.toLocaleString()}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </Card>
 
@@ -196,4 +216,5 @@ const Dashboard = () => {
       <FinancialSummary debts={monthlyData.debts} goals={monthlyData.goals} income={monthlyData.income} totalSpent={totalSpent} remaining={remaining} />
     </div>;
 };
+
 export default Dashboard;

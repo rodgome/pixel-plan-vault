@@ -1,6 +1,5 @@
 
 import SpendingAnalysisCard from './SpendingAnalysisCard';
-import DebtTrackerCard from './DebtTrackerCard';
 import GoalsTrackerCard from './GoalsTrackerCard';
 
 interface Category {
@@ -50,7 +49,7 @@ const DashboardGrid = ({
   maxTotalPayment 
 }: DashboardGridProps) => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <SpendingAnalysisCard 
         spendingCategories={spendingCategories}
         totalMinPayments={totalMinPayments}
@@ -59,7 +58,6 @@ const DashboardGrid = ({
         maxTotalPayment={maxTotalPayment}
         debts={debts}
       />
-      <DebtTrackerCard debts={debts} />
       <GoalsTrackerCard goals={goals} />
     </div>
   );

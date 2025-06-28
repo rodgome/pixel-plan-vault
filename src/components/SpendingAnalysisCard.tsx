@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -62,6 +61,7 @@ const SpendingAnalysisCard = ({
   const [isSavingsDialogOpen, setIsSavingsDialogOpen] = useState(false);
 
   const savingsPercentage = (savingsCurrent / savingsTarget) * 100;
+  const debtPercentage = (totalPaid / maxTotalPayment) * 100;
 
   return (
     <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
@@ -72,45 +72,33 @@ const SpendingAnalysisCard = ({
         </div>
         <CategoryBreakdown categories={spendingCategories} />
         
-        {/* Debt Payment Progress - Clickable */}
+        {/* Debt Payment Progress - Styled like category breakdown */}
         <div className="mt-4 pt-4 border-t border-slate-600">
           <Dialog open={isDebtDialogOpen} onOpenChange={setIsDebtDialogOpen}>
             <DialogTrigger asChild>
-              <div className="bg-black/30 p-4 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors">
-                <div className="text-xs text-slate-400 mb-2">DEBT PAYMENTS (Click to view details)</div>
-
-                {/* Total Payment Progress Bar */}
-                <div className="space-y-2">
-                  <div className="text-xs text-slate-400 mb-1">TOTAL PAYMENT PROGRESS</div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-orange-400">Min: ${totalMinPayments.toLocaleString()}</span>
-                    <span className="text-blue-400">Planned: ${totalPlannedPayments.toLocaleString()}</span>
-                    <span className="text-green-400">Paid: ${totalPaid.toLocaleString()}</span>
+              <div className="group hover:bg-slate-700/30 p-3 rounded transition-all duration-200 cursor-pointer">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-red-500 rounded" />
+                    <span className="text-sm font-bold text-slate-300">DEBT PAYMENTS</span>
                   </div>
-                  
-                  <div className="relative h-4 bg-slate-700 rounded overflow-hidden">
-                    {/* Min Payment Bar */}
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-orange-500/60"
-                      style={{ width: `${(totalMinPayments / maxTotalPayment) * 100}%` }}
-                    />
-                    {/* Planned Payment Bar */}
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-blue-500/60"
-                      style={{ width: `${(totalPlannedPayments / maxTotalPayment) * 100}%` }}
-                    />
-                    {/* Total Paid Bar */}
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-green-500"
-                      style={{ width: `${(totalPaid / maxTotalPayment) * 100}%` }}
-                    />
-                    
-                    {/* Dotted line for minimum payment */}
-                    <div 
-                      className="absolute top-0 h-full w-1 border-l-4 border-dashed border-red-500"
-                      style={{ left: `${(totalMinPayments / maxTotalPayment) * 100}%` }}
-                    />
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-amber-400">
+                      ${totalPaid} / ${totalPlannedPayments}
+                    </div>
+                    <div className={`text-xs ${debtPercentage >= 100 ? 'text-green-400' : 'text-orange-400'}`}>
+                      {debtPercentage >= 100 ? 'COMPLETE' : 'IN PROGRESS'}
+                    </div>
                   </div>
+                </div>
+                <div className="bg-slate-700 h-2 rounded overflow-hidden">
+                  <div 
+                    className="h-full transition-all duration-500 bg-red-500"
+                    style={{ width: `${Math.min(debtPercentage, 100)}%` }}
+                  />
+                </div>
+                <div className="text-xs text-slate-400 mt-1">
+                  {debtPercentage.toFixed(0)}% paid
                 </div>
               </div>
             </DialogTrigger>
@@ -127,28 +115,33 @@ const SpendingAnalysisCard = ({
           </Dialog>
         </div>
 
-        {/* Savings Progress - Clickable */}
+        {/* Savings Progress - Styled like category breakdown */}
         <div className="mt-4 pt-4 border-t border-slate-600">
           <Dialog open={isSavingsDialogOpen} onOpenChange={setIsSavingsDialogOpen}>
             <DialogTrigger asChild>
-              <div className="bg-black/30 p-4 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors">
-                <div className="text-xs text-slate-400 mb-2">SAVINGS PROGRESS (Click to view details)</div>
-
-                {/* Savings Progress Bar */}
-                <div className="space-y-2">
-                  <div className="text-xs text-slate-400 mb-1">VAULT PROGRESS</div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-green-400">Current: ${savingsCurrent.toLocaleString()}</span>
-                    <span className="text-blue-400">Target: ${savingsTarget.toLocaleString()}</span>
-                    <span className="text-amber-400">{savingsPercentage.toFixed(0)}%</span>
+              <div className="group hover:bg-slate-700/30 p-3 rounded transition-all duration-200 cursor-pointer">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded" />
+                    <span className="text-sm font-bold text-slate-300">SAVINGS PROGRESS</span>
                   </div>
-                  
-                  <div className="relative h-4 bg-slate-700 rounded overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-1000 ease-out"
-                      style={{ width: `${Math.min(savingsPercentage, 100)}%` }}
-                    />
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-amber-400">
+                      ${savingsCurrent.toLocaleString()} / ${savingsTarget.toLocaleString()}
+                    </div>
+                    <div className={`text-xs ${savingsPercentage >= 100 ? 'text-green-400' : 'text-blue-400'}`}>
+                      {savingsPercentage >= 100 ? 'TARGET REACHED' : 'ON TRACK'}
+                    </div>
                   </div>
+                </div>
+                <div className="bg-slate-700 h-2 rounded overflow-hidden">
+                  <div 
+                    className="h-full transition-all duration-500 bg-green-500"
+                    style={{ width: `${Math.min(savingsPercentage, 100)}%` }}
+                  />
+                </div>
+                <div className="text-xs text-slate-400 mt-1">
+                  {savingsPercentage.toFixed(0)}% completed
                 </div>
               </div>
             </DialogTrigger>

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import FinancialSummaryCards from './FinancialSummaryCards';
@@ -13,27 +12,27 @@ const Dashboard = () => {
     income: 5000,
     categories: [{
       name: 'NEEDS',
-      amount: 2000,
+      amount: 0,
       budget: 2500,
       color: 'bg-red-500'
     }, {
       name: 'WANTS',
-      amount: 800,
+      amount: 0,
       budget: 1000,
       color: 'bg-orange-500'
     }, {
       name: 'DEBT',
-      amount: 300,
+      amount: 0,
       budget: 400,
       color: 'bg-yellow-500'
     }, {
       name: 'SAVINGS',
-      amount: 1200,
+      amount: 0,
       budget: 1500,
       color: 'bg-green-500'
     }, {
       name: 'INVESTING',
-      amount: 200,
+      amount: 0,
       budget: 300,
       color: 'bg-blue-500'
     }],

@@ -63,6 +63,12 @@ const SpendingAnalysisCard = ({
                   className="absolute top-0 left-0 h-full bg-green-500"
                   style={{ width: `${(totalPaid / maxTotalPayment) * 100}%` }}
                 />
+                
+                {/* Dotted line for minimum payment */}
+                <div 
+                  className="absolute top-0 h-full w-px border-l-2 border-dashed border-orange-300"
+                  style={{ left: `${(totalMinPayments / maxTotalPayment) * 100}%` }}
+                />
               </div>
             </div>
           </div>

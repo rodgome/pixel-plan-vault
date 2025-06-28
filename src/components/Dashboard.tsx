@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import CategoryBreakdown from './CategoryBreakdown';
@@ -165,20 +164,10 @@ const Dashboard = () => {
             </div>
             <CategoryBreakdown categories={spendingCategories} />
             
-            {/* Debt Summary */}
+            {/* Debt Payment Progress */}
             <div className="mt-4 pt-4 border-t border-slate-600">
               <div className="bg-black/30 p-4 rounded border border-slate-600">
                 <div className="text-xs text-slate-400 mb-2">DEBT PAYMENTS</div>
-                <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-                  <div>
-                    <div className="text-xs text-slate-400">TOTAL DEBT</div>
-                    <div className="text-lg font-bold text-red-400">${monthlyData.debts.reduce((sum, debt) => sum + debt.balance, 0).toLocaleString()}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-400">MIN PAYMENTS</div>
-                    <div className="text-lg font-bold text-orange-400">${totalMinPayments.toLocaleString()}</div>
-                  </div>
-                </div>
 
                 {/* Total Payment Progress Bar */}
                 <div className="space-y-2">

@@ -57,6 +57,7 @@ const DashboardGrid = ({
         totalPlannedPayments={totalPlannedPayments}
         totalPaid={totalPaid}
         maxTotalPayment={maxTotalPayment}
+        debts={debts}
       />
       <DebtTrackerCard debts={debts} />
       <GoalsTrackerCard goals={goals} />

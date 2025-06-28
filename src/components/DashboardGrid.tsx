@@ -1,6 +1,5 @@
 
 import SpendingAnalysisCard from './SpendingAnalysisCard';
-import GoalsTrackerCard from './GoalsTrackerCard';
 
 interface Category {
   name: string;
@@ -48,8 +47,16 @@ const DashboardGrid = ({
   totalPaid, 
   maxTotalPayment 
 }: DashboardGridProps) => {
+  // Calculate savings data from goals
+  const totalSavingsCurrent = goals.reduce((sum, goal) => sum + goal.current, 0);
+  const totalSavingsTarget = goals.reduce((sum, goal) => sum + goal.target, 0);
+  
+  // Calculate remaining based on income minus expenses (this would come from parent component ideally)
+  const totalExpenses = spendingCategories.reduce((sum, cat) => sum + cat.amount, 0) + totalPlannedPayments;
+  const remaining = 5000 - totalExpenses; // Using placeholder income, should be passed as prop
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4">
       <SpendingAnalysisCard 
         spendingCategories={spendingCategories}
         totalMinPayments={totalMinPayments}
@@ -57,8 +64,11 @@ const DashboardGrid = ({
         totalPaid={totalPaid}
         maxTotalPayment={maxTotalPayment}
         debts={debts}
+        goals={goals}
+        savingsCurrent={totalSavingsCurrent}
+        savingsTarget={totalSavingsTarget}
+        remaining={remaining}
       />
-      <GoalsTrackerCard goals={goals} />
     </div>
   );
 };

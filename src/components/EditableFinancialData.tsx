@@ -75,7 +75,7 @@ const EditableFinancialData = ({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <span className="text-lg">✏️</span>
-            <h2 className="text-base font-bold text-amber-400">Money Plan</h2>
+            <h2 className="text-base font-bold text-amber-400">MONEY PLAN</h2>
           </div>
           <Popover>
             <PopoverTrigger asChild>

@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import CategoryBreakdown from './CategoryBreakdown';
 import DebtBreakdown from './DebtBreakdown';
-import SavingsProgress from './SavingsProgress';
+import GoalsBreakdown from './GoalsBreakdown';
 
 interface Category {
   name: string;
@@ -72,7 +72,7 @@ const SpendingAnalysisCard = ({
         </div>
         <CategoryBreakdown categories={spendingCategories} />
         
-        {/* Debt Payment Progress - Styled like category breakdown */}
+        {/* Debt Payment Progress */}
         <div className="mt-4 pt-4 border-t border-slate-600">
           <Dialog open={isDebtDialogOpen} onOpenChange={setIsDebtDialogOpen}>
             <DialogTrigger asChild>
@@ -115,7 +115,7 @@ const SpendingAnalysisCard = ({
           </Dialog>
         </div>
 
-        {/* Savings Progress - Styled like category breakdown */}
+        {/* Savings Progress */}
         <div className="mt-4 pt-4 border-t border-slate-600">
           <Dialog open={isSavingsDialogOpen} onOpenChange={setIsSavingsDialogOpen}>
             <DialogTrigger asChild>
@@ -149,15 +149,11 @@ const SpendingAnalysisCard = ({
             <DialogContent className="max-w-2xl bg-slate-800 border-slate-700 text-slate-200">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2 text-amber-400">
-                  <span className="text-lg">🏦</span>
-                  SAVINGS TRACKER
+                  <span className="text-lg">🎯</span>
+                  GOALS TRACKER
                 </DialogTitle>
               </DialogHeader>
-              <SavingsProgress 
-                current={savingsCurrent}
-                target={savingsTarget}
-                remaining={remaining}
-              />
+              <GoalsBreakdown goals={goals} />
             </DialogContent>
           </Dialog>
         </div>

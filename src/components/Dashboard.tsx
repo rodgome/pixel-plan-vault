@@ -135,8 +135,8 @@ const Dashboard = () => {
   const totalPaid = monthlyData.debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
   const maxTotalPayment = Math.max(totalMinPayments, totalPlannedPayments, totalPaid);
 
-  // Validation checks (reactive)
-  const isDebtPaymentConsistent = monthlyData.debt === totalMinPayments;
+  // Validation checks (reactive) - Updated logic for debt payment consistency
+  const isDebtPaymentConsistent = monthlyData.debt >= totalMinPayments;
   const isBudgetBalanced = totalSpent <= monthlyData.income;
 
   // Filter categories for spending analysis (exclude DEBT, SAVINGS, INVESTING)

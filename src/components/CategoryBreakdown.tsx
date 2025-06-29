@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 
 interface Category {
@@ -34,9 +33,19 @@ interface CategoryBreakdownProps {
   goals?: GoalItem[];
   onDebtClick?: () => void;
   onGoalsClick?: () => void;
+  onNeedsClick?: () => void;
+  onWantsClick?: () => void;
 }
 
-const CategoryBreakdown = ({ categories, debts, goals, onDebtClick, onGoalsClick }: CategoryBreakdownProps) => {
+const CategoryBreakdown = ({ 
+  categories, 
+  debts, 
+  goals, 
+  onDebtClick, 
+  onGoalsClick, 
+  onNeedsClick, 
+  onWantsClick 
+}: CategoryBreakdownProps) => {
   const getCategoryIcon = (name: string) => {
     switch (name) {
       case 'NEEDS': return '🏠';
@@ -62,7 +71,10 @@ const CategoryBreakdown = ({ categories, debts, goals, onDebtClick, onGoalsClick
   };
 
   const isClickable = (categoryName: string) => {
-    return (categoryName === 'DEBT' && onDebtClick) || (categoryName === 'GOALS' && onGoalsClick);
+    return (categoryName === 'DEBT' && onDebtClick) || 
+           (categoryName === 'GOALS' && onGoalsClick) ||
+           (categoryName === 'NEEDS' && onNeedsClick) ||
+           (categoryName === 'WANTS' && onWantsClick);
   };
 
   const handleCategoryClick = (categoryName: string) => {
@@ -70,6 +82,10 @@ const CategoryBreakdown = ({ categories, debts, goals, onDebtClick, onGoalsClick
       onDebtClick();
     } else if (categoryName === 'GOALS' && onGoalsClick) {
       onGoalsClick();
+    } else if (categoryName === 'NEEDS' && onNeedsClick) {
+      onNeedsClick();
+    } else if (categoryName === 'WANTS' && onWantsClick) {
+      onWantsClick();
     }
   };
 

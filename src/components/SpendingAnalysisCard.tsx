@@ -1,10 +1,11 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import CategoryBreakdown from './CategoryBreakdown';
 import DebtBreakdown from './DebtBreakdown';
 import GoalsBreakdown from './GoalsBreakdown';
+import NeedsBreakdown from './NeedsBreakdown';
+import WantsBreakdown from './WantsBreakdown';
 
 interface Category {
   name: string;
@@ -60,6 +61,8 @@ const SpendingAnalysisCard = ({
 }: SpendingAnalysisCardProps) => {
   const [isDebtDialogOpen, setIsDebtDialogOpen] = useState(false);
   const [isGoalsDialogOpen, setIsGoalsDialogOpen] = useState(false);
+  const [isNeedsDialogOpen, setIsNeedsDialogOpen] = useState(false);
+  const [isWantsDialogOpen, setIsWantsDialogOpen] = useState(false);
 
   return (
     <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
@@ -75,6 +78,8 @@ const SpendingAnalysisCard = ({
           goals={goals}
           onDebtClick={() => setIsDebtDialogOpen(true)}
           onGoalsClick={() => setIsGoalsDialogOpen(true)}
+          onNeedsClick={() => setIsNeedsDialogOpen(true)}
+          onWantsClick={() => setIsWantsDialogOpen(true)}
         />
         
         {/* Debt Dialog */}
@@ -100,6 +105,32 @@ const SpendingAnalysisCard = ({
               </DialogTitle>
             </DialogHeader>
             <GoalsBreakdown goals={goals} />
+          </DialogContent>
+        </Dialog>
+
+        {/* Needs Dialog */}
+        <Dialog open={isNeedsDialogOpen} onOpenChange={setIsNeedsDialogOpen}>
+          <DialogContent className="max-w-2xl bg-slate-800 border-slate-700 text-slate-200">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-amber-400">
+                <span className="text-lg">🏠</span>
+                NEEDS TRACKER
+              </DialogTitle>
+            </DialogHeader>
+            <NeedsBreakdown categories={spendingCategories} />
+          </DialogContent>
+        </Dialog>
+
+        {/* Wants Dialog */}
+        <Dialog open={isWantsDialogOpen} onOpenChange={setIsWantsDialogOpen}>
+          <DialogContent className="max-w-2xl bg-slate-800 border-slate-700 text-slate-200">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-amber-400">
+                <span className="text-lg">🎮</span>
+                WANTS TRACKER
+              </DialogTitle>
+            </DialogHeader>
+            <WantsBreakdown categories={spendingCategories} />
           </DialogContent>
         </Dialog>
       </div>

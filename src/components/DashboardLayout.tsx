@@ -1,3 +1,4 @@
+
 import { Card } from '@/components/ui/card';
 import FinancialSummaryCards from './FinancialSummaryCards';
 import ValidationAlerts from './ValidationAlerts';
@@ -79,6 +80,13 @@ const DashboardLayout = ({
 
   return (
     <div className="space-y-6">
+      {/* Monthly Overview - Now at the very top */}
+      <BudgetOverview 
+        totalBudget={totalBudget} 
+        totalSpent={totalSpent} 
+        remaining={remaining} 
+      />
+
       {/* Editable Financial Data */}
       <EditableFinancialData 
         income={baseData.income} 
@@ -98,13 +106,6 @@ const DashboardLayout = ({
         expenses={monthlyData.expenses} 
         debt={monthlyData.debt} 
         goals={monthlyData.goals} 
-      />
-
-      {/* Monthly Overview - Will update when spending changes */}
-      <BudgetOverview 
-        totalBudget={totalBudget} 
-        totalSpent={totalSpent} 
-        remaining={remaining} 
       />
 
       {/* Validation Alerts - Now based on budget vs actual requirements */}

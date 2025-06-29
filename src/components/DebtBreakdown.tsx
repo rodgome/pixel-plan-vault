@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -11,8 +12,8 @@ interface DebtItem {
   minPayment: number;
   interestRate: number;
   type: 'credit_card' | 'loan' | 'mortgage' | 'other';
-  plannedPayment?: number;
-  totalPaid?: number;
+  plannedPayment: number;
+  totalPaid: number;
 }
 
 interface DebtBreakdownProps {
@@ -41,10 +42,11 @@ const DebtBreakdown = ({ debts, onUpdateDebt }: DebtBreakdownProps) => {
     return 'text-yellow-400';
   };
 
-  // Calculate monthly debt payment progress
-  const totalPlannedPayments = debts.reduce((sum, debt) => sum + (debt.plannedPayment || debt.minPayment), 0);
-  const totalPaidThisMonth = debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
-  const monthlyPaymentProgress = totalPlannedPayments > 0 ? (totalPaidThisMonth / totalPlannedPayments) * 100 : 0;
+  // Calculate monthly debt payment progress - this should show against the budgeted amount (800)
+  const budgetedDebtAmount = 800; // Money plan allocation for debt
+  const totalPlannedPayments = debts.reduce((sum, debt) => sum + debt.plannedPayment, 0);
+  const totalPaidThisMonth = debts.reduce((sum, debt) => sum + debt.totalPaid, 0);
+  const monthlyPaymentProgress = budgetedDebtAmount > 0 ? (totalPaidThisMonth / budgetedDebtAmount) * 100 : 0;
 
   const handleEditDebt = (debt: DebtItem, index: number) => {
     setEditingDebt({ debt, index });
@@ -71,11 +73,11 @@ const DebtBreakdown = ({ debts, onUpdateDebt }: DebtBreakdownProps) => {
         </div>
       </div>
 
-      {/* Monthly Debt Payment Progress */}
+      {/* Monthly Debt Payment Progress - Against Budget */}
       <div className="bg-black/20 p-4 rounded border border-slate-600">
         <div className="flex items-center justify-between mb-2">
           <div className="text-sm font-bold text-amber-400">MONTHLY DEBT PAYMENTS</div>
-          <div className="text-xs text-slate-400">${totalPaidThisMonth.toLocaleString()} / ${totalPlannedPayments.toLocaleString()}</div>
+          <div className="text-xs text-slate-400">${totalPaidThisMonth.toLocaleString()} / ${budgetedDebtAmount.toLocaleString()}</div>
         </div>
         <Progress 
           value={Math.min(monthlyPaymentProgress, 100)} 
@@ -84,15 +86,15 @@ const DebtBreakdown = ({ debts, onUpdateDebt }: DebtBreakdownProps) => {
         <div className="flex justify-between text-xs text-slate-400 mt-1">
           <span>$0</span>
           <span>{Math.round(monthlyPaymentProgress)}% Complete</span>
-          <span>${totalPlannedPayments.toLocaleString()}</span>
+          <span>${budgetedDebtAmount.toLocaleString()}</span>
         </div>
       </div>
 
       {/* Debt Items */}
       <div className="space-y-3">
         {debts.map((debt, index) => {
-          const plannedPayment = debt.plannedPayment || debt.minPayment;
-          const totalPaid = debt.totalPaid || 0;
+          const plannedPayment = debt.plannedPayment;
+          const totalPaid = debt.totalPaid;
           const maxPayment = Math.max(debt.minPayment, plannedPayment, totalPaid);
           
           // Calculate individual monthly payment progress for this debt

@@ -2,22 +2,13 @@
 import SpendingAnalysisCard from './SpendingAnalysisCard';
 import DebtTrackerCard from './DebtTrackerCard';
 import GoalsTrackerCard from './GoalsTrackerCard';
+import { DebtItem } from '@/types/debt';
 
 interface Category {
   name: string;
   amount: number;
   budget: number;
   color: string;
-}
-
-interface DebtItem {
-  name: string;
-  balance: number;
-  minPayment: number;
-  plannedPayment?: number;
-  totalPaid?: number;
-  interestRate: number;
-  type: 'credit_card' | 'loan' | 'mortgage' | 'other';
 }
 
 interface GoalItem {
@@ -51,8 +42,6 @@ const DashboardGrid = ({
 }: DashboardGridProps) => {
   const debtBudget = spendingCategories.find(cat => cat.name === 'DEBT')?.budget || 0;
   const debtSpent = spendingCategories.find(cat => cat.name === 'DEBT')?.amount || 0;
-  const goalsBudget = spendingCategories.find(cat => cat.name === 'GOALS')?.budget || 0;
-  const goalsSpent = spendingCategories.find(cat => cat.name === 'GOALS')?.amount || 0;
 
   // Calculate savings progress (simplified)
   const savingsCurrent = goals.reduce((sum, goal) => sum + goal.current, 0);
@@ -82,8 +71,6 @@ const DashboardGrid = ({
       
       <GoalsTrackerCard 
         goals={goals} 
-        goalsBudget={goalsBudget}
-        goalsSpent={goalsSpent}
       />
     </div>
   );

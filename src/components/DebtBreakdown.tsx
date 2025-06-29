@@ -9,9 +9,10 @@ import EditDebtForm from './EditDebtForm';
 interface DebtBreakdownProps {
   debts: DebtItem[];
   onUpdateDebt?: (index: number, updatedDebt: DebtItem) => void;
+  debtBudget?: number;
 }
 
-const DebtBreakdown = ({ debts, onUpdateDebt }: DebtBreakdownProps) => {
+const DebtBreakdown = ({ debts, onUpdateDebt, debtBudget = 0 }: DebtBreakdownProps) => {
   const [editingDebt, setEditingDebt] = useState<{ debt: DebtItem; index: number } | null>(null);
 
   const handleEditDebt = (debt: DebtItem, index: number) => {
@@ -31,7 +32,7 @@ const DebtBreakdown = ({ debts, onUpdateDebt }: DebtBreakdownProps) => {
       <DebtSummaryCards debts={debts} />
 
       {/* Monthly Debt Payment Progress - Against Budget */}
-      <MonthlyDebtProgress debts={debts} />
+      <MonthlyDebtProgress debts={debts} budgetedAmount={debtBudget} />
 
       {/* Debt Items */}
       <div className="space-y-3">

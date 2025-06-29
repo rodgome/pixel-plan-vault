@@ -5,9 +5,10 @@ import DebtBreakdown from './DebtBreakdown';
 
 interface DebtTrackerCardProps {
   debts: DebtItem[];
+  debtBudget?: number;
 }
 
-const DebtTrackerCard = ({ debts }: DebtTrackerCardProps) => {
+const DebtTrackerCard = ({ debts, debtBudget = 0 }: DebtTrackerCardProps) => {
   return (
     <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
       <div className="p-4">
@@ -15,7 +16,7 @@ const DebtTrackerCard = ({ debts }: DebtTrackerCardProps) => {
           <span className="text-lg">💳</span>
           <h2 className="text-base font-bold text-amber-400">DEBT TRACKER</h2>
         </div>
-        <DebtBreakdown debts={debts} />
+        <DebtBreakdown debts={debts} debtBudget={debtBudget} />
       </div>
     </Card>
   );

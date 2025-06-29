@@ -18,6 +18,8 @@ const DebtDetails = () => {
     }
   };
 
+  const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-green-400 font-mono">
       {/* Header */}
@@ -50,7 +52,11 @@ const DebtDetails = () => {
       <div className="container mx-auto px-4 py-6">
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <div className="p-6">
-            <DebtBreakdown debts={baseData.debts} onUpdateDebt={handleUpdateDebt} />
+            <DebtBreakdown 
+              debts={baseData.debts} 
+              onUpdateDebt={handleUpdateDebt} 
+              debtBudget={debtBudget}
+            />
           </div>
         </Card>
       </div>

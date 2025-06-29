@@ -61,8 +61,14 @@ const SpendingAnalysisCard = ({
   const [isDebtDialogOpen, setIsDebtDialogOpen] = useState(false);
   const [isSavingsDialogOpen, setIsSavingsDialogOpen] = useState(false);
 
-  // Use planned payments for the debt progress calculation instead of totalPaid
-  const debtPercentage = (totalPlannedPayments / maxTotalPayment) * 100;
+  // Find the debt category to get spent amount and budget
+  const debtCategory = spendingCategories.find(cat => cat.name === 'DEBT') || 
+    { name: 'DEBT', amount: 0, budget: 400, color: 'bg-yellow-500' }; // fallback if not found in spending categories
+  
+  // Use spent debt amount vs planned debt budget for progress calculation
+  const debtSpent = debtCategory.amount;
+  const debtBudget = debtCategory.budget;
+  const debtPercentage = debtBudget > 0 ? (debtSpent / debtBudget) * 100 : 0;
   
   // Calculate savings contribution progress
   const totalMonthlyContributions = goals.reduce((sum, goal) => sum + goal.monthlyContribution, 0);
@@ -91,21 +97,21 @@ const SpendingAnalysisCard = ({
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-bold text-amber-400">
-                      ${totalPlannedPayments} / ${maxTotalPayment}
+                      ${debtSpent} / ${debtBudget}
                     </div>
-                    <div className={`text-xs ${debtPercentage >= 100 ? 'text-green-400' : 'text-orange-400'}`}>
-                      {debtPercentage >= 100 ? 'PLAN COMPLETE' : 'PLANNED'}
+                    <div className={`text-xs ${debtPercentage >= 100 ? 'text-red-400' : 'text-orange-400'}`}>
+                      {debtPercentage >= 100 ? 'OVER BUDGET' : 'ON TRACK'}
                     </div>
                   </div>
                 </div>
                 <div className="bg-slate-700 h-2 rounded overflow-hidden">
                   <div 
-                    className="h-full transition-all duration-500 bg-red-500"
+                    className={`h-full transition-all duration-500 ${debtPercentage >= 100 ? 'bg-red-500' : 'bg-orange-500'}`}
                     style={{ width: `${Math.min(debtPercentage, 100)}%` }}
                   />
                 </div>
                 <div className="text-xs text-slate-400 mt-1">
-                  {debtPercentage.toFixed(0)}% of planned debt payments
+                  {debtPercentage.toFixed(0)}% of debt budget spent
                 </div>
               </div>
             </DialogTrigger>

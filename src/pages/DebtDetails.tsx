@@ -6,7 +6,7 @@ import { useDashboardData } from '../components/DashboardData';
 import DebtBreakdown from '../components/DebtBreakdown';
 
 const DebtDetails = () => {
-  const { baseData, handleDebtUpdate } = useDashboardData();
+  const { baseData, debtStrategy, handleDebtUpdate, handleDebtStrategyChange } = useDashboardData();
 
   const handleBack = () => {
     window.history.back();
@@ -19,6 +19,7 @@ const DebtDetails = () => {
   };
 
   const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
+  const debtSpent = baseData.categories.find(cat => cat.name === 'DEBT')?.amount || 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-green-400 font-mono">
@@ -56,6 +57,8 @@ const DebtDetails = () => {
               debts={baseData.debts} 
               onUpdateDebt={handleUpdateDebt} 
               debtBudget={debtBudget}
+              debtSpent={debtSpent}
+              strategy={debtStrategy}
             />
           </div>
         </Card>

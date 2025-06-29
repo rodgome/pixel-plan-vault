@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
 
@@ -108,6 +107,8 @@ export const useDashboardData = () => {
     }]
   });
 
+  const [debtStrategy, setDebtStrategy] = useState<'snowball' | 'avalanche'>('snowball');
+
   const handleDataUpdate = (newData: {
     income: number;
     categories: Category[];
@@ -135,10 +136,16 @@ export const useDashboardData = () => {
     }));
   };
 
+  const handleDebtStrategyChange = (strategy: 'snowball' | 'avalanche') => {
+    setDebtStrategy(strategy);
+  };
+
   return {
     baseData,
+    debtStrategy,
     handleDataUpdate,
     handleSpentUpdate,
-    handleDebtUpdate
+    handleDebtUpdate,
+    handleDebtStrategyChange
   };
 };

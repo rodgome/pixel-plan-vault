@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
+import { DebtStrategy, calculateDebtStrategy } from '@/utils/debtStrategies';
 import DebtSummaryCards from './debt/DebtSummaryCards';
 import MonthlyDebtProgress from './debt/MonthlyDebtProgress';
 import DebtItemCard from './debt/DebtItemCard';
@@ -10,10 +11,21 @@ interface DebtBreakdownProps {
   debts: DebtItem[];
   onUpdateDebt?: (index: number, updatedDebt: DebtItem) => void;
   debtBudget?: number;
+  debtSpent?: number;
+  strategy?: DebtStrategy;
 }
 
-const DebtBreakdown = ({ debts, onUpdateDebt, debtBudget = 0 }: DebtBreakdownProps) => {
+const DebtBreakdown = ({ 
+  debts, 
+  onUpdateDebt, 
+  debtBudget = 0, 
+  debtSpent = 0,
+  strategy = 'snowball'
+}: DebtBreakdownProps) => {
   const [editingDebt, setEditingDebt] = useState<{ debt: DebtItem; index: number } | null>(null);
+
+  // Calculate strategy-based debt recommendations
+  const strategicDebts = calculateDebtStrategy(debts, strategy, debtBudget);
 
   const handleEditDebt = (debt: DebtItem, index: number) => {
     setEditingDebt({ debt, index });
@@ -32,16 +44,21 @@ const DebtBreakdown = ({ debts, onUpdateDebt, debtBudget = 0 }: DebtBreakdownPro
       <DebtSummaryCards debts={debts} />
 
       {/* Monthly Debt Payment Progress - Against Budget */}
-      <MonthlyDebtProgress debts={debts} budgetedAmount={debtBudget} />
+      <MonthlyDebtProgress 
+        debts={debts} 
+        budgetedAmount={debtBudget}
+        spentAmount={debtSpent}
+      />
 
       {/* Debt Items */}
       <div className="space-y-3">
-        {debts.map((debt, index) => (
+        {strategicDebts.map((debt, index) => (
           <DebtItemCard
             key={index}
             debt={debt}
             index={index}
             onEdit={onUpdateDebt ? handleEditDebt : undefined}
+            showStrategy={true}
           />
         ))}
       </div>

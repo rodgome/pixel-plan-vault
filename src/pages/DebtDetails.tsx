@@ -2,11 +2,14 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { useDashboardData } from '../components/DashboardData';
 import DebtBreakdown from '../components/DebtBreakdown';
 
-const DebtDetails = () => {
-  const { baseData, debtStrategy, handleDebtUpdate, handleDebtStrategyChange } = useDashboardData();
+interface DebtDetailsProps {
+  dashboardData: any;
+}
+
+const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
+  const { baseData, debtStrategy, handleDebtUpdate, handleDebtStrategyChange } = dashboardData;
 
   const handleBack = () => {
     window.history.back();
@@ -59,6 +62,7 @@ const DebtDetails = () => {
               debtBudget={debtBudget}
               debtSpent={debtSpent}
               strategy={debtStrategy}
+              onStrategyChange={handleDebtStrategyChange}
             />
           </div>
         </Card>

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
 import { DebtStrategy, calculateDebtStrategy } from '@/utils/debtStrategies';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DebtSummaryCards from './debt/DebtSummaryCards';
 import MonthlyDebtProgress from './debt/MonthlyDebtProgress';
 import DebtItemCard from './debt/DebtItemCard';
@@ -13,6 +14,7 @@ interface DebtBreakdownProps {
   debtBudget?: number;
   debtSpent?: number;
   strategy?: DebtStrategy;
+  onStrategyChange?: (strategy: DebtStrategy) => void;
 }
 
 const DebtBreakdown = ({ 
@@ -20,7 +22,8 @@ const DebtBreakdown = ({
   onUpdateDebt, 
   debtBudget = 0, 
   debtSpent = 0,
-  strategy = 'snowball'
+  strategy = 'snowball',
+  onStrategyChange
 }: DebtBreakdownProps) => {
   const [editingDebt, setEditingDebt] = useState<{ debt: DebtItem; index: number } | null>(null);
 
@@ -40,6 +43,24 @@ const DebtBreakdown = ({
 
   return (
     <div className="space-y-4">
+      {/* Strategy Selector - Only show if onStrategyChange is provided */}
+      {onStrategyChange && (
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-bold text-amber-400">DEBT STRATEGY</h3>
+          </div>
+          <Select value={strategy} onValueChange={onStrategyChange}>
+            <SelectTrigger className="w-32 h-8 bg-slate-700 border-slate-600 text-slate-200 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-700 border-slate-600">
+              <SelectItem value="snowball" className="text-slate-200 hover:bg-slate-600">Snowball</SelectItem>
+              <SelectItem value="avalanche" className="text-slate-200 hover:bg-slate-600">Avalanche</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       {/* Summary */}
       <DebtSummaryCards debts={debts} />
 

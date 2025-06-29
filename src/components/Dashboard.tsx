@@ -1,10 +1,13 @@
 
-import { useDashboardData } from './DashboardData';
 import { useDashboardCalculations } from './DashboardCalculations';
 import DashboardLayout from './DashboardLayout';
 
-const Dashboard = () => {
-  const { baseData, handleDataUpdate, handleSpentUpdate } = useDashboardData();
+interface DashboardProps {
+  dashboardData: any;
+}
+
+const Dashboard = ({ dashboardData }: DashboardProps) => {
+  const { baseData, handleDataUpdate, handleSpentUpdate } = dashboardData;
   
   const {
     monthlyData,

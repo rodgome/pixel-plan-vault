@@ -6,10 +6,16 @@ import { useDashboardData } from '../components/DashboardData';
 import DebtBreakdown from '../components/DebtBreakdown';
 
 const DebtDetails = () => {
-  const { baseData } = useDashboardData();
+  const { baseData, handleDebtUpdate } = useDashboardData();
 
   const handleBack = () => {
     window.history.back();
+  };
+
+  const handleUpdateDebt = (index: number, updatedDebt: any) => {
+    if (handleDebtUpdate) {
+      handleDebtUpdate(index, updatedDebt);
+    }
   };
 
   return (
@@ -44,7 +50,7 @@ const DebtDetails = () => {
       <div className="container mx-auto px-4 py-6">
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <div className="p-6">
-            <DebtBreakdown debts={baseData.debts} />
+            <DebtBreakdown debts={baseData.debts} onUpdateDebt={handleUpdateDebt} />
           </div>
         </Card>
       </div>

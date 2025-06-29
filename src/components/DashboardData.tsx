@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 
 export interface Category {
@@ -137,9 +136,17 @@ export const useDashboardData = () => {
     }));
   };
 
+  const handleDebtUpdate = (index: number, updatedDebt: DebtItem) => {
+    setBaseData(prev => ({
+      ...prev,
+      debts: prev.debts.map((debt, i) => i === index ? updatedDebt : debt)
+    }));
+  };
+
   return {
     baseData,
     handleDataUpdate,
-    handleSpentUpdate
+    handleSpentUpdate,
+    handleDebtUpdate
   };
 };

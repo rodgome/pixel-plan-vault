@@ -1,6 +1,9 @@
-
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { Edit } from 'lucide-react';
+import EditDebtForm from './EditDebtForm';
 
 interface DebtItem {
   name: string;
@@ -14,9 +17,12 @@ interface DebtItem {
 
 interface DebtBreakdownProps {
   debts: DebtItem[];
+  onUpdateDebt?: (index: number, updatedDebt: DebtItem) => void;
 }
 
-const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
+const DebtBreakdown = ({ debts, onUpdateDebt }: DebtBreakdownProps) => {
+  const [editingDebt, setEditingDebt] = useState<{ debt: DebtItem; index: number } | null>(null);
+  
   const totalDebt = debts.reduce((sum, debt) => sum + debt.balance, 0);
   const totalMinPayments = debts.reduce((sum, debt) => sum + debt.minPayment, 0);
 
@@ -39,6 +45,17 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
   const totalPlannedPayments = debts.reduce((sum, debt) => sum + (debt.plannedPayment || debt.minPayment), 0);
   const totalPaidThisMonth = debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
   const monthlyPaymentProgress = totalPlannedPayments > 0 ? (totalPaidThisMonth / totalPlannedPayments) * 100 : 0;
+
+  const handleEditDebt = (debt: DebtItem, index: number) => {
+    setEditingDebt({ debt, index });
+  };
+
+  const handleSaveDebt = (updatedDebt: DebtItem) => {
+    if (editingDebt && onUpdateDebt) {
+      onUpdateDebt(editingDebt.index, updatedDebt);
+    }
+    setEditingDebt(null);
+  };
 
   return (
     <div className="space-y-4">
@@ -88,8 +105,20 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
                   <span className="text-lg">{getDebtIcon(debt.type)}</span>
                   <span className="font-bold text-slate-200">{debt.name}</span>
                 </div>
-                <div className={`text-sm font-bold ${getDebtColor(debt.interestRate)}`}>
-                  {debt.interestRate}% APR
+                <div className="flex items-center gap-2">
+                  <div className={`text-sm font-bold ${getDebtColor(debt.interestRate)}`}>
+                    {debt.interestRate}% APR
+                  </div>
+                  {onUpdateDebt && (
+                    <Button
+                      onClick={() => handleEditDebt(debt, index)}
+                      variant="ghost"
+                      size="sm"
+                      className="text-amber-400 hover:text-amber-300 hover:bg-slate-700/50 h-8 w-8 p-0"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
               
@@ -156,6 +185,16 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
           );
         })}
       </div>
+
+      {/* Edit Debt Dialog */}
+      {editingDebt && (
+        <EditDebtForm
+          debt={editingDebt.debt}
+          isOpen={!!editingDebt}
+          onClose={() => setEditingDebt(null)}
+          onSave={handleSaveDebt}
+        />
+      )}
     </div>
   );
 };

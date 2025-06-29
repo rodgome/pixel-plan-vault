@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
 import { DebtStrategy, calculateDebtStrategy } from '@/utils/debtStrategies';
@@ -79,6 +78,7 @@ const DebtBreakdown = ({
             debt={debt}
             index={index}
             onEdit={onUpdateDebt ? handleEditDebt : undefined}
+            onUpdate={onUpdateDebt}
             showStrategy={true}
           />
         ))}

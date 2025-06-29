@@ -1,7 +1,9 @@
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Edit } from 'lucide-react';
+import { Edit, Plus, Minus } from 'lucide-react';
 import { DebtItem } from '@/types/debt';
 import { DebtWithStrategy } from '@/utils/debtStrategies';
 
@@ -9,10 +11,15 @@ interface DebtItemCardProps {
   debt: DebtItem | DebtWithStrategy;
   index: number;
   onEdit?: (debt: DebtItem, index: number) => void;
+  onUpdate?: (index: number, updatedDebt: DebtItem) => void;
   showStrategy?: boolean;
 }
 
-const DebtItemCard = ({ debt, index, onEdit, showStrategy = false }: DebtItemCardProps) => {
+const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: DebtItemCardProps) => {
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [directEditValue, setDirectEditValue] = useState<string>('');
+  const [increment, setIncrement] = useState(100);
+
   const getDebtIcon = (type: string) => {
     switch (type) {
       case 'credit_card': return '💳';
@@ -42,14 +49,146 @@ const DebtItemCard = ({ debt, index, onEdit, showStrategy = false }: DebtItemCar
   // Calculate individual monthly payment progress for this debt
   const individualMonthlyProgress = plannedPayment > 0 ? Math.min((totalPaid / plannedPayment) * 100, 100) : 0;
 
+  const handleDoubleClick = (fieldName: string, currentValue: number) => {
+    setEditingField(fieldName);
+    setDirectEditValue(currentValue.toString());
+  };
+
+  const handleIncrement = (fieldName: string) => {
+    if (!onUpdate) return;
+    
+    const updatedDebt = { ...debt };
+    switch (fieldName) {
+      case 'balance':
+        updatedDebt.balance += increment;
+        break;
+      case 'minPayment':
+        updatedDebt.minPayment += increment;
+        break;
+      case 'plannedPayment':
+        updatedDebt.plannedPayment += increment;
+        break;
+      case 'totalPaid':
+        updatedDebt.totalPaid += increment;
+        break;
+    }
+    onUpdate(index, updatedDebt);
+  };
+
+  const handleDecrement = (fieldName: string) => {
+    if (!onUpdate) return;
+    
+    const updatedDebt = { ...debt };
+    switch (fieldName) {
+      case 'balance':
+        updatedDebt.balance = Math.max(0, updatedDebt.balance - increment);
+        break;
+      case 'minPayment':
+        updatedDebt.minPayment = Math.max(0, updatedDebt.minPayment - increment);
+        break;
+      case 'plannedPayment':
+        updatedDebt.plannedPayment = Math.max(0, updatedDebt.plannedPayment - increment);
+        break;
+      case 'totalPaid':
+        updatedDebt.totalPaid = Math.max(0, updatedDebt.totalPaid - increment);
+        break;
+    }
+    onUpdate(index, updatedDebt);
+  };
+
+  const handleDirectValueChange = (fieldName: string, value: string) => {
+    if (!onUpdate) return;
+    
+    setDirectEditValue(value);
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue) && numValue >= 0) {
+      const updatedDebt = { ...debt };
+      switch (fieldName) {
+        case 'balance':
+          updatedDebt.balance = numValue;
+          break;
+        case 'minPayment':
+          updatedDebt.minPayment = numValue;
+          break;
+        case 'plannedPayment':
+          updatedDebt.plannedPayment = numValue;
+          break;
+        case 'totalPaid':
+          updatedDebt.totalPaid = numValue;
+          break;
+      }
+      onUpdate(index, updatedDebt);
+    }
+  };
+
+  const handleClickOutside = () => {
+    setEditingField(null);
+  };
+
   const handleEditClick = () => {
     if (onEdit) {
       onEdit(debt, index);
     }
   };
 
+  const renderEditableField = (fieldName: string, value: number, label: string, colorClass: string) => {
+    const isEditing = editingField === fieldName;
+    
+    return (
+      <div 
+        className="cursor-pointer" 
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          if (onUpdate) handleDoubleClick(fieldName, value);
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="text-xs text-slate-400">{label}</div>
+        <div className={`font-bold ${colorClass}`}>${value.toLocaleString()}</div>
+        
+        {isEditing && onUpdate && (
+          <div className="mt-2 space-y-2">
+            <Input
+              type="number"
+              value={directEditValue}
+              onChange={(e) => handleDirectValueChange(fieldName, e.target.value)}
+              className="text-sm bg-slate-700 border-slate-600 text-white h-8"
+              placeholder="Enter amount"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="flex items-center justify-center gap-2">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDecrement(fieldName);
+                }} 
+                className="bg-red-600 hover:bg-red-700 text-white border-red-600 h-7 px-2"
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <span className="text-white text-xs">±{increment}</span>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleIncrement(fieldName);
+                }} 
+                className="bg-green-600 hover:bg-green-700 text-white border-green-600 h-7 px-2"
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
-    <div className="bg-black/20 p-4 rounded border border-slate-600">
+    <div className="bg-black/20 p-4 rounded border border-slate-600" onClick={handleClickOutside}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="text-lg">{getDebtIcon(debt.type)}</span>
@@ -78,14 +217,8 @@ const DebtItemCard = ({ debt, index, onEdit, showStrategy = false }: DebtItemCar
       </div>
       
       <div className="grid grid-cols-2 gap-4 text-sm mb-3">
-        <div>
-          <div className="text-xs text-slate-400">BALANCE</div>
-          <div className="font-bold text-red-400">${debt.balance.toLocaleString()}</div>
-        </div>
-        <div>
-          <div className="text-xs text-slate-400">MIN PAYMENT</div>
-          <div className="font-bold text-orange-400">${debt.minPayment.toLocaleString()}</div>
-        </div>
+        {renderEditableField('balance', debt.balance, 'BALANCE', 'text-red-400')}
+        {renderEditableField('minPayment', debt.minPayment, 'MIN PAYMENT', 'text-orange-400')}
       </div>
 
       {/* Strategy Recommendation */}
@@ -95,6 +228,12 @@ const DebtItemCard = ({ debt, index, onEdit, showStrategy = false }: DebtItemCar
           <div className="font-bold text-amber-400">${debt.recommendedPayment.toLocaleString()}</div>
         </div>
       )}
+
+      {/* Planned Payment and Total Paid Fields */}
+      <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+        {renderEditableField('plannedPayment', debt.plannedPayment, 'PLANNED PAYMENT', 'text-blue-400')}
+        {renderEditableField('totalPaid', debt.totalPaid, 'TOTAL PAID', 'text-green-400')}
+      </div>
 
       {/* Individual Monthly Payment Progress */}
       <div className="space-y-2 mb-3">

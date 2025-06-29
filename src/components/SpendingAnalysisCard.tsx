@@ -1,11 +1,7 @@
-import { useState } from 'react';
+
 import { Card } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import CategoryBreakdown from './CategoryBreakdown';
-import DebtBreakdown from './DebtBreakdown';
-import GoalsBreakdown from './GoalsBreakdown';
-import NeedsBreakdown from './NeedsBreakdown';
-import WantsBreakdown from './WantsBreakdown';
+import { useNavigate } from 'react-router-dom';
 
 interface Category {
   name: string;
@@ -59,10 +55,23 @@ const SpendingAnalysisCard = ({
   savingsTarget,
   remaining
 }: SpendingAnalysisCardProps) => {
-  const [isDebtDialogOpen, setIsDebtDialogOpen] = useState(false);
-  const [isGoalsDialogOpen, setIsGoalsDialogOpen] = useState(false);
-  const [isNeedsDialogOpen, setIsNeedsDialogOpen] = useState(false);
-  const [isWantsDialogOpen, setIsWantsDialogOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNeedsClick = () => {
+    navigate('/needs');
+  };
+
+  const handleWantsClick = () => {
+    navigate('/wants');
+  };
+
+  const handleDebtClick = () => {
+    navigate('/debt');
+  };
+
+  const handleGoalsClick = () => {
+    navigate('/goals');
+  };
 
   return (
     <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
@@ -76,63 +85,11 @@ const SpendingAnalysisCard = ({
           categories={spendingCategories} 
           debts={debts}
           goals={goals}
-          onDebtClick={() => setIsDebtDialogOpen(true)}
-          onGoalsClick={() => setIsGoalsDialogOpen(true)}
-          onNeedsClick={() => setIsNeedsDialogOpen(true)}
-          onWantsClick={() => setIsWantsDialogOpen(true)}
+          onDebtClick={handleDebtClick}
+          onGoalsClick={handleGoalsClick}
+          onNeedsClick={handleNeedsClick}
+          onWantsClick={handleWantsClick}
         />
-        
-        {/* Debt Dialog */}
-        <Dialog open={isDebtDialogOpen} onOpenChange={setIsDebtDialogOpen}>
-          <DialogContent className="max-w-2xl bg-slate-800 border-slate-700 text-slate-200">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-amber-400">
-                <span className="text-lg">💳</span>
-                DEBT TRACKER
-              </DialogTitle>
-            </DialogHeader>
-            <DebtBreakdown debts={debts} />
-          </DialogContent>
-        </Dialog>
-
-        {/* Goals Dialog */}
-        <Dialog open={isGoalsDialogOpen} onOpenChange={setIsGoalsDialogOpen}>
-          <DialogContent className="max-w-2xl bg-slate-800 border-slate-700 text-slate-200">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-amber-400">
-                <span className="text-lg">🎯</span>
-                GOALS TRACKER
-              </DialogTitle>
-            </DialogHeader>
-            <GoalsBreakdown goals={goals} />
-          </DialogContent>
-        </Dialog>
-
-        {/* Needs Dialog */}
-        <Dialog open={isNeedsDialogOpen} onOpenChange={setIsNeedsDialogOpen}>
-          <DialogContent className="max-w-2xl bg-slate-800 border-slate-700 text-slate-200">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-amber-400">
-                <span className="text-lg">🏠</span>
-                NEEDS TRACKER
-              </DialogTitle>
-            </DialogHeader>
-            <NeedsBreakdown categories={spendingCategories} />
-          </DialogContent>
-        </Dialog>
-
-        {/* Wants Dialog */}
-        <Dialog open={isWantsDialogOpen} onOpenChange={setIsWantsDialogOpen}>
-          <DialogContent className="max-w-2xl bg-slate-800 border-slate-700 text-slate-200">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-amber-400">
-                <span className="text-lg">🎮</span>
-                WANTS TRACKER
-              </DialogTitle>
-            </DialogHeader>
-            <WantsBreakdown categories={spendingCategories} />
-          </DialogContent>
-        </Dialog>
       </div>
     </Card>
   );

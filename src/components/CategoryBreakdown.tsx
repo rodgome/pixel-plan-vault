@@ -1,4 +1,3 @@
-import { useState } from 'react';
 
 interface Category {
   name: string;
@@ -99,7 +98,7 @@ const CategoryBreakdown = ({
           <div 
             key={index} 
             className={`group p-3 rounded transition-all duration-200 ${
-              clickable ? 'hover:bg-slate-700/30 cursor-pointer' : ''
+              clickable ? 'hover:bg-slate-700/30 cursor-pointer hover:border-amber-400/30 border border-transparent' : ''
             }`}
             onClick={() => handleCategoryClick(category.name)}
           >
@@ -107,6 +106,11 @@ const CategoryBreakdown = ({
               <div className="flex items-center gap-2">
                 <span className="text-lg">{getCategoryIcon(category.name)}</span>
                 <span className="text-sm font-bold text-slate-300">{category.name}</span>
+                {clickable && (
+                  <span className="text-xs text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Click to view details →
+                  </span>
+                )}
               </div>
               <div className="text-right">
                 <div className="text-sm font-bold text-amber-400">

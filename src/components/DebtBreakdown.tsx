@@ -35,6 +35,15 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
     return 'text-yellow-400';
   };
 
+  // Calculate monthly progress (assuming we're tracking monthly payments)
+  const getCurrentDate = () => new Date();
+  const getDaysInMonth = () => {
+    const now = getCurrentDate();
+    return new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  };
+  const getCurrentDay = () => getCurrentDate().getDate();
+  const monthProgress = (getCurrentDay() / getDaysInMonth()) * 100;
+
   return (
     <div className="space-y-4">
       {/* Summary */}
@@ -49,12 +58,34 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
         </div>
       </div>
 
+      {/* Monthly Progress */}
+      <div className="bg-black/20 p-4 rounded border border-slate-600">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-sm font-bold text-amber-400">MONTHLY PROGRESS</div>
+          <div className="text-xs text-slate-400">Day {getCurrentDay()} of {getDaysInMonth()}</div>
+        </div>
+        <Progress 
+          value={monthProgress} 
+          className="h-3 bg-slate-700 [&>div]:bg-gradient-to-r [&>div]:from-green-500 [&>div]:to-emerald-400" 
+        />
+        <div className="flex justify-between text-xs text-slate-400 mt-1">
+          <span>Month Start</span>
+          <span>{Math.round(monthProgress)}% Complete</span>
+          <span>Month End</span>
+        </div>
+      </div>
+
       {/* Debt Items */}
       <div className="space-y-3">
         {debts.map((debt, index) => {
           const plannedPayment = debt.plannedPayment || debt.minPayment;
           const totalPaid = debt.totalPaid || 0;
           const maxPayment = Math.max(debt.minPayment, plannedPayment, totalPaid);
+          
+          // Calculate monthly payment progress for this debt
+          const monthlyTarget = plannedPayment;
+          const monthlyPaid = totalPaid * (monthProgress / 100); // Simulate monthly progress
+          const monthlyProgress = Math.min((monthlyPaid / monthlyTarget) * 100, 100);
           
           return (
             <div key={index} className="bg-black/20 p-4 rounded border border-slate-600">
@@ -79,9 +110,22 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
                 </div>
               </div>
 
+              {/* Monthly Payment Progress */}
+              <div className="space-y-2 mb-3">
+                <div className="text-xs text-slate-400">THIS MONTH'S PAYMENT PROGRESS</div>
+                <Progress 
+                  value={monthlyProgress} 
+                  className="h-2 bg-slate-700 [&>div]:bg-blue-500" 
+                />
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-400">Paid: ${Math.round(monthlyPaid).toLocaleString()}</span>
+                  <span className="text-blue-400">Target: ${monthlyTarget.toLocaleString()}</span>
+                </div>
+              </div>
+
               {/* Payment Progress Bar */}
               <div className="space-y-2">
-                <div className="text-xs text-slate-400 mb-1">PAYMENT PROGRESS</div>
+                <div className="text-xs text-slate-400 mb-1">OVERALL PAYMENT PROGRESS</div>
                 <div className="relative">
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-orange-400">Min: ${debt.minPayment}</span>

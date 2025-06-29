@@ -33,9 +33,11 @@ const EditableFinancialData = ({
 }: EditableFinancialDataProps) => {
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [increment, setIncrement] = useState(100);
+  const [directEditValue, setDirectEditValue] = useState<string>('');
 
-  const handleDoubleClick = (itemName: string) => {
+  const handleDoubleClick = (itemName: string, currentValue: number) => {
     setEditingItem(itemName);
+    setDirectEditValue(currentValue.toString());
   };
 
   const handleIncrement = (itemName: string, isIncome: boolean = false) => {
@@ -74,6 +76,46 @@ const EditableFinancialData = ({
     }
   };
 
+  const handleDirectValueChange = (itemName: string, value: string, isIncome: boolean = false) => {
+    setDirectEditValue(value);
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue) && numValue >= 0) {
+      if (isIncome) {
+        onUpdate({
+          income: numValue,
+          categories: [...categories]
+        });
+      } else {
+        const updatedCategories = categories.map(cat => cat.name === itemName ? {
+          ...cat,
+          budget: numValue
+        } : cat);
+        onUpdate({
+          income,
+          categories: updatedCategories
+        });
+      }
+    }
+  };
+
+  const handleValueChange = (itemName: string, newValue: number, isIncome: boolean = false) => {
+    if (isIncome) {
+      onUpdate({
+        income: Math.max(0, newValue),
+        categories: [...categories]
+      });
+    } else {
+      const updatedCategories = categories.map(cat => cat.name === itemName ? {
+        ...cat,
+        budget: Math.max(0, newValue)
+      } : cat);
+      onUpdate({
+        income,
+        categories: updatedCategories
+      });
+    }
+  };
+
   const handleClickOutside = () => {
     setEditingItem(null);
   };
@@ -103,7 +145,7 @@ const EditableFinancialData = ({
                   onChange={e => setIncrement(Number(e.target.value))} 
                   className="bg-slate-700 border-slate-600 text-white" 
                 />
-                <p className="text-xs text-slate-400">Double-click any card to edit with +/- buttons</p>
+                <p className="text-xs text-slate-400">Double-click any card to edit with +/- buttons or type custom amount</p>
               </div>
             </PopoverContent>
           </Popover>
@@ -111,18 +153,38 @@ const EditableFinancialData = ({
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm" onClick={handleClickOutside}>
           {/* Income Card */}
-          <div 
-            className="bg-black/30 p-3 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors relative" 
-            onDoubleClick={e => {
-              e.stopPropagation();
-              handleDoubleClick('INCOME');
-            }}
-          >
-            <div className="text-xs text-slate-400 mb-1">INCOME</div>
-            <div className="text-lg font-bold text-green-400">${income.toLocaleString()}</div>
+          <div className="space-y-2">
+            <div 
+              className="bg-black/30 p-3 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors" 
+              onDoubleClick={e => {
+                e.stopPropagation();
+                handleDoubleClick('INCOME', income);
+              }}
+              onClick={e => {
+                e.stopPropagation();
+                // Single click for direct amount editing
+                const newAmount = prompt(`Enter income amount:`, income.toString());
+                if (newAmount !== null && !isNaN(Number(newAmount))) {
+                  handleValueChange('INCOME', Number(newAmount), true);
+                }
+              }}
+            >
+              <div className="text-xs text-slate-400 mb-1">INCOME</div>
+              {editingItem === 'INCOME' ? (
+                <Input
+                  type="number"
+                  value={directEditValue}
+                  onChange={(e) => handleDirectValueChange('INCOME', e.target.value, true)}
+                  className="text-lg font-bold text-green-400 bg-transparent border-none p-0 h-auto focus:ring-0"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ) : (
+                <div className="text-lg font-bold text-green-400">${income.toLocaleString()}</div>
+              )}
+            </div>
             
             {editingItem === 'INCOME' && (
-              <div className="absolute inset-0 bg-black/80 rounded flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2 bg-black/30 p-2 rounded border border-slate-600">
                 <Button 
                   size="sm" 
                   variant="outline" 
@@ -152,19 +214,38 @@ const EditableFinancialData = ({
 
           {/* Category Cards - Now showing budget amounts */}
           {categories.map(category => (
-            <div 
-              key={category.name} 
-              className="bg-black/30 p-3 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors relative" 
-              onDoubleClick={e => {
-                e.stopPropagation();
-                handleDoubleClick(category.name);
-              }}
-            >
-              <div className="text-xs text-slate-400 mb-1">{category.name}</div>
-              <div className="text-lg font-bold text-blue-400">${category.budget.toLocaleString()}</div>
+            <div key={category.name} className="space-y-2">
+              <div 
+                className="bg-black/30 p-3 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors" 
+                onDoubleClick={e => {
+                  e.stopPropagation();
+                  handleDoubleClick(category.name, category.budget);
+                }}
+                onClick={e => {
+                  e.stopPropagation();
+                  // Single click for direct amount editing
+                  const newAmount = prompt(`Enter budget amount for ${category.name}:`, category.budget.toString());
+                  if (newAmount !== null && !isNaN(Number(newAmount))) {
+                    handleValueChange(category.name, Number(newAmount));
+                  }
+                }}
+              >
+                <div className="text-xs text-slate-400 mb-1">{category.name}</div>
+                {editingItem === category.name ? (
+                  <Input
+                    type="number"
+                    value={directEditValue}
+                    onChange={(e) => handleDirectValueChange(category.name, e.target.value)}
+                    className="text-lg font-bold text-blue-400 bg-transparent border-none p-0 h-auto focus:ring-0"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <div className="text-lg font-bold text-blue-400">${category.budget.toLocaleString()}</div>
+                )}
+              </div>
               
               {editingItem === category.name && (
-                <div className="absolute inset-0 bg-black/80 rounded flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 bg-black/30 p-2 rounded border border-slate-600">
                   <Button 
                     size="sm" 
                     variant="outline" 

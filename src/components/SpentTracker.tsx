@@ -30,9 +30,11 @@ const SpentTracker = ({
 }: SpentTrackerProps) => {
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [increment, setIncrement] = useState(50);
+  const [directEditValue, setDirectEditValue] = useState<string>('');
 
-  const handleDoubleClick = (itemName: string) => {
+  const handleDoubleClick = (itemName: string, currentAmount: number) => {
     setEditingItem(itemName);
+    setDirectEditValue(currentAmount.toString());
   };
 
   const handleIncrement = (itemName: string) => {
@@ -57,6 +59,21 @@ const SpentTracker = ({
     onUpdate({
       categories: updatedCategories
     });
+  };
+
+  const handleDirectAmountChange = (itemName: string, value: string) => {
+    setDirectEditValue(value);
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue) && numValue >= 0) {
+      const updatedCategories = categories.map(cat => cat.name === itemName ? {
+        ...cat,
+        amount: numValue
+      } : cat);
+      
+      onUpdate({
+        categories: updatedCategories
+      });
+    }
   };
 
   const handleAmountChange = (itemName: string, newAmount: number) => {
@@ -102,7 +119,7 @@ const SpentTracker = ({
                   onChange={e => setIncrement(Number(e.target.value))} 
                   className="bg-slate-700 border-slate-600 text-white" 
                 />
-                <p className="text-xs text-slate-400">Double-click any card to edit with +/- buttons or click to enter custom amount</p>
+                <p className="text-xs text-slate-400">Double-click any card to edit with +/- buttons or type custom amount</p>
               </div>
             </PopoverContent>
           </Popover>
@@ -117,30 +134,41 @@ const SpentTracker = ({
 
           {/* Category Cards - Showing actual spending amounts */}
           {categories.map(category => (
-            <div 
-              key={category.name} 
-              className="bg-black/30 p-3 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors relative" 
-              onDoubleClick={e => {
-                e.stopPropagation();
-                handleDoubleClick(category.name);
-              }}
-              onClick={e => {
-                e.stopPropagation();
-                // Single click for direct amount editing
-                const newAmount = prompt(`Enter amount spent for ${category.name}:`, category.amount.toString());
-                if (newAmount !== null && !isNaN(Number(newAmount))) {
-                  handleAmountChange(category.name, Number(newAmount));
-                }
-              }}
-            >
-              <div className="text-xs text-slate-400 mb-1">{category.name}</div>
-              <div className="text-lg font-bold text-red-400">${category.amount.toLocaleString()}</div>
-              <div className="text-xs text-slate-500 mt-1">
-                of ${category.budget.toLocaleString()} budget
+            <div key={category.name} className="space-y-2">
+              <div 
+                className="bg-black/30 p-3 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors" 
+                onDoubleClick={e => {
+                  e.stopPropagation();
+                  handleDoubleClick(category.name, category.amount);
+                }}
+                onClick={e => {
+                  e.stopPropagation();
+                  // Single click for direct amount editing
+                  const newAmount = prompt(`Enter amount spent for ${category.name}:`, category.amount.toString());
+                  if (newAmount !== null && !isNaN(Number(newAmount))) {
+                    handleAmountChange(category.name, Number(newAmount));
+                  }
+                }}
+              >
+                <div className="text-xs text-slate-400 mb-1">{category.name}</div>
+                {editingItem === category.name ? (
+                  <Input
+                    type="number"
+                    value={directEditValue}
+                    onChange={(e) => handleDirectAmountChange(category.name, e.target.value)}
+                    className="text-lg font-bold text-red-400 bg-transparent border-none p-0 h-auto focus:ring-0"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <div className="text-lg font-bold text-red-400">${category.amount.toLocaleString()}</div>
+                )}
+                <div className="text-xs text-slate-500 mt-1">
+                  of ${category.budget.toLocaleString()} budget
+                </div>
               </div>
               
               {editingItem === category.name && (
-                <div className="absolute inset-0 bg-black/80 rounded flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 bg-black/30 p-2 rounded border border-slate-600">
                   <Button 
                     size="sm" 
                     variant="outline" 

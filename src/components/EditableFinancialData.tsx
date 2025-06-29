@@ -98,24 +98,6 @@ const EditableFinancialData = ({
     }
   };
 
-  const handleValueChange = (itemName: string, newValue: number, isIncome: boolean = false) => {
-    if (isIncome) {
-      onUpdate({
-        income: Math.max(0, newValue),
-        categories: [...categories]
-      });
-    } else {
-      const updatedCategories = categories.map(cat => cat.name === itemName ? {
-        ...cat,
-        budget: Math.max(0, newValue)
-      } : cat);
-      onUpdate({
-        income,
-        categories: updatedCategories
-      });
-    }
-  };
-
   const handleClickOutside = () => {
     setEditingItem(null);
   };
@@ -153,124 +135,110 @@ const EditableFinancialData = ({
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm" onClick={handleClickOutside}>
           {/* Income Card */}
-          <div className="space-y-2">
+          <div>
             <div 
               className="bg-black/30 p-3 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors" 
               onDoubleClick={e => {
                 e.stopPropagation();
                 handleDoubleClick('INCOME', income);
               }}
-              onClick={e => {
-                e.stopPropagation();
-                // Single click for direct amount editing
-                const newAmount = prompt(`Enter income amount:`, income.toString());
-                if (newAmount !== null && !isNaN(Number(newAmount))) {
-                  handleValueChange('INCOME', Number(newAmount), true);
-                }
-              }}
+              onClick={e => e.stopPropagation()}
             >
               <div className="text-xs text-slate-400 mb-1">INCOME</div>
-              {editingItem === 'INCOME' ? (
-                <Input
-                  type="number"
-                  value={directEditValue}
-                  onChange={(e) => handleDirectValueChange('INCOME', e.target.value, true)}
-                  className="text-lg font-bold text-green-400 bg-transparent border-none p-0 h-auto focus:ring-0"
-                  onClick={(e) => e.stopPropagation()}
-                />
-              ) : (
-                <div className="text-lg font-bold text-green-400">${income.toLocaleString()}</div>
+              <div className="text-lg font-bold text-green-400">${income.toLocaleString()}</div>
+              
+              {editingItem === 'INCOME' && (
+                <div className="mt-3 space-y-2">
+                  <Input
+                    type="number"
+                    value={directEditValue}
+                    onChange={(e) => handleDirectValueChange('INCOME', e.target.value, true)}
+                    className="text-sm bg-slate-700 border-slate-600 text-white"
+                    placeholder="Enter amount"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <div className="flex items-center justify-center gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleDecrement('INCOME', true);
+                      }} 
+                      className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+                    >
+                      <Minus className="w-3 h-3" />
+                    </Button>
+                    <span className="text-white text-xs">±{increment}</span>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleIncrement('INCOME', true);
+                      }} 
+                      className="bg-green-600 hover:bg-green-700 text-white border-green-600"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
               )}
             </div>
-            
-            {editingItem === 'INCOME' && (
-              <div className="flex items-center justify-center gap-2 bg-black/30 p-2 rounded border border-slate-600">
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleDecrement('INCOME', true);
-                  }} 
-                  className="bg-red-600 hover:bg-red-700 text-white border-red-600"
-                >
-                  <Minus className="w-4 h-4" />
-                </Button>
-                <span className="text-white text-sm">±{increment}</span>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleIncrement('INCOME', true);
-                  }} 
-                  className="bg-green-600 hover:bg-green-700 text-white border-green-600"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
           </div>
 
-          {/* Category Cards - Now showing budget amounts */}
+          {/* Category Cards */}
           {categories.map(category => (
-            <div key={category.name} className="space-y-2">
+            <div key={category.name}>
               <div 
                 className="bg-black/30 p-3 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors" 
                 onDoubleClick={e => {
                   e.stopPropagation();
                   handleDoubleClick(category.name, category.budget);
                 }}
-                onClick={e => {
-                  e.stopPropagation();
-                  // Single click for direct amount editing
-                  const newAmount = prompt(`Enter budget amount for ${category.name}:`, category.budget.toString());
-                  if (newAmount !== null && !isNaN(Number(newAmount))) {
-                    handleValueChange(category.name, Number(newAmount));
-                  }
-                }}
+                onClick={e => e.stopPropagation()}
               >
                 <div className="text-xs text-slate-400 mb-1">{category.name}</div>
-                {editingItem === category.name ? (
-                  <Input
-                    type="number"
-                    value={directEditValue}
-                    onChange={(e) => handleDirectValueChange(category.name, e.target.value)}
-                    className="text-lg font-bold text-blue-400 bg-transparent border-none p-0 h-auto focus:ring-0"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                ) : (
-                  <div className="text-lg font-bold text-blue-400">${category.budget.toLocaleString()}</div>
+                <div className="text-lg font-bold text-blue-400">${category.budget.toLocaleString()}</div>
+                
+                {editingItem === category.name && (
+                  <div className="mt-3 space-y-2">
+                    <Input
+                      type="number"
+                      value={directEditValue}
+                      onChange={(e) => handleDirectValueChange(category.name, e.target.value)}
+                      className="text-sm bg-slate-700 border-slate-600 text-white"
+                      placeholder="Enter amount"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <div className="flex items-center justify-center gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleDecrement(category.name);
+                        }} 
+                        className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                      <span className="text-white text-xs">±{increment}</span>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleIncrement(category.name);
+                        }} 
+                        className="bg-green-600 hover:bg-green-700 text-white border-green-600"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
                 )}
               </div>
-              
-              {editingItem === category.name && (
-                <div className="flex items-center justify-center gap-2 bg-black/30 p-2 rounded border border-slate-600">
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={e => {
-                      e.stopPropagation();
-                      handleDecrement(category.name);
-                    }} 
-                    className="bg-red-600 hover:bg-red-700 text-white border-red-600"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <span className="text-white text-sm">±{increment}</span>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={e => {
-                      e.stopPropagation();
-                      handleIncrement(category.name);
-                    }} 
-                    className="bg-green-600 hover:bg-green-700 text-white border-green-600"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-              )}
             </div>
           ))}
         </div>

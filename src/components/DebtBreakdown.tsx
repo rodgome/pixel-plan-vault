@@ -48,6 +48,34 @@ const DebtBreakdown = ({
     }
   };
 
+  const handleDeleteDebt = (debt: DebtItem) => {
+    if (onDeleteDebt) {
+      // Find the original index of this debt in the base debts array
+      const originalIndex = debts.findIndex(d => 
+        d.name === debt.name && 
+        d.balance === debt.balance && 
+        d.interestRate === debt.interestRate
+      );
+      if (originalIndex !== -1) {
+        onDeleteDebt(originalIndex);
+      }
+    }
+  };
+
+  const handleUpdateDebt = (debt: DebtItem, updatedDebt: DebtItem) => {
+    if (onUpdateDebt) {
+      // Find the original index of this debt in the base debts array
+      const originalIndex = debts.findIndex(d => 
+        d.name === debt.name && 
+        d.balance === debt.balance && 
+        d.interestRate === debt.interestRate
+      );
+      if (originalIndex !== -1) {
+        onUpdateDebt(originalIndex, updatedDebt);
+      }
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Strategy Selector and Add Button */}
@@ -97,11 +125,11 @@ const DebtBreakdown = ({
       <div className="space-y-3">
         {strategicDebts.map((debt, index) => (
           <DebtItemCard
-            key={index}
+            key={`${debt.name}-${debt.balance}-${debt.interestRate}`}
             debt={debt}
             index={index}
-            onUpdate={onUpdateDebt}
-            onDelete={onDeleteDebt}
+            onUpdate={(_, updatedDebt) => handleUpdateDebt(debt, updatedDebt)}
+            onDelete={() => handleDeleteDebt(debt)}
             showStrategy={true}
           />
         ))}

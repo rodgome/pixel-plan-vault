@@ -11,7 +11,7 @@ interface DebtItemCardProps {
   index: number;
   onEdit?: (debt: DebtItem, index: number) => void;
   onUpdate?: (index: number, updatedDebt: DebtItem) => void;
-  onDelete?: (index: number) => void;
+  onDelete?: () => void;
   showStrategy?: boolean;
 }
 
@@ -134,7 +134,7 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
 
   const handleDelete = () => {
     if (onDelete) {
-      onDelete(index);
+      onDelete();
     }
   };
 

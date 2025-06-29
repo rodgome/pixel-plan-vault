@@ -34,8 +34,8 @@ export const useDashboardCalculations = (baseData: BaseData) => {
     const isDebtPaymentConsistent = debtBudget >= totalMinPayments;
     const isBudgetBalanced = totalBudgetAmount <= monthlyData.income;
 
-    // Filter categories for spending analysis (exclude DEBT, SAVINGS, INVESTING)
-    const spendingCategories = monthlyData.categories.filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS');
+    // Include all categories for spending analysis - this allows debt progress to update live
+    const spendingCategories = monthlyData.categories;
 
     return {
       monthlyData,

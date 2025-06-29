@@ -35,14 +35,10 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
     return 'text-yellow-400';
   };
 
-  // Calculate monthly progress (assuming we're tracking monthly payments)
-  const getCurrentDate = () => new Date();
-  const getDaysInMonth = () => {
-    const now = getCurrentDate();
-    return new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  };
-  const getCurrentDay = () => getCurrentDate().getDate();
-  const monthProgress = (getCurrentDay() / getDaysInMonth()) * 100;
+  // Calculate monthly debt payment progress
+  const totalPlannedPayments = debts.reduce((sum, debt) => sum + (debt.plannedPayment || debt.minPayment), 0);
+  const totalPaidThisMonth = debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
+  const monthlyPaymentProgress = totalPlannedPayments > 0 ? (totalPaidThisMonth / totalPlannedPayments) * 100 : 0;
 
   return (
     <div className="space-y-4">
@@ -58,20 +54,20 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
         </div>
       </div>
 
-      {/* Monthly Progress */}
+      {/* Monthly Debt Payment Progress */}
       <div className="bg-black/20 p-4 rounded border border-slate-600">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-sm font-bold text-amber-400">MONTHLY PROGRESS</div>
-          <div className="text-xs text-slate-400">Day {getCurrentDay()} of {getDaysInMonth()}</div>
+          <div className="text-sm font-bold text-amber-400">MONTHLY DEBT PAYMENTS</div>
+          <div className="text-xs text-slate-400">${totalPaidThisMonth.toLocaleString()} / ${totalPlannedPayments.toLocaleString()}</div>
         </div>
         <Progress 
-          value={monthProgress} 
+          value={Math.min(monthlyPaymentProgress, 100)} 
           className="h-3 bg-slate-700 [&>div]:bg-gradient-to-r [&>div]:from-green-500 [&>div]:to-emerald-400" 
         />
         <div className="flex justify-between text-xs text-slate-400 mt-1">
-          <span>Month Start</span>
-          <span>{Math.round(monthProgress)}% Complete</span>
-          <span>Month End</span>
+          <span>$0</span>
+          <span>{Math.round(monthlyPaymentProgress)}% Complete</span>
+          <span>${totalPlannedPayments.toLocaleString()}</span>
         </div>
       </div>
 
@@ -82,10 +78,8 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
           const totalPaid = debt.totalPaid || 0;
           const maxPayment = Math.max(debt.minPayment, plannedPayment, totalPaid);
           
-          // Calculate monthly payment progress for this debt
-          const monthlyTarget = plannedPayment;
-          const monthlyPaid = totalPaid * (monthProgress / 100); // Simulate monthly progress
-          const monthlyProgress = Math.min((monthlyPaid / monthlyTarget) * 100, 100);
+          // Calculate individual monthly payment progress for this debt
+          const individualMonthlyProgress = plannedPayment > 0 ? Math.min((totalPaid / plannedPayment) * 100, 100) : 0;
           
           return (
             <div key={index} className="bg-black/20 p-4 rounded border border-slate-600">
@@ -110,16 +104,16 @@ const DebtBreakdown = ({ debts }: DebtBreakdownProps) => {
                 </div>
               </div>
 
-              {/* Monthly Payment Progress */}
+              {/* Individual Monthly Payment Progress */}
               <div className="space-y-2 mb-3">
                 <div className="text-xs text-slate-400">THIS MONTH'S PAYMENT PROGRESS</div>
                 <Progress 
-                  value={monthlyProgress} 
+                  value={individualMonthlyProgress} 
                   className="h-2 bg-slate-700 [&>div]:bg-blue-500" 
                 />
                 <div className="flex justify-between text-xs">
-                  <span className="text-slate-400">Paid: ${Math.round(monthlyPaid).toLocaleString()}</span>
-                  <span className="text-blue-400">Target: ${monthlyTarget.toLocaleString()}</span>
+                  <span className="text-slate-400">Paid: ${totalPaid.toLocaleString()}</span>
+                  <span className="text-blue-400">Target: ${plannedPayment.toLocaleString()}</span>
                 </div>
               </div>
 

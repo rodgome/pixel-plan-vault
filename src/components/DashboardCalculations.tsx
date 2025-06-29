@@ -10,11 +10,10 @@ export const useDashboardCalculations = (baseData: BaseData) => {
       // Calculate actual amounts from categories - this will update when spending changes
       expenses: baseData.categories.filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS').reduce((sum, cat) => sum + cat.amount, 0),
       debt: baseData.categories.find(cat => cat.name === 'DEBT')?.amount || 0,
-      savings: baseData.categories.find(cat => cat.name === 'SAVINGS')?.amount || 0,
-      investing: baseData.categories.find(cat => cat.name === 'INVESTING')?.amount || 0,
+      goals: baseData.categories.find(cat => cat.name === 'GOALS')?.amount || 0,
       categories: baseData.categories,
       debts: baseData.debts,
-      goals: baseData.goals
+      goalItems: baseData.goals
     };
 
     // Reactive financial calculations - these will update when spending changes

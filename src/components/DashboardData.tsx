@@ -54,15 +54,10 @@ export const useDashboardData = () => {
       budget: 400,
       color: 'bg-yellow-500'
     }, {
-      name: 'SAVINGS',
+      name: 'GOALS',
       amount: 0,
-      budget: 1500,
+      budget: 1800,
       color: 'bg-green-500'
-    }, {
-      name: 'INVESTING',
-      amount: 0,
-      budget: 300,
-      color: 'bg-blue-500'
     }],
     debts: [{
       name: 'Credit Card - Chase',

@@ -1,4 +1,3 @@
-
 import { Card } from '@/components/ui/card';
 import FinancialSummaryCards from './FinancialSummaryCards';
 import ValidationAlerts from './ValidationAlerts';
@@ -15,8 +14,7 @@ interface DashboardLayoutProps {
     income: number;
     expenses: number;
     debt: number;
-    savings: number;
-    investing: number;
+    goals: number;
     categories: Array<{
       name: string;
       amount: number;
@@ -24,7 +22,7 @@ interface DashboardLayoutProps {
       color: string;
     }>;
     debts: Array<any>;
-    goals: Array<any>;
+    goalItems: Array<any>;
   };
   totalBudget: number;
   totalSpent: number;
@@ -99,8 +97,7 @@ const DashboardLayout = ({
         income={monthlyData.income} 
         expenses={monthlyData.expenses} 
         debt={monthlyData.debt} 
-        savings={monthlyData.savings} 
-        investing={monthlyData.investing} 
+        goals={monthlyData.goals} 
       />
 
       {/* Monthly Overview - Will update when spending changes */}
@@ -124,7 +121,7 @@ const DashboardLayout = ({
       <DashboardGrid 
         spendingCategories={spendingCategories}
         debts={monthlyData.debts}
-        goals={monthlyData.goals}
+        goals={monthlyData.goalItems}
         totalMinPayments={totalMinPayments}
         totalPlannedPayments={totalPlannedPayments}
         totalPaid={totalPaid}
@@ -139,7 +136,7 @@ const DashboardLayout = ({
       {/* Financial Summary */}
       <FinancialSummary 
         debts={monthlyData.debts} 
-        goals={monthlyData.goals} 
+        goals={monthlyData.goalItems} 
         income={monthlyData.income} 
         totalSpent={totalSpent} 
         remaining={remaining} 

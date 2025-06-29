@@ -5,13 +5,12 @@ interface FinancialSummaryCardsProps {
   income: number;
   expenses: number;
   debt: number;
-  savings: number;
-  investing: number;
+  goals: number;
 }
 
-const FinancialSummaryCards = ({ income, expenses, debt, savings, investing }: FinancialSummaryCardsProps) => {
+const FinancialSummaryCards = ({ income, expenses, debt, goals }: FinancialSummaryCardsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <MoneyPlanCard
         title="INCOME"
         amount={income}
@@ -34,18 +33,11 @@ const FinancialSummaryCards = ({ income, expenses, debt, savings, investing }: F
         bgColor="bg-orange-900/20"
       />
       <MoneyPlanCard
-        title="SAVINGS"
-        amount={savings}
-        icon="🏦"
+        title="GOALS"
+        amount={goals}
+        icon="🎯"
         color="text-blue-400"
         bgColor="bg-blue-900/20"
-      />
-      <MoneyPlanCard
-        title="INVESTING"
-        amount={investing}
-        icon="📈"
-        color="text-purple-400"
-        bgColor="bg-purple-900/20"
       />
     </div>
   );

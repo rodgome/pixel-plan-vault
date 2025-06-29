@@ -2,6 +2,7 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { DebtItem } from '@/types/debt';
 import DebtBreakdown from '../components/DebtBreakdown';
 
 interface DebtDetailsProps {
@@ -15,9 +16,20 @@ const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
     window.history.back();
   };
 
-  const handleUpdateDebt = (index: number, updatedDebt: any) => {
+  const handleUpdateDebt = (index: number, updatedDebt: DebtItem) => {
     if (handleDebtUpdate) {
       handleDebtUpdate(index, updatedDebt);
+    }
+  };
+
+  const handleAddDebt = (newDebt: DebtItem) => {
+    // Add the new debt to the existing debts array
+    const updatedDebts = [...baseData.debts, newDebt];
+    if (dashboardData.setBaseData) {
+      dashboardData.setBaseData({
+        ...baseData,
+        debts: updatedDebts
+      });
     }
   };
 
@@ -58,7 +70,8 @@ const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
           <div className="p-6">
             <DebtBreakdown 
               debts={baseData.debts} 
-              onUpdateDebt={handleUpdateDebt} 
+              onUpdateDebt={handleUpdateDebt}
+              onAddDebt={handleAddDebt}
               debtBudget={debtBudget}
               debtSpent={debtSpent}
               strategy={debtStrategy}

@@ -1,15 +1,18 @@
+
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
 import { DebtStrategy, calculateDebtStrategy } from '@/utils/debtStrategies';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import DebtSummaryCards from './debt/DebtSummaryCards';
 import MonthlyDebtProgress from './debt/MonthlyDebtProgress';
 import DebtItemCard from './debt/DebtItemCard';
-import EditDebtForm from './EditDebtForm';
 
 interface DebtBreakdownProps {
   debts: DebtItem[];
   onUpdateDebt?: (index: number, updatedDebt: DebtItem) => void;
+  onAddDebt?: (newDebt: DebtItem) => void;
   debtBudget?: number;
   debtSpent?: number;
   strategy?: DebtStrategy;
@@ -18,47 +21,65 @@ interface DebtBreakdownProps {
 
 const DebtBreakdown = ({ 
   debts, 
-  onUpdateDebt, 
+  onUpdateDebt,
+  onAddDebt,
   debtBudget = 0, 
   debtSpent = 0,
   strategy = 'snowball',
   onStrategyChange
 }: DebtBreakdownProps) => {
-  const [editingDebt, setEditingDebt] = useState<{ debt: DebtItem; index: number } | null>(null);
-
   // Calculate strategy-based debt recommendations
   const strategicDebts = calculateDebtStrategy(debts, strategy, debtBudget);
 
-  const handleEditDebt = (debt: DebtItem, index: number) => {
-    setEditingDebt({ debt, index });
-  };
-
-  const handleSaveDebt = (updatedDebt: DebtItem) => {
-    if (editingDebt && onUpdateDebt) {
-      onUpdateDebt(editingDebt.index, updatedDebt);
+  const handleAddDebt = () => {
+    if (onAddDebt) {
+      const newDebt: DebtItem = {
+        name: 'New Debt',
+        balance: 0,
+        minPayment: 0,
+        plannedPayment: 0,
+        totalPaid: 0,
+        interestRate: 0,
+        type: 'other'
+      };
+      onAddDebt(newDebt);
     }
-    setEditingDebt(null);
   };
 
   return (
     <div className="space-y-4">
-      {/* Strategy Selector - Only show if onStrategyChange is provided */}
-      {onStrategyChange && (
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold text-amber-400">DEBT STRATEGY</h3>
-          </div>
-          <Select value={strategy} onValueChange={onStrategyChange}>
-            <SelectTrigger className="w-32 h-8 bg-slate-700 border-slate-600 text-slate-200 text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-slate-700 border-slate-600">
-              <SelectItem value="snowball" className="text-slate-200 hover:bg-slate-600">Snowball</SelectItem>
-              <SelectItem value="avalanche" className="text-slate-200 hover:bg-slate-600">Avalanche</SelectItem>
-            </SelectContent>
-          </Select>
+      {/* Strategy Selector and Add Button */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          {onStrategyChange ? (
+            <>
+              <h3 className="text-sm font-bold text-amber-400">DEBT STRATEGY</h3>
+              <Select value={strategy} onValueChange={onStrategyChange}>
+                <SelectTrigger className="w-32 h-8 bg-slate-700 border-slate-600 text-slate-200 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-700 border-slate-600">
+                  <SelectItem value="snowball" className="text-slate-200 hover:bg-slate-600">Snowball</SelectItem>
+                  <SelectItem value="avalanche" className="text-slate-200 hover:bg-slate-600">Avalanche</SelectItem>
+                </SelectContent>
+              </Select>
+            </>
+          ) : (
+            <h3 className="text-sm font-bold text-amber-400">DEBT BREAKDOWN</h3>
+          )}
         </div>
-      )}
+        {onAddDebt && (
+          <Button
+            onClick={handleAddDebt}
+            variant="ghost"
+            size="sm"
+            className="text-green-400 hover:text-green-300 hover:bg-slate-700/50 h-8 px-3"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Add Debt
+          </Button>
+        )}
+      </div>
 
       {/* Summary */}
       <DebtSummaryCards debts={debts} />
@@ -77,22 +98,11 @@ const DebtBreakdown = ({
             key={index}
             debt={debt}
             index={index}
-            onEdit={onUpdateDebt ? handleEditDebt : undefined}
             onUpdate={onUpdateDebt}
             showStrategy={true}
           />
         ))}
       </div>
-
-      {/* Edit Debt Dialog */}
-      {editingDebt && (
-        <EditDebtForm
-          debt={editingDebt.debt}
-          isOpen={!!editingDebt}
-          onClose={() => setEditingDebt(null)}
-          onSave={handleSaveDebt}
-        />
-      )}
     </div>
   );
 };

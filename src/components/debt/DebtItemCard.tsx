@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Edit, Plus, Minus } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { DebtItem } from '@/types/debt';
 import { DebtWithStrategy } from '@/utils/debtStrategies';
 
@@ -49,7 +49,7 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: D
   // Calculate individual monthly payment progress for this debt
   const individualMonthlyProgress = plannedPayment > 0 ? Math.min((totalPaid / plannedPayment) * 100, 100) : 0;
 
-  const handleDoubleClick = (fieldName: string, currentValue: number) => {
+  const handleDoubleClick = (fieldName: string, currentValue: number | string) => {
     setEditingField(fieldName);
     setDirectEditValue(currentValue.toString());
   };
@@ -100,9 +100,16 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: D
     if (!onUpdate) return;
     
     setDirectEditValue(value);
+    const updatedDebt = { ...debt };
+    
+    if (fieldName === 'name') {
+      updatedDebt.name = value;
+      onUpdate(index, updatedDebt);
+      return;
+    }
+    
     const numValue = parseFloat(value);
     if (!isNaN(numValue) && numValue >= 0) {
-      const updatedDebt = { ...debt };
       switch (fieldName) {
         case 'balance':
           updatedDebt.balance = numValue;
@@ -123,12 +130,6 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: D
 
   const handleClickOutside = () => {
     setEditingField(null);
-  };
-
-  const handleEditClick = () => {
-    if (onEdit) {
-      onEdit(debt, index);
-    }
   };
 
   const renderEditableField = (fieldName: string, value: number, label: string, colorClass: string) => {
@@ -187,12 +188,83 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: D
     );
   };
 
+  const renderEditableName = () => {
+    const isEditing = editingField === 'name';
+    
+    return (
+      <div 
+        className="cursor-pointer flex-1" 
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          if (onUpdate) handleDoubleClick('name', debt.name);
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="font-bold text-slate-200">{debt.name}</span>
+        
+        {isEditing && onUpdate && (
+          <div className="mt-2">
+            <Input
+              type="text"
+              value={directEditValue}
+              onChange={(e) => handleDirectValueChange('name', e.target.value)}
+              className="text-sm bg-slate-700 border-slate-600 text-white h-8"
+              placeholder="Enter debt name"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderEditableIcon = () => {
+    const isEditing = editingField === 'icon';
+    
+    return (
+      <div 
+        className="cursor-pointer" 
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          if (onUpdate) {
+            setEditingField('icon');
+            setDirectEditValue(debt.type);
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="text-lg">{getDebtIcon(debt.type)}</span>
+        
+        {isEditing && onUpdate && (
+          <div className="mt-2">
+            <select
+              value={directEditValue}
+              onChange={(e) => {
+                const updatedDebt = { ...debt };
+                updatedDebt.type = e.target.value as 'credit_card' | 'loan' | 'mortgage' | 'other';
+                onUpdate(index, updatedDebt);
+                setEditingField(null);
+              }}
+              className="text-sm bg-slate-700 border-slate-600 text-white h-8 rounded px-2"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <option value="credit_card">💳 Credit Card</option>
+              <option value="loan">🏦 Loan</option>
+              <option value="mortgage">🏠 Mortgage</option>
+              <option value="other">💸 Other</option>
+            </select>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="bg-black/20 p-4 rounded border border-slate-600" onClick={handleClickOutside}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="text-lg">{getDebtIcon(debt.type)}</span>
-          <span className="font-bold text-slate-200">{debt.name}</span>
+          {renderEditableIcon()}
+          {renderEditableName()}
           {showStrategy && isStrategicDebt && (
             <span className={`text-xs px-2 py-1 rounded ${getPriorityColor(debt.priority)}`}>
               Priority #{debt.priority}
@@ -203,16 +275,6 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: D
           <div className={`text-sm font-bold ${getDebtColor(debt.interestRate)}`}>
             {debt.interestRate}% APR
           </div>
-          {onEdit && (
-            <Button
-              onClick={handleEditClick}
-              variant="ghost"
-              size="sm"
-              className="text-amber-400 hover:text-amber-300 hover:bg-slate-700/50 h-8 w-8 p-0"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-          )}
         </div>
       </div>
       

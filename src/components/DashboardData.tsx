@@ -142,6 +142,7 @@ export const useDashboardData = () => {
 
   return {
     baseData,
+    setBaseData,
     debtStrategy,
     handleDataUpdate,
     handleSpentUpdate,

@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, Trash2 } from 'lucide-react';
 import { DebtItem } from '@/types/debt';
 import { DebtWithStrategy } from '@/utils/debtStrategies';
 
@@ -12,10 +11,11 @@ interface DebtItemCardProps {
   index: number;
   onEdit?: (debt: DebtItem, index: number) => void;
   onUpdate?: (index: number, updatedDebt: DebtItem) => void;
+  onDelete?: (index: number) => void;
   showStrategy?: boolean;
 }
 
-const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: DebtItemCardProps) => {
+const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = false }: DebtItemCardProps) => {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [directEditValue, setDirectEditValue] = useState<string>('');
   const [increment, setIncrement] = useState(100);
@@ -130,6 +130,12 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: D
 
   const handleClickOutside = () => {
     setEditingField(null);
+  };
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(index);
+    }
   };
 
   const renderEditableField = (fieldName: string, value: number, label: string, colorClass: string) => {
@@ -260,7 +266,22 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: D
   };
 
   return (
-    <div className="bg-black/20 p-4 rounded border border-slate-600" onClick={handleClickOutside}>
+    <div className="bg-black/20 p-4 rounded border border-slate-600 relative" onClick={handleClickOutside}>
+      {/* Delete Button */}
+      {onDelete && (
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDelete();
+          }}
+          variant="ghost"
+          size="sm"
+          className="absolute top-2 right-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 h-6 w-6 p-0"
+        >
+          <Trash2 className="h-3 w-3" />
+        </Button>
+      )}
+
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           {renderEditableIcon()}
@@ -271,7 +292,7 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, showStrategy = false }: D
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mr-8">
           <div className={`text-sm font-bold ${getDebtColor(debt.interestRate)}`}>
             {debt.interestRate}% APR
           </div>

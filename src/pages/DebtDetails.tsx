@@ -10,7 +10,7 @@ interface DebtDetailsProps {
 }
 
 const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
-  const { baseData, debtStrategy, handleDebtUpdate, handleDebtStrategyChange } = dashboardData;
+  const { baseData, debtStrategy, handleDebtUpdate, handleDebtStrategyChange, setBaseData } = dashboardData;
 
   const handleBack = () => {
     window.history.back();
@@ -22,11 +22,21 @@ const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
     }
   };
 
+  const handleDeleteDebt = (index: number) => {
+    const updatedDebts = baseData.debts.filter((_, i) => i !== index);
+    if (setBaseData) {
+      setBaseData({
+        ...baseData,
+        debts: updatedDebts
+      });
+    }
+  };
+
   const handleAddDebt = (newDebt: DebtItem) => {
     // Add the new debt to the existing debts array
     const updatedDebts = [...baseData.debts, newDebt];
-    if (dashboardData.setBaseData) {
-      dashboardData.setBaseData({
+    if (setBaseData) {
+      setBaseData({
         ...baseData,
         debts: updatedDebts
       });
@@ -71,6 +81,7 @@ const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
             <DebtBreakdown 
               debts={baseData.debts} 
               onUpdateDebt={handleUpdateDebt}
+              onDeleteDebt={handleDeleteDebt}
               onAddDebt={handleAddDebt}
               debtBudget={debtBudget}
               debtSpent={debtSpent}

@@ -12,6 +12,7 @@ import DebtItemCard from './debt/DebtItemCard';
 interface DebtBreakdownProps {
   debts: DebtItem[];
   onUpdateDebt?: (index: number, updatedDebt: DebtItem) => void;
+  onDeleteDebt?: (index: number) => void;
   onAddDebt?: (newDebt: DebtItem) => void;
   debtBudget?: number;
   debtSpent?: number;
@@ -22,6 +23,7 @@ interface DebtBreakdownProps {
 const DebtBreakdown = ({ 
   debts, 
   onUpdateDebt,
+  onDeleteDebt,
   onAddDebt,
   debtBudget = 0, 
   debtSpent = 0,
@@ -99,6 +101,7 @@ const DebtBreakdown = ({
             debt={debt}
             index={index}
             onUpdate={onUpdateDebt}
+            onDelete={onDeleteDebt}
             showStrategy={true}
           />
         ))}

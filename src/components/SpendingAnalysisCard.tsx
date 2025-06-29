@@ -61,7 +61,8 @@ const SpendingAnalysisCard = ({
   const [isDebtDialogOpen, setIsDebtDialogOpen] = useState(false);
   const [isSavingsDialogOpen, setIsSavingsDialogOpen] = useState(false);
 
-  const debtPercentage = (totalPaid / maxTotalPayment) * 100;
+  // Use planned payments for the debt progress calculation instead of totalPaid
+  const debtPercentage = (totalPlannedPayments / maxTotalPayment) * 100;
   
   // Calculate savings contribution progress
   const totalMonthlyContributions = goals.reduce((sum, goal) => sum + goal.monthlyContribution, 0);
@@ -90,10 +91,10 @@ const SpendingAnalysisCard = ({
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-bold text-amber-400">
-                      ${totalPaid} / ${totalPlannedPayments}
+                      ${totalPlannedPayments} / ${maxTotalPayment}
                     </div>
                     <div className={`text-xs ${debtPercentage >= 100 ? 'text-green-400' : 'text-orange-400'}`}>
-                      {debtPercentage >= 100 ? 'COMPLETE' : 'IN PROGRESS'}
+                      {debtPercentage >= 100 ? 'PLAN COMPLETE' : 'PLANNED'}
                     </div>
                   </div>
                 </div>
@@ -104,7 +105,7 @@ const SpendingAnalysisCard = ({
                   />
                 </div>
                 <div className="text-xs text-slate-400 mt-1">
-                  {debtPercentage.toFixed(0)}% paid
+                  {debtPercentage.toFixed(0)}% of planned debt payments
                 </div>
               </div>
             </DialogTrigger>

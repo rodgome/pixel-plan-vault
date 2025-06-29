@@ -76,6 +76,9 @@ const DashboardLayout = ({
   onDataUpdate,
   onSpentUpdate
 }: DashboardLayoutProps) => {
+  const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
+  const totalBudgetAmount = baseData.categories.reduce((sum, cat) => sum + cat.budget, 0);
+
   return (
     <div className="space-y-6">
       {/* Editable Financial Data */}
@@ -107,13 +110,13 @@ const DashboardLayout = ({
         remaining={remaining} 
       />
 
-      {/* Validation Alerts - Will show/hide based on spending changes */}
+      {/* Validation Alerts - Now based on budget vs actual requirements */}
       <ValidationAlerts 
         isDebtPaymentConsistent={isDebtPaymentConsistent} 
         isBudgetBalanced={isBudgetBalanced} 
-        debtAmount={monthlyData.debt} 
+        debtBudget={debtBudget} 
         totalMinPayments={totalMinPayments} 
-        totalSpent={totalSpent} 
+        totalBudget={totalBudgetAmount} 
         income={monthlyData.income} 
       />
 

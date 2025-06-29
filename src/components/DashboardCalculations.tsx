@@ -28,9 +28,11 @@ export const useDashboardCalculations = (baseData: BaseData) => {
     const totalPaid = monthlyData.debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
     const maxTotalPayment = Math.max(totalMinPayments, totalPlannedPayments, totalPaid);
 
-    // Validation checks (reactive) - Updated logic for debt payment consistency
-    const isDebtPaymentConsistent = monthlyData.debt >= totalMinPayments;
-    const isBudgetBalanced = totalSpent <= monthlyData.income;
+    // Validation checks (reactive) - Updated to use budget amounts instead of spent amounts
+    const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
+    const totalBudgetAmount = baseData.categories.reduce((sum, cat) => sum + cat.budget, 0);
+    const isDebtPaymentConsistent = debtBudget >= totalMinPayments;
+    const isBudgetBalanced = totalBudgetAmount <= monthlyData.income;
 
     // Filter categories for spending analysis (exclude DEBT, SAVINGS, INVESTING)
     const spendingCategories = monthlyData.categories.filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS');

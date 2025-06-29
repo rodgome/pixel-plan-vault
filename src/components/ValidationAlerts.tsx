@@ -4,18 +4,18 @@ import { Card } from '@/components/ui/card';
 interface ValidationAlertsProps {
   isDebtPaymentConsistent: boolean;
   isBudgetBalanced: boolean;
-  debtAmount: number;
+  debtBudget: number;
   totalMinPayments: number;
-  totalSpent: number;
+  totalBudget: number;
   income: number;
 }
 
 const ValidationAlerts = ({ 
   isDebtPaymentConsistent, 
   isBudgetBalanced, 
-  debtAmount, 
+  debtBudget, 
   totalMinPayments, 
-  totalSpent, 
+  totalBudget, 
   income 
 }: ValidationAlertsProps) => {
   if (isDebtPaymentConsistent && isBudgetBalanced) {
@@ -32,12 +32,12 @@ const ValidationAlerts = ({
         <div className="space-y-1 text-sm">
           {!isDebtPaymentConsistent && (
             <div className="text-red-300">
-              • Debt category (${debtAmount}) doesn't match minimum payments (${totalMinPayments})
+              • Debt budget (${debtBudget}) doesn't cover minimum payments (${totalMinPayments})
             </div>
           )}
           {!isBudgetBalanced && (
             <div className="text-red-300">
-              • Total spending (${totalSpent}) exceeds income (${income})
+              • Total budget (${totalBudget}) exceeds income (${income})
             </div>
           )}
         </div>

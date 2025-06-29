@@ -1,16 +1,7 @@
 
 import { Card } from '@/components/ui/card';
+import { DebtItem } from '@/types/debt';
 import DebtBreakdown from './DebtBreakdown';
-
-interface DebtItem {
-  name: string;
-  balance: number;
-  minPayment: number;
-  plannedPayment?: number;
-  totalPaid?: number;
-  interestRate: number;
-  type: 'credit_card' | 'loan' | 'mortgage' | 'other';
-}
 
 interface DebtTrackerCardProps {
   debts: DebtItem[];

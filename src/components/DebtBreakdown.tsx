@@ -1,20 +1,10 @@
 
 import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { Edit } from 'lucide-react';
+import { DebtItem } from '@/types/debt';
+import DebtSummaryCards from './debt/DebtSummaryCards';
+import MonthlyDebtProgress from './debt/MonthlyDebtProgress';
+import DebtItemCard from './debt/DebtItemCard';
 import EditDebtForm from './EditDebtForm';
-
-interface DebtItem {
-  name: string;
-  balance: number;
-  minPayment: number;
-  interestRate: number;
-  type: 'credit_card' | 'loan' | 'mortgage' | 'other';
-  plannedPayment: number;
-  totalPaid: number;
-}
 
 interface DebtBreakdownProps {
   debts: DebtItem[];
@@ -23,30 +13,6 @@ interface DebtBreakdownProps {
 
 const DebtBreakdown = ({ debts, onUpdateDebt }: DebtBreakdownProps) => {
   const [editingDebt, setEditingDebt] = useState<{ debt: DebtItem; index: number } | null>(null);
-  
-  const totalDebt = debts.reduce((sum, debt) => sum + debt.balance, 0);
-  const totalMinPayments = debts.reduce((sum, debt) => sum + debt.minPayment, 0);
-
-  const getDebtIcon = (type: string) => {
-    switch (type) {
-      case 'credit_card': return '💳';
-      case 'loan': return '🏦';
-      case 'mortgage': return '🏠';
-      default: return '💸';
-    }
-  };
-
-  const getDebtColor = (interestRate: number) => {
-    if (interestRate > 20) return 'text-red-400';
-    if (interestRate > 10) return 'text-orange-400';
-    return 'text-yellow-400';
-  };
-
-  // Calculate monthly debt payment progress - this should show against the budgeted amount (800)
-  const budgetedDebtAmount = 800; // Money plan allocation for debt
-  const totalPlannedPayments = debts.reduce((sum, debt) => sum + debt.plannedPayment, 0);
-  const totalPaidThisMonth = debts.reduce((sum, debt) => sum + debt.totalPaid, 0);
-  const monthlyPaymentProgress = budgetedDebtAmount > 0 ? (totalPaidThisMonth / budgetedDebtAmount) * 100 : 0;
 
   const handleEditDebt = (debt: DebtItem, index: number) => {
     setEditingDebt({ debt, index });
@@ -62,130 +28,21 @@ const DebtBreakdown = ({ debts, onUpdateDebt }: DebtBreakdownProps) => {
   return (
     <div className="space-y-4">
       {/* Summary */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-black/30 p-3 rounded border border-slate-600">
-          <div className="text-xs text-slate-400 mb-1">TOTAL DEBT</div>
-          <div className="text-lg font-bold text-red-400">${totalDebt.toLocaleString()}</div>
-        </div>
-        <div className="bg-black/30 p-3 rounded border border-slate-600">
-          <div className="text-xs text-slate-400 mb-1">MIN PAYMENTS</div>
-          <div className="text-lg font-bold text-orange-400">${totalMinPayments.toLocaleString()}</div>
-        </div>
-      </div>
+      <DebtSummaryCards debts={debts} />
 
       {/* Monthly Debt Payment Progress - Against Budget */}
-      <div className="bg-black/20 p-4 rounded border border-slate-600">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-sm font-bold text-amber-400">MONTHLY DEBT PAYMENTS</div>
-          <div className="text-xs text-slate-400">${totalPaidThisMonth.toLocaleString()} / ${budgetedDebtAmount.toLocaleString()}</div>
-        </div>
-        <Progress 
-          value={Math.min(monthlyPaymentProgress, 100)} 
-          className="h-3 bg-slate-700 [&>div]:bg-gradient-to-r [&>div]:from-green-500 [&>div]:to-emerald-400" 
-        />
-        <div className="flex justify-between text-xs text-slate-400 mt-1">
-          <span>$0</span>
-          <span>{Math.round(monthlyPaymentProgress)}% Complete</span>
-          <span>${budgetedDebtAmount.toLocaleString()}</span>
-        </div>
-      </div>
+      <MonthlyDebtProgress debts={debts} />
 
       {/* Debt Items */}
       <div className="space-y-3">
-        {debts.map((debt, index) => {
-          const plannedPayment = debt.plannedPayment;
-          const totalPaid = debt.totalPaid;
-          const maxPayment = Math.max(debt.minPayment, plannedPayment, totalPaid);
-          
-          // Calculate individual monthly payment progress for this debt
-          const individualMonthlyProgress = plannedPayment > 0 ? Math.min((totalPaid / plannedPayment) * 100, 100) : 0;
-          
-          return (
-            <div key={index} className="bg-black/20 p-4 rounded border border-slate-600">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{getDebtIcon(debt.type)}</span>
-                  <span className="font-bold text-slate-200">{debt.name}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className={`text-sm font-bold ${getDebtColor(debt.interestRate)}`}>
-                    {debt.interestRate}% APR
-                  </div>
-                  {onUpdateDebt && (
-                    <Button
-                      onClick={() => handleEditDebt(debt, index)}
-                      variant="ghost"
-                      size="sm"
-                      className="text-amber-400 hover:text-amber-300 hover:bg-slate-700/50 h-8 w-8 p-0"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 text-sm mb-3">
-                <div>
-                  <div className="text-xs text-slate-400">BALANCE</div>
-                  <div className="font-bold text-red-400">${debt.balance.toLocaleString()}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-slate-400">MIN PAYMENT</div>
-                  <div className="font-bold text-orange-400">${debt.minPayment.toLocaleString()}</div>
-                </div>
-              </div>
-
-              {/* Individual Monthly Payment Progress */}
-              <div className="space-y-2 mb-3">
-                <div className="text-xs text-slate-400">THIS MONTH'S PAYMENT PROGRESS</div>
-                <Progress 
-                  value={individualMonthlyProgress} 
-                  className="h-2 bg-slate-700 [&>div]:bg-blue-500" 
-                />
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-400">Paid: ${totalPaid.toLocaleString()}</span>
-                  <span className="text-blue-400">Target: ${plannedPayment.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Payment Progress Bar */}
-              <div className="space-y-2">
-                <div className="text-xs text-slate-400 mb-1">OVERALL PAYMENT PROGRESS</div>
-                <div className="relative">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-orange-400">Min: ${debt.minPayment}</span>
-                    <span className="text-blue-400">Planned: ${plannedPayment}</span>
-                    <span className="text-green-400">Paid: ${totalPaid}</span>
-                  </div>
-                  
-                  <div className="relative h-4 bg-slate-700 rounded overflow-hidden">
-                    {/* Min Payment Bar */}
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-orange-500/60"
-                      style={{ width: `${(debt.minPayment / maxPayment) * 100}%` }}
-                    />
-                    {/* Planned Payment Bar */}
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-blue-500/60"
-                      style={{ width: `${(plannedPayment / maxPayment) * 100}%` }}
-                    />
-                    {/* Total Paid Bar */}
-                    <div 
-                      className="absolute top-0 left-0 h-full bg-green-500"
-                      style={{ width: `${(totalPaid / maxPayment) * 100}%` }}
-                    />
-                    
-                    {/* Dotted line for minimum payment */}
-                    <div 
-                      className="absolute top-0 h-full w-1 border-l-4 border-dashed border-red-500"
-                      style={{ left: `${(debt.minPayment / maxPayment) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {debts.map((debt, index) => (
+          <DebtItemCard
+            key={index}
+            debt={debt}
+            index={index}
+            onEdit={onUpdateDebt ? handleEditDebt : undefined}
+          />
+        ))}
       </div>
 
       {/* Edit Debt Dialog */}

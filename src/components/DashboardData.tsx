@@ -1,20 +1,12 @@
+
 import { useState } from 'react';
+import { DebtItem } from '@/types/debt';
 
 export interface Category {
   name: string;
   amount: number;
   budget: number;
   color: string;
-}
-
-export interface DebtItem {
-  name: string;
-  balance: number;
-  minPayment: number;
-  plannedPayment: number;
-  totalPaid: number;
-  interestRate: number;
-  type: 'credit_card' | 'loan' | 'mortgage' | 'other';
 }
 
 export interface GoalItem {

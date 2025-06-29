@@ -2,10 +2,12 @@
 import { useState } from 'react';
 import Dashboard from '../components/Dashboard';
 import BudgetSimulator from '../components/BudgetSimulator';
+import { useDashboardData } from '../components/DashboardData';
 import { Card } from '@/components/ui/card';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { baseData } = useDashboardData();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-green-400 font-mono">
@@ -55,7 +57,7 @@ const Index = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
         {activeTab === 'dashboard' && <Dashboard />}
-        {activeTab === 'simulator' && <BudgetSimulator />}
+        {activeTab === 'simulator' && <BudgetSimulator baseData={baseData} />}
       </div>
 
       {/* Footer */}

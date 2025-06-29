@@ -1,19 +1,27 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import SimulationControls from './SimulationControls';
 import SimulationResults from './SimulationResults';
+import { BaseData } from './DashboardData';
 
-const BudgetSimulator = () => {
-  const [baseData] = useState({
+interface BudgetSimulatorProps {
+  baseData?: BaseData;
+}
+
+const BudgetSimulator = ({ baseData: propBaseData }: BudgetSimulatorProps) => {
+  // Use prop data if available, otherwise fall back to default data
+  const [baseData] = useState(propBaseData || {
     income: 5000,
     categories: [
-      { name: 'NEEDS', amount: 2000, budget: 2500 },
-      { name: 'WANTS', amount: 800, budget: 1000 },
-      { name: 'DEBT', amount: 300, budget: 400 },
-      { name: 'SAVINGS', amount: 1200, budget: 1500 },
-      { name: 'INVESTING', amount: 200, budget: 300 }
-    ]
+      { name: 'NEEDS', amount: 2000, budget: 2500, color: 'bg-red-500' },
+      { name: 'WANTS', amount: 800, budget: 1000, color: 'bg-orange-500' },
+      { name: 'DEBT', amount: 300, budget: 400, color: 'bg-yellow-500' },
+      { name: 'GOALS', amount: 1200, budget: 1800, color: 'bg-green-500' }
+    ],
+    debts: [],
+    goals: []
   });
 
   const [simulations, setSimulations] = useState([
@@ -54,7 +62,7 @@ const BudgetSimulator = () => {
           <span className="text-3xl">🔮</span>
           <div>
             <h1 className="text-2xl font-bold text-amber-400">BUDGET SIMULATOR</h1>
-            <p className="text-sm text-slate-400">Explore "what-if" scenarios</p>
+            <p className="text-sm text-slate-400">Explore "what-if" scenarios with your current budget</p>
           </div>
         </div>
         <Button 
@@ -64,6 +72,29 @@ const BudgetSimulator = () => {
           + NEW SCENARIO
         </Button>
       </div>
+
+      {/* Current Budget Summary */}
+      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">📊</span>
+            <h2 className="text-lg font-bold text-green-400">CURRENT BUDGET</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div className="bg-black/30 p-3 rounded border border-slate-600">
+              <div className="text-xs text-slate-400 mb-1">INCOME</div>
+              <div className="text-lg font-bold text-green-400">${baseData.income.toLocaleString()}</div>
+            </div>
+            {baseData.categories.map(cat => (
+              <div key={cat.name} className="bg-black/30 p-3 rounded border border-slate-600">
+                <div className="text-xs text-slate-400 mb-1">{cat.name}</div>
+                <div className="text-lg font-bold text-amber-400">${cat.amount.toLocaleString()}</div>
+                <div className="text-xs text-slate-500">of ${cat.budget.toLocaleString()} budget</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
 
       {/* Simulation Tabs */}
       <div className="flex gap-2 overflow-x-auto pb-2">

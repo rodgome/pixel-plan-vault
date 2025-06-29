@@ -43,7 +43,6 @@ const SpentTracker = ({
       amount: cat.amount + increment
     } : cat);
     
-    // Trigger update to parent component which will update all other cards
     onUpdate({
       categories: updatedCategories
     });
@@ -55,7 +54,6 @@ const SpentTracker = ({
       amount: Math.max(0, cat.amount - increment)
     } : cat);
     
-    // Trigger update to parent component which will update all other cards
     onUpdate({
       categories: updatedCategories
     });
@@ -74,18 +72,6 @@ const SpentTracker = ({
         categories: updatedCategories
       });
     }
-  };
-
-  const handleAmountChange = (itemName: string, newAmount: number) => {
-    const updatedCategories = categories.map(cat => cat.name === itemName ? {
-      ...cat,
-      amount: Math.max(0, newAmount)
-    } : cat);
-    
-    // Trigger update to parent component which will update all other cards
-    onUpdate({
-      categories: updatedCategories
-    });
   };
 
   const handleClickOutside = () => {
@@ -132,68 +118,61 @@ const SpentTracker = ({
             <div className="text-lg font-bold text-red-400">${totalSpent.toLocaleString()}</div>
           </div>
 
-          {/* Category Cards - Showing actual spending amounts */}
+          {/* Category Cards */}
           {categories.map(category => (
-            <div key={category.name} className="space-y-2">
+            <div key={category.name}>
               <div 
                 className="bg-black/30 p-3 rounded border border-slate-600 cursor-pointer hover:bg-black/40 transition-colors" 
                 onDoubleClick={e => {
                   e.stopPropagation();
                   handleDoubleClick(category.name, category.amount);
                 }}
-                onClick={e => {
-                  e.stopPropagation();
-                  // Single click for direct amount editing
-                  const newAmount = prompt(`Enter amount spent for ${category.name}:`, category.amount.toString());
-                  if (newAmount !== null && !isNaN(Number(newAmount))) {
-                    handleAmountChange(category.name, Number(newAmount));
-                  }
-                }}
+                onClick={e => e.stopPropagation()}
               >
                 <div className="text-xs text-slate-400 mb-1">{category.name}</div>
-                {editingItem === category.name ? (
-                  <Input
-                    type="number"
-                    value={directEditValue}
-                    onChange={(e) => handleDirectAmountChange(category.name, e.target.value)}
-                    className="text-lg font-bold text-red-400 bg-transparent border-none p-0 h-auto focus:ring-0"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                ) : (
-                  <div className="text-lg font-bold text-red-400">${category.amount.toLocaleString()}</div>
-                )}
+                <div className="text-lg font-bold text-red-400">${category.amount.toLocaleString()}</div>
                 <div className="text-xs text-slate-500 mt-1">
                   of ${category.budget.toLocaleString()} budget
                 </div>
+
+                {editingItem === category.name && (
+                  <div className="mt-3 space-y-2">
+                    <Input
+                      type="number"
+                      value={directEditValue}
+                      onChange={(e) => handleDirectAmountChange(category.name, e.target.value)}
+                      className="text-sm bg-slate-700 border-slate-600 text-white"
+                      placeholder="Enter amount"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <div className="flex items-center justify-center gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleDecrement(category.name);
+                        }} 
+                        className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                      <span className="text-white text-xs">±{increment}</span>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleIncrement(category.name);
+                        }} 
+                        className="bg-green-600 hover:bg-green-700 text-white border-green-600"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
-              
-              {editingItem === category.name && (
-                <div className="flex items-center justify-center gap-2 bg-black/30 p-2 rounded border border-slate-600">
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={e => {
-                      e.stopPropagation();
-                      handleDecrement(category.name);
-                    }} 
-                    className="bg-red-600 hover:bg-red-700 text-white border-red-600"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <span className="text-white text-sm">±{increment}</span>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={e => {
-                      e.stopPropagation();
-                      handleIncrement(category.name);
-                    }} 
-                    className="bg-green-600 hover:bg-green-700 text-white border-green-600"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-              )}
             </div>
           ))}
         </div>

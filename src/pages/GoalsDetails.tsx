@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import GoalsBreakdown from '../components/GoalsBreakdown';
 import { useDashboard } from '../contexts/DashboardContext';
+import { useNavigate } from 'react-router-dom';
 
 const GoalsDetails = () => {
   const {
@@ -12,9 +13,10 @@ const GoalsDetails = () => {
     handleDeleteGoal,
     handleAddGoal
   } = useDashboard();
+  const navigate = useNavigate();
 
   const handleBack = () => {
-    window.history.back();
+    navigate(-1);
   };
 
   // Get the goals spent amount from the GOALS category

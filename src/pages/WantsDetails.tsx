@@ -4,12 +4,14 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import WantsBreakdown from '../components/WantsBreakdown';
 import { useDashboard } from '../contexts/DashboardContext';
+import { useNavigate } from 'react-router-dom';
 
 const WantsDetails = () => {
   const { baseData } = useDashboard();
+  const navigate = useNavigate();
 
   const handleBack = () => {
-    window.history.back();
+    navigate(-1);
   };
 
   return (

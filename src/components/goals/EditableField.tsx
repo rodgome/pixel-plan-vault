@@ -52,12 +52,31 @@ const EditableField = ({
     onDecrement(fieldName);
   };
 
+  const handleInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onFieldBlur(fieldName);
+    }
+    // Prevent other key events from bubbling up
+    e.stopPropagation();
+  };
+
+  const handleInputBlur = (e: React.FocusEvent) => {
+    // Only blur if we're not clicking on one of our buttons
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget && relatedTarget.closest('.increment-decrement-buttons')) {
+      return; // Don't blur if clicking on our buttons
+    }
+    onFieldBlur(fieldName);
+  };
+
   return (
     <div 
       className="cursor-pointer" 
       onClick={(e) => {
         e.stopPropagation();
-        onFieldClick(fieldName, value);
+        if (!isEditing) {
+          onFieldClick(fieldName, value);
+        }
       }}
     >
       <div className="text-xs text-slate-400">{label}</div>
@@ -71,23 +90,21 @@ const EditableField = ({
             type={isNumber ? "number" : "text"}
             value={localEditValue}
             onChange={(e) => onLocalValueChange(e.target.value)}
-            onBlur={() => onFieldBlur(fieldName)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                onFieldBlur(fieldName);
-              }
-            }}
+            onBlur={handleInputBlur}
+            onKeyDown={handleInputKeyDown}
             className="text-sm bg-slate-700 border-slate-600 text-white h-8"
             placeholder={isNumber ? "Enter amount" : "Enter value"}
             autoFocus
+            onClick={(e) => e.stopPropagation()}
           />
           {isNumber && (
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-2 increment-decrement-buttons">
               <Button 
                 size="sm" 
                 variant="outline" 
                 onClick={handleDecrement}
                 className="bg-red-600 hover:bg-red-700 text-white border-red-600 h-7 px-2"
+                type="button"
               >
                 <Minus className="w-3 h-3" />
               </Button>
@@ -97,6 +114,7 @@ const EditableField = ({
                 variant="outline" 
                 onClick={handleIncrement}
                 className="bg-green-600 hover:bg-green-700 text-white border-green-600 h-7 px-2"
+                type="button"
               >
                 <Plus className="w-3 h-3" />
               </Button>

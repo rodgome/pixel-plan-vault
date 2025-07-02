@@ -1,8 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 import { DebtItem } from '@/types/debt';
 
 interface DebtAllocationCardProps {
@@ -25,6 +26,7 @@ const DebtAllocationCard = ({ debts, totalPaidAmount, onUpdateDebt }: DebtAlloca
 
   const totalAllocated = Object.values(allocations).reduce((sum, amount) => sum + amount, 0);
   const remainingToAllocate = totalPaidAmount - totalAllocated;
+  const hasAllocationMismatch = remainingToAllocate !== 0;
 
   const handleAllocationChange = (index: number, amount: number) => {
     const newAllocations = { ...allocations, [index]: amount };
@@ -89,6 +91,19 @@ const DebtAllocationCard = ({ debts, totalPaidAmount, onUpdateDebt }: DebtAlloca
             Auto Allocate
           </Button>
         </div>
+        
+        {/* Allocation Alert */}
+        {hasAllocationMismatch && (
+          <Alert variant="destructive" className="mb-3 bg-red-900/20 border-red-700">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="text-red-300">
+              {remainingToAllocate > 0 
+                ? `You have $${remainingToAllocate.toLocaleString()} unallocated. Use Auto Allocate or adjust amounts manually.`
+                : `You've over-allocated by $${Math.abs(remainingToAllocate).toLocaleString()}. Reduce some amounts.`
+              }
+            </AlertDescription>
+          </Alert>
+        )}
         
         <div className="grid grid-cols-3 gap-4 text-sm mb-3">
           <div className="bg-slate-700/50 p-2 rounded">

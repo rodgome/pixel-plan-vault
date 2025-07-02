@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, ReactNode } from 'react';
 import { DebtItem } from '@/types/debt';
 import { useDashboardData, BaseData, Category, GoalItem } from '@/components/DashboardData';
@@ -6,6 +7,8 @@ interface DashboardContextType {
   baseData: BaseData;
   setBaseData: React.Dispatch<React.SetStateAction<BaseData>>;
   debtStrategy: 'snowball' | 'avalanche';
+  isLoading: boolean;
+  error: string | null;
   handleDataUpdate: (newData: {
     income: number;
     categories: Category[];
@@ -74,6 +77,8 @@ export const DashboardProvider = ({ children }: DashboardProviderProps) => {
     baseData: dashboardData.baseData,
     setBaseData: dashboardData.setBaseData,
     debtStrategy: dashboardData.debtStrategy,
+    isLoading: dashboardData.isLoading,
+    error: dashboardData.error,
     handleDataUpdate: dashboardData.handleDataUpdate,
     handleSpentUpdate: dashboardData.handleSpentUpdate,
     handleDebtUpdate: dashboardData.handleDebtUpdate,

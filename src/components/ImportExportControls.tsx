@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Download, Upload, Trash2 } from 'lucide-react';
 import { useRef } from 'react';
-import { toast } from '@/components/ui/sonner';
 
 interface ImportExportControlsProps {
   onExport: () => void;
@@ -22,12 +21,7 @@ const ImportExportControls = ({ onExport, onImport, onClear }: ImportExportContr
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const success = await onImport(file);
-      if (success) {
-        toast.success('Data imported successfully!');
-      } else {
-        toast.error('Failed to import data. Please check the file format.');
-      }
+      await onImport(file);
       // Reset input
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -37,13 +31,11 @@ const ImportExportControls = ({ onExport, onImport, onClear }: ImportExportContr
 
   const handleExport = () => {
     onExport();
-    toast.success('Data exported successfully!');
   };
 
   const handleClear = () => {
     if (window.confirm('Are you sure you want to clear all data? This cannot be undone.')) {
       onClear();
-      toast.success('All data cleared!');
     }
   };
 

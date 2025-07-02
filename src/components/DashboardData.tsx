@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
 import { usePersistedState } from '@/hooks/usePersistedState';
+import { toast } from '@/components/ui/sonner';
 
 export interface Category {
   name: string;
@@ -132,6 +133,8 @@ export const useDashboardData = () => {
   const {
     state: baseData,
     setState: setBaseData,
+    isLoading,
+    error,
     exportData,
     importData,
     clearPersistedData
@@ -153,6 +156,7 @@ export const useDashboardData = () => {
       income: newData.income,
       categories: newData.categories
     }));
+    toast.success('Budget plan updated successfully!');
   };
 
   const handleSpentUpdate = (newData: {
@@ -162,6 +166,7 @@ export const useDashboardData = () => {
       ...prev,
       categories: newData.categories
     }));
+    toast.success('Spending updated successfully!');
   };
 
   const handleDebtUpdate = (index: number, updatedDebt: DebtItem) => {
@@ -169,16 +174,20 @@ export const useDashboardData = () => {
       ...prev,
       debts: prev.debts.map((debt, i) => i === index ? updatedDebt : debt)
     }));
+    toast.success('Debt information updated!');
   };
 
   const handleDebtStrategyChange = (strategy: 'snowball' | 'avalanche') => {
     setDebtStrategy(strategy);
+    toast.success(`Debt strategy changed to ${strategy}`);
   };
 
   return {
     baseData,
     setBaseData,
     debtStrategy,
+    isLoading,
+    error,
     handleDataUpdate,
     handleSpentUpdate,
     handleDebtUpdate,

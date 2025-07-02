@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { DebtItem } from '@/types/debt';
 import { DebtWithStrategy } from '@/utils/debtStrategies';
 import { useDebtItemLogic } from './useDebtItemLogic';
@@ -21,7 +21,7 @@ interface DebtItemCardProps {
   debtBudget?: number;
 }
 
-const DebtItemCard = ({ 
+const DebtItemCard = React.memo(({ 
   debt, 
   index, 
   onEdit, 
@@ -185,6 +185,20 @@ const DebtItemCard = ({
       </AlertDialog>
     </>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison function to prevent unnecessary re-renders
+  return (
+    prevProps.debt === nextProps.debt &&
+    prevProps.index === nextProps.index &&
+    prevProps.showStrategy === nextProps.showStrategy &&
+    prevProps.debtBudget === nextProps.debtBudget &&
+    prevProps.onUpdate === nextProps.onUpdate &&
+    prevProps.onDelete === nextProps.onDelete &&
+    prevProps.onBudgetUpdate === nextProps.onBudgetUpdate &&
+    prevProps.onSpentUpdate === nextProps.onSpentUpdate
+  );
+});
+
+DebtItemCard.displayName = 'DebtItemCard';
 
 export default DebtItemCard;

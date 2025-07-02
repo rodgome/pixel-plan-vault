@@ -1,4 +1,5 @@
 
+import React from 'react';
 import GoalItemHeader from './GoalItemHeader';
 import GoalItemFields from './GoalItemFields';
 import GoalProgressBars from './GoalProgressBars';
@@ -21,7 +22,7 @@ interface GoalItemCardProps {
   onDelete?: () => void;
 }
 
-const GoalItemCard = ({ goal, index, onUpdate, onDelete }: GoalItemCardProps) => {
+const GoalItemCard = React.memo(({ goal, index, onUpdate, onDelete }: GoalItemCardProps) => {
   const {
     editingField,
     setEditingField,
@@ -72,6 +73,16 @@ const GoalItemCard = ({ goal, index, onUpdate, onDelete }: GoalItemCardProps) =>
       <GoalProgressBars goal={goal} />
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison function to prevent unnecessary re-renders
+  return (
+    prevProps.goal === nextProps.goal &&
+    prevProps.index === nextProps.index &&
+    prevProps.onUpdate === nextProps.onUpdate &&
+    prevProps.onDelete === nextProps.onDelete
+  );
+});
+
+GoalItemCard.displayName = 'GoalItemCard';
 
 export default GoalItemCard;

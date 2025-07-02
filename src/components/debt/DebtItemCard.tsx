@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +18,7 @@ interface DebtItemCardProps {
 
 const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = false }: DebtItemCardProps) => {
   const [editingField, setEditingField] = useState<string | null>(null);
-  const [directEditValue, setDirectEditValue] = useState<string>('');
+  const [localEditValue, setLocalEditValue] = useState<string>('');
   const [increment, setIncrement] = useState(100);
 
   const getDebtIcon = (type: string) => {
@@ -51,7 +52,47 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
 
   const handleDoubleClick = (fieldName: string, currentValue: number | string) => {
     setEditingField(fieldName);
-    setDirectEditValue(currentValue.toString());
+    setLocalEditValue(currentValue.toString());
+  };
+
+  const handleLocalValueChange = (value: string) => {
+    setLocalEditValue(value);
+  };
+
+  const commitEdit = (fieldName: string) => {
+    if (!onUpdate) return;
+    
+    const updatedDebt = { ...debt };
+    
+    if (fieldName === 'name') {
+      updatedDebt.name = localEditValue;
+    } else {
+      const numValue = parseFloat(localEditValue);
+      if (!isNaN(numValue) && numValue >= 0) {
+        switch (fieldName) {
+          case 'balance':
+            updatedDebt.balance = numValue;
+            break;
+          case 'minPayment':
+            updatedDebt.minPayment = numValue;
+            break;
+          case 'plannedPayment':
+            updatedDebt.plannedPayment = numValue;
+            break;
+          case 'totalPaid':
+            updatedDebt.totalPaid = numValue;
+            break;
+        }
+      }
+    }
+    
+    onUpdate(index, updatedDebt);
+    setEditingField(null);
+    setLocalEditValue('');
+  };
+
+  const handleFieldBlur = (fieldName: string) => {
+    commitEdit(fieldName);
   };
 
   const handleIncrement = (fieldName: string) => {
@@ -96,40 +137,10 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
     onUpdate(index, updatedDebt);
   };
 
-  const handleDirectValueChange = (fieldName: string, value: string) => {
-    if (!onUpdate) return;
-    
-    setDirectEditValue(value);
-    const updatedDebt = { ...debt };
-    
-    if (fieldName === 'name') {
-      updatedDebt.name = value;
-      onUpdate(index, updatedDebt);
-      return;
-    }
-    
-    const numValue = parseFloat(value);
-    if (!isNaN(numValue) && numValue >= 0) {
-      switch (fieldName) {
-        case 'balance':
-          updatedDebt.balance = numValue;
-          break;
-        case 'minPayment':
-          updatedDebt.minPayment = numValue;
-          break;
-        case 'plannedPayment':
-          updatedDebt.plannedPayment = numValue;
-          break;
-        case 'totalPaid':
-          updatedDebt.totalPaid = numValue;
-          break;
-      }
-      onUpdate(index, updatedDebt);
-    }
-  };
-
   const handleClickOutside = () => {
-    setEditingField(null);
+    if (editingField) {
+      commitEdit(editingField);
+    }
   };
 
   const handleDelete = () => {
@@ -157,11 +168,18 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
           <div className="mt-2 space-y-2">
             <Input
               type="number"
-              value={directEditValue}
-              onChange={(e) => handleDirectValueChange(fieldName, e.target.value)}
+              value={localEditValue}
+              onChange={(e) => handleLocalValueChange(e.target.value)}
+              onBlur={() => handleFieldBlur(fieldName)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleFieldBlur(fieldName);
+                }
+              }}
               className="text-sm bg-slate-700 border-slate-600 text-white h-8"
               placeholder="Enter amount"
               onClick={(e) => e.stopPropagation()}
+              autoFocus
             />
             <div className="flex items-center justify-center gap-2">
               <Button 
@@ -212,11 +230,18 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
           <div className="mt-2">
             <Input
               type="text"
-              value={directEditValue}
-              onChange={(e) => handleDirectValueChange('name', e.target.value)}
+              value={localEditValue}
+              onChange={(e) => handleLocalValueChange(e.target.value)}
+              onBlur={() => handleFieldBlur('name')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleFieldBlur('name');
+                }
+              }}
               className="text-sm bg-slate-700 border-slate-600 text-white h-8"
               placeholder="Enter debt name"
               onClick={(e) => e.stopPropagation()}
+              autoFocus
             />
           </div>
         )}
@@ -234,7 +259,7 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
           e.stopPropagation();
           if (onUpdate) {
             setEditingField('icon');
-            setDirectEditValue(debt.type);
+            setLocalEditValue(debt.type);
           }
         }}
         onClick={(e) => e.stopPropagation()}
@@ -244,7 +269,7 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
         {isEditing && onUpdate && (
           <div className="mt-2">
             <select
-              value={directEditValue}
+              value={localEditValue}
               onChange={(e) => {
                 const updatedDebt = { ...debt };
                 updatedDebt.type = e.target.value as 'credit_card' | 'loan' | 'mortgage' | 'other';

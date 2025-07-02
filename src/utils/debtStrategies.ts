@@ -33,7 +33,7 @@ export const calculateDebtStrategy = (
     const priority = index + 1;
     let recommendedPayment = debt.minPayment;
 
-    // Give extra budget to highest priority debt
+    // Give all extra budget to highest priority debt (first in sorted array)
     if (index === 0 && extraBudget > 0) {
       recommendedPayment += extraBudget;
     }

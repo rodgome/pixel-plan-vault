@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { DebtItem } from '@/types/debt';
 import { DebtStrategy, calculateDebtStrategy } from '@/utils/debtStrategies';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -30,8 +29,10 @@ const DebtBreakdown = ({
   strategy = 'snowball',
   onStrategyChange
 }: DebtBreakdownProps) => {
-  // Calculate strategy-based debt recommendations
-  const strategicDebts = calculateDebtStrategy(debts, strategy, debtBudget);
+  // Use useMemo to recalculate strategy when debts, strategy, or debtBudget changes
+  const strategicDebts = useMemo(() => {
+    return calculateDebtStrategy(debts, strategy, debtBudget);
+  }, [debts, strategy, debtBudget]);
 
   const handleAddDebt = () => {
     if (onAddDebt) {

@@ -18,6 +18,7 @@ interface GoalItemFieldsProps {
   increment: number;
   onDoubleClick: (fieldName: string, currentValue: number | string) => void;
   onDirectValueChange: (fieldName: string, value: string) => void;
+  onFieldBlur: (fieldName: string) => void;
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
 }
@@ -29,6 +30,7 @@ const GoalItemFields = ({
   increment,
   onDoubleClick,
   onDirectValueChange,
+  onFieldBlur,
   onIncrement,
   onDecrement
 }: GoalItemFieldsProps) => {
@@ -45,6 +47,7 @@ const GoalItemFields = ({
           increment={increment}
           onDoubleClick={onDoubleClick}
           onDirectValueChange={onDirectValueChange}
+          onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
         />
@@ -58,6 +61,7 @@ const GoalItemFields = ({
           increment={increment}
           onDoubleClick={onDoubleClick}
           onDirectValueChange={onDirectValueChange}
+          onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
         />
@@ -75,6 +79,7 @@ const GoalItemFields = ({
           increment={increment}
           onDoubleClick={onDoubleClick}
           onDirectValueChange={onDirectValueChange}
+          onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
         />
@@ -88,6 +93,7 @@ const GoalItemFields = ({
           increment={increment}
           onDoubleClick={onDoubleClick}
           onDirectValueChange={onDirectValueChange}
+          onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
         />

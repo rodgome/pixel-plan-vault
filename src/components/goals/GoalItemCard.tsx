@@ -33,6 +33,7 @@ const GoalItemCard = ({ goal, index, onUpdate, onDelete }: GoalItemCardProps) =>
     handleIncrement,
     handleDecrement,
     handleDirectValueChange,
+    handleFieldBlur,
     handleTypeChange,
     handleClickOutside,
   } = useGoalItemLogic({ goal, index, onUpdate });
@@ -49,6 +50,7 @@ const GoalItemCard = ({ goal, index, onUpdate, onDelete }: GoalItemCardProps) =>
         increment={increment}
         onDoubleClick={handleDoubleClick}
         onDirectValueChange={handleDirectValueChange}
+        onFieldBlur={handleFieldBlur}
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
         onTypeChange={handleTypeChange}
@@ -62,6 +64,7 @@ const GoalItemCard = ({ goal, index, onUpdate, onDelete }: GoalItemCardProps) =>
         increment={increment}
         onDoubleClick={handleDoubleClick}
         onDirectValueChange={handleDirectValueChange}
+        onFieldBlur={handleFieldBlur}
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
       />

@@ -24,6 +24,7 @@ interface GoalItemHeaderProps {
   increment: number;
   onDoubleClick: (fieldName: string, currentValue: number | string) => void;
   onDirectValueChange: (fieldName: string, value: string) => void;
+  onFieldBlur: (fieldName: string) => void;
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
   onTypeChange: (type: 'emergency_fund' | 'retirement' | 'investment' | 'vacation' | 'other') => void;
@@ -40,6 +41,7 @@ const GoalItemHeader = ({
   increment,
   onDoubleClick,
   onDirectValueChange,
+  onFieldBlur,
   onIncrement,
   onDecrement,
   onTypeChange,
@@ -87,6 +89,7 @@ const GoalItemHeader = ({
             increment={increment}
             onDoubleClick={onDoubleClick}
             onDirectValueChange={onDirectValueChange}
+            onFieldBlur={onFieldBlur}
             onIncrement={onIncrement}
             onDecrement={onDecrement}
             isNumber={false}

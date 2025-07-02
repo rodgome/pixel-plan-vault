@@ -79,18 +79,23 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
   };
 
   const handleDirectValueChange = (fieldName: string, value: string) => {
+    // Only update the local state, don't trigger onUpdate yet
+    setDirectEditValue(value);
+  };
+
+  const handleFieldBlur = (fieldName: string) => {
     if (!onUpdate) return;
     
-    setDirectEditValue(value);
     const updatedGoal = { ...goal };
     
     if (fieldName === 'name') {
-      updatedGoal.name = value;
+      updatedGoal.name = directEditValue;
       onUpdate(index, updatedGoal);
+      setEditingField(null);
       return;
     }
     
-    const numValue = parseFloat(value);
+    const numValue = parseFloat(directEditValue);
     if (!isNaN(numValue) && numValue >= 0) {
       switch (fieldName) {
         case 'target':
@@ -108,6 +113,7 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
       }
       onUpdate(index, updatedGoal);
     }
+    setEditingField(null);
   };
 
   const handleTypeChange = (type: 'emergency_fund' | 'retirement' | 'investment' | 'vacation' | 'other') => {
@@ -116,8 +122,14 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
     onUpdate(index, updatedGoal);
   };
 
-  const handleClickOutside = () => {
-    setEditingField(null);
+  const handleClickOutside = (e: React.MouseEvent) => {
+    if (editingField && e.target === e.currentTarget) {
+      if (editingField !== 'icon') {
+        handleFieldBlur(editingField);
+      } else {
+        setEditingField(null);
+      }
+    }
   };
 
   return {
@@ -131,6 +143,7 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
     handleIncrement,
     handleDecrement,
     handleDirectValueChange,
+    handleFieldBlur,
     handleTypeChange,
     handleClickOutside,
   };

@@ -13,6 +13,7 @@ interface EditableFieldProps {
   increment: number;
   onDoubleClick: (fieldName: string, value: number | string) => void;
   onDirectValueChange: (fieldName: string, value: string) => void;
+  onFieldBlur: (fieldName: string) => void;
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
   isNumber?: boolean;
@@ -28,6 +29,7 @@ const EditableField = ({
   increment, 
   onDoubleClick, 
   onDirectValueChange, 
+  onFieldBlur,
   onIncrement, 
   onDecrement,
   isNumber = true
@@ -56,9 +58,16 @@ const EditableField = ({
             type={isNumber ? "number" : "text"}
             value={directEditValue}
             onChange={(e) => onDirectValueChange(fieldName, e.target.value)}
+            onBlur={() => onFieldBlur(fieldName)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                onFieldBlur(fieldName);
+              }
+            }}
             className="text-sm bg-slate-700 border-slate-600 text-white h-8"
             placeholder={isNumber ? "Enter amount" : "Enter value"}
             onClick={(e) => e.stopPropagation()}
+            autoFocus
           />
           {isNumber && (
             <div className="flex items-center justify-center gap-2">

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import DebtSummaryCards from './debt/DebtSummaryCards';
 import MonthlyDebtProgress from './debt/MonthlyDebtProgress';
-import DebtItemCard from './debt/DebtItemCard';
+import VirtualizedDebtList from './debt/VirtualizedDebtList';
 
 interface DebtBreakdownProps {
   debts: DebtItem[];
@@ -68,9 +68,10 @@ const DebtBreakdown = ({
     }
   };
 
-  const handleUpdateDebt = (debt: DebtItem, updatedDebt: DebtItem) => {
+  const handleUpdateDebt = (index: number, updatedDebt: DebtItem) => {
     if (onUpdateDebt) {
       // Find the original index of this debt in the base debts array
+      const debt = strategicDebts[index];
       const originalIndex = debts.findIndex(d => 
         d.name === debt.name && 
         d.balance === debt.balance && 
@@ -135,22 +136,18 @@ const DebtBreakdown = ({
         spentAmount={debtSpent}
       />
 
-      {/* Debt Items */}
-      <div className="space-y-3">
-        {strategicDebts.map((debt, index) => (
-          <DebtItemCard
-            key={`${debt.name}-${debt.balance}-${debt.interestRate}`}
-            debt={debt}
-            index={index}
-            onUpdate={(_, updatedDebt) => handleUpdateDebt(debt, updatedDebt)}
-            onDelete={() => handleDeleteDebt(debt)}
-            onBudgetUpdate={onBudgetUpdate}
-            onSpentUpdate={handleSpentUpdate}
-            debtBudget={debtBudget}
-            showStrategy={true}
-          />
-        ))}
-      </div>
+      {/* Virtualized Debt Items */}
+      <VirtualizedDebtList
+        debts={strategicDebts}
+        onUpdate={handleUpdateDebt}
+        onDelete={handleDeleteDebt}
+        onBudgetUpdate={onBudgetUpdate}
+        onSpentUpdate={handleSpentUpdate}
+        debtBudget={debtBudget}
+        showStrategy={true}
+        height={600}
+        itemHeight={180}
+      />
     </div>
   );
 };

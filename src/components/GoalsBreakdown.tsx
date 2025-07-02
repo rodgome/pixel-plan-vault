@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import GoalSummaryCards from './goals/GoalSummaryCards';
-import GoalItemCard from './goals/GoalItemCard';
+import VirtualizedGoalsList from './goals/VirtualizedGoalsList';
 
 interface GoalItem {
   name: string;
@@ -75,18 +75,14 @@ const GoalsBreakdown = ({
       {/* Summary */}
       <GoalSummaryCards goals={goals} />
 
-      {/* Goal Items */}
-      <div className="space-y-3">
-        {goals.map((goal, index) => (
-          <GoalItemCard
-            key={`${goal.name}-${goal.target}-${goal.current}-${index}`}
-            goal={goal}
-            index={index}
-            onUpdate={onUpdateGoal ? handleUpdateGoal : undefined}
-            onDelete={onDeleteGoal ? () => handleDeleteGoal(index) : undefined}
-          />
-        ))}
-      </div>
+      {/* Virtualized Goal Items */}
+      <VirtualizedGoalsList
+        goals={goals}
+        onUpdate={onUpdateGoal ? handleUpdateGoal : undefined}
+        onDelete={onDeleteGoal ? handleDeleteGoal : undefined}
+        height={600}
+        itemHeight={160}
+      />
     </div>
   );
 };

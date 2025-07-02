@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,12 +32,17 @@ const SpentTracker = ({
   const [increment, setIncrement] = useState(50);
   const [directEditValue, setDirectEditValue] = useState<string>('');
 
-  const handleDoubleClick = (itemName: string, currentAmount: number) => {
+  // Memoize total spent to prevent recalculation
+  const totalSpent = useMemo(() => {
+    return categories.reduce((sum, cat) => sum + cat.amount, 0);
+  }, [categories]);
+
+  const handleDoubleClick = useCallback((itemName: string, currentAmount: number) => {
     setEditingItem(itemName);
     setDirectEditValue(currentAmount.toString());
-  };
+  }, []);
 
-  const handleIncrement = (itemName: string) => {
+  const handleIncrement = useCallback((itemName: string) => {
     const updatedCategories = categories.map(cat => cat.name === itemName ? {
       ...cat,
       amount: cat.amount + increment
@@ -46,9 +51,9 @@ const SpentTracker = ({
     onUpdate({
       categories: updatedCategories
     });
-  };
+  }, [categories, increment, onUpdate]);
 
-  const handleDecrement = (itemName: string) => {
+  const handleDecrement = useCallback((itemName: string) => {
     const updatedCategories = categories.map(cat => cat.name === itemName ? {
       ...cat,
       amount: Math.max(0, cat.amount - increment)
@@ -57,9 +62,9 @@ const SpentTracker = ({
     onUpdate({
       categories: updatedCategories
     });
-  };
+  }, [categories, increment, onUpdate]);
 
-  const handleDirectAmountChange = (itemName: string, value: string) => {
+  const handleDirectAmountChange = useCallback((itemName: string, value: string) => {
     setDirectEditValue(value);
     const numValue = parseFloat(value);
     if (!isNaN(numValue) && numValue >= 0) {
@@ -72,13 +77,11 @@ const SpentTracker = ({
         categories: updatedCategories
       });
     }
-  };
+  }, [categories, onUpdate]);
 
-  const handleClickOutside = () => {
+  const handleClickOutside = useCallback(() => {
     setEditingItem(null);
-  };
-
-  const totalSpent = categories.reduce((sum, cat) => sum + cat.amount, 0);
+  }, []);
 
   return (
     <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">

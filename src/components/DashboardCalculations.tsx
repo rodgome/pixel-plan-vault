@@ -10,11 +10,19 @@ import { DashboardCalculations } from '@/types/dashboard';
  * @returns Calculated dashboard metrics
  */
 export const useDashboardCalculations = (baseData: BaseData): DashboardCalculations => {
+  // Create stable reference for baseData to prevent unnecessary recalculations
+  const stableBaseData = useMemo(() => baseData, [
+    baseData.income,
+    JSON.stringify(baseData.categories),
+    JSON.stringify(baseData.debts),
+    JSON.stringify(baseData.goals)
+  ]);
+
   // Memoize debt calculations separately
   const debtCalculations = useMemo(() => {
-    const actualDebtPayments = baseData.debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
-    const totalMinPayments = baseData.debts.reduce((sum, debt) => sum + debt.minPayment, 0);
-    const totalPlannedPayments = baseData.debts.reduce((sum, debt) => sum + (debt.plannedPayment || debt.minPayment), 0);
+    const actualDebtPayments = stableBaseData.debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
+    const totalMinPayments = stableBaseData.debts.reduce((sum, debt) => sum + debt.minPayment, 0);
+    const totalPlannedPayments = stableBaseData.debts.reduce((sum, debt) => sum + (debt.plannedPayment || debt.minPayment), 0);
     const totalPaid = actualDebtPayments;
     const maxTotalPayment = Math.max(totalMinPayments, totalPlannedPayments, totalPaid);
     
@@ -25,16 +33,16 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
       totalPaid,
       maxTotalPayment
     };
-  }, [baseData.debts]);
+  }, [stableBaseData.debts]);
 
   // Memoize updated categories separately
   const updatedCategories = useMemo(() => {
-    return baseData.categories.map(cat => 
+    return stableBaseData.categories.map(cat => 
       cat.name === 'DEBT' 
         ? { ...cat, amount: debtCalculations.actualDebtPayments }
         : cat
     );
-  }, [baseData.categories, debtCalculations.actualDebtPayments]);
+  }, [stableBaseData.categories, debtCalculations.actualDebtPayments]);
 
   // Memoize monthly data
   const monthlyData = useMemo(() => {
@@ -45,15 +53,15 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
     const goals = updatedCategories.find(cat => cat.name === 'GOALS')?.amount || 0;
 
     return {
-      income: baseData.income,
+      income: stableBaseData.income,
       expenses,
       debt: debtCalculations.actualDebtPayments,
       goals,
       categories: updatedCategories,
-      debts: baseData.debts,
-      goalItems: baseData.goals
+      debts: stableBaseData.debts,
+      goalItems: stableBaseData.goals
     };
-  }, [baseData.income, baseData.debts, baseData.goals, updatedCategories, debtCalculations.actualDebtPayments]);
+  }, [stableBaseData.income, stableBaseData.debts, stableBaseData.goals, updatedCategories, debtCalculations.actualDebtPayments]);
 
   // Memoize budget calculations
   const budgetCalculations = useMemo(() => {
@@ -70,8 +78,8 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
 
   // Memoize validation checks
   const validationChecks = useMemo(() => {
-    const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
-    const totalBudgetAmount = baseData.categories.reduce((sum, cat) => sum + cat.budget, 0);
+    const debtBudget = stableBaseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
+    const totalBudgetAmount = stableBaseData.categories.reduce((sum, cat) => sum + cat.budget, 0);
     const isDebtPaymentConsistent = debtBudget >= debtCalculations.totalMinPayments;
     const isBudgetBalanced = totalBudgetAmount <= monthlyData.income;
     
@@ -79,8 +87,9 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
       isDebtPaymentConsistent,
       isBudgetBalanced
     };
-  }, [baseData.categories, debtCalculations.totalMinPayments, monthlyData.income]);
+  }, [stableBaseData.categories, debtCalculations.totalMinPayments, monthlyData.income]);
 
+  // Return memoized final result
   return useMemo(() => ({
     monthlyData,
     totalBudget: budgetCalculations.totalBudget,

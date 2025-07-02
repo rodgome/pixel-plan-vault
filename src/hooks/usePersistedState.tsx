@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 
 interface PersistedStateOptions<T> {
@@ -18,16 +18,16 @@ export const usePersistedState = <T,>({
   const [state, setState] = useState<T>(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const loadedRef = useRef(false);
 
   // Load initial data
   useEffect(() => {
+    if (loadedRef.current) return;
+    
     const loadData = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        
-        // Simulate loading delay for better UX
-        await new Promise(resolve => setTimeout(resolve, 100));
         
         const stored = localStorage.getItem(key);
         if (stored) {
@@ -41,10 +41,12 @@ export const usePersistedState = <T,>({
             setState(parsed.version ? parsed.data : parsed);
           }
         }
+        loadedRef.current = true;
       } catch (error) {
         console.warn(`Failed to load persisted state for key "${key}":`, error);
         setError(`Failed to load saved data: ${error instanceof Error ? error.message : 'Unknown error'}`);
         setState(defaultValue);
+        loadedRef.current = true;
       } finally {
         setIsLoading(false);
       }
@@ -53,32 +55,34 @@ export const usePersistedState = <T,>({
     loadData();
   }, [key, defaultValue, version, migrate]);
 
-  // Optimistic update with rollback
-  const setStateWithPersistence = useCallback((updater: React.SetStateAction<T>) => {
-    const previousState = state;
-    
-    // Apply optimistic update immediately
-    setState(updater);
-    
+  // Debounced persistence to prevent rapid writes
+  const persistData = useCallback((newState: T) => {
     try {
-      const newState = typeof updater === 'function' 
-        ? (updater as (prevState: T) => T)(state)
-        : updater;
-        
       const dataToStore = {
         version,
         data: newState,
         timestamp: Date.now()
       };
-      
       localStorage.setItem(key, JSON.stringify(dataToStore));
     } catch (error) {
-      // Rollback on failure
       console.warn(`Failed to persist state for key "${key}":`, error);
-      setState(previousState);
-      toast.error('Failed to save changes. Changes have been reverted.');
+      toast.error('Failed to save changes');
     }
-  }, [key, state, version]);
+  }, [key, version]);
+
+  // Optimistic update with debounced persistence
+  const setStateWithPersistence = useCallback((updater: React.SetStateAction<T>) => {
+    setState(prev => {
+      const newState = typeof updater === 'function' 
+        ? (updater as (prevState: T) => T)(prev)
+        : updater;
+      
+      // Debounce persistence to prevent flickering
+      setTimeout(() => persistData(newState), 100);
+      
+      return newState;
+    });
+  }, [persistData]);
 
   // Export functionality with loading state
   const exportData = useCallback(async () => {
@@ -128,14 +132,7 @@ export const usePersistedState = <T,>({
             }
             
             setState(dataToImport);
-            
-            // Persist the imported data
-            const dataToStore = {
-              version,
-              data: dataToImport,
-              timestamp: Date.now()
-            };
-            localStorage.setItem(key, JSON.stringify(dataToStore));
+            persistData(dataToImport);
             
             toast.success('Data imported successfully!');
             resolve(true);
@@ -156,7 +153,7 @@ export const usePersistedState = <T,>({
       };
       reader.readAsText(file);
     });
-  }, [version, migrate, key]);
+  }, [version, migrate, persistData]);
 
   // Clear persisted data
   const clearPersistedData = useCallback(() => {

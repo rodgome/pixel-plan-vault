@@ -38,11 +38,11 @@ export const useEditableField = <T extends Record<string, any>>({
       return;
     }
     
-    const updatedItem = { ...item };
+    const updatedItem = { ...item } as T;
     
     // Handle text fields (like name)
     if (typeof item[fieldName] === 'string' && fieldName === 'name') {
-      updatedItem[fieldName] = localEditValue;
+      (updatedItem as any)[fieldName] = localEditValue;
       onUpdate(index, updatedItem);
       setEditingField(null);
       setLocalEditValue('');
@@ -52,7 +52,7 @@ export const useEditableField = <T extends Record<string, any>>({
     // Handle numeric fields
     const numValue = parseFloat(localEditValue);
     if (!isNaN(numValue) && numValue >= 0) {
-      updatedItem[fieldName] = numValue;
+      (updatedItem as any)[fieldName] = numValue;
       console.log(`${fieldName} field blur - updating to:`, numValue);
       console.log('Updated item object:', updatedItem);
       onUpdate(index, updatedItem);
@@ -68,18 +68,18 @@ export const useEditableField = <T extends Record<string, any>>({
     console.log('Increment:', fieldName);
     if (!onUpdate) return;
     
-    const updatedItem = { ...item };
+    const updatedItem = { ...item } as T;
     let newValue: number;
     
     // Special handling for percentage fields
     if (fieldName === 'interestRate') {
-      newValue = (updatedItem[fieldName] || 0) + 0.5;
+      newValue = ((updatedItem as any)[fieldName] || 0) + 0.5;
     } else {
-      newValue = (updatedItem[fieldName] || 0) + increment;
+      newValue = ((updatedItem as any)[fieldName] || 0) + increment;
     }
     
-    updatedItem[fieldName] = newValue;
-    console.log(`Incrementing ${fieldName} from`, item[fieldName], 'to', updatedItem[fieldName]);
+    (updatedItem as any)[fieldName] = newValue;
+    console.log(`Incrementing ${fieldName} from`, item[fieldName], 'to', (updatedItem as any)[fieldName]);
     onUpdate(index, updatedItem);
     
     // Update local edit value if currently editing
@@ -92,18 +92,18 @@ export const useEditableField = <T extends Record<string, any>>({
     console.log('Decrement:', fieldName);
     if (!onUpdate) return;
     
-    const updatedItem = { ...item };
+    const updatedItem = { ...item } as T;
     let newValue: number;
     
     // Special handling for percentage fields
     if (fieldName === 'interestRate') {
-      newValue = Math.max(0, (updatedItem[fieldName] || 0) - 0.5);
+      newValue = Math.max(0, ((updatedItem as any)[fieldName] || 0) - 0.5);
     } else {
-      newValue = Math.max(0, (updatedItem[fieldName] || 0) - increment);
+      newValue = Math.max(0, ((updatedItem as any)[fieldName] || 0) - increment);
     }
     
-    updatedItem[fieldName] = newValue;
-    console.log(`Decrementing ${fieldName} from`, item[fieldName], 'to', updatedItem[fieldName]);
+    (updatedItem as any)[fieldName] = newValue;
+    console.log(`Decrementing ${fieldName} from`, item[fieldName], 'to', (updatedItem as any)[fieldName]);
     onUpdate(index, updatedItem);
     
     // Update local edit value if currently editing
@@ -126,8 +126,8 @@ export const useEditableField = <T extends Record<string, any>>({
   const handleTypeChange = useCallback((newType: string) => {
     if (!onUpdate || !onTypeChange) return;
     
-    const updatedItem = { ...item };
-    updatedItem.type = newType;
+    const updatedItem = { ...item } as T;
+    (updatedItem as any).type = newType;
     onUpdate(index, updatedItem);
     onTypeChange(newType);
   }, [item, index, onUpdate, onTypeChange]);

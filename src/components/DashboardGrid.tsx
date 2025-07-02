@@ -1,7 +1,5 @@
 
 import SpendingAnalysisCard from './SpendingAnalysisCard';
-import DebtTrackerCard from './DebtTrackerCard';
-import GoalsTrackerCard from './GoalsTrackerCard';
 import { DebtItem } from '@/types/debt';
 
 interface Category {
@@ -40,16 +38,13 @@ const DashboardGrid = ({
   totalPaid,
   maxTotalPayment
 }: DashboardGridProps) => {
-  const debtBudget = spendingCategories.find(cat => cat.name === 'DEBT')?.budget || 0;
-  const debtSpent = spendingCategories.find(cat => cat.name === 'DEBT')?.amount || 0;
-
   // Calculate savings progress (simplified)
   const savingsCurrent = goals.reduce((sum, goal) => sum + goal.current, 0);
   const savingsTarget = goals.reduce((sum, goal) => sum + goal.target, 0);
   const remaining = spendingCategories.reduce((sum, cat) => sum - cat.amount, 0);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 gap-6">
       <SpendingAnalysisCard 
         spendingCategories={spendingCategories}
         totalMinPayments={totalMinPayments}
@@ -61,16 +56,6 @@ const DashboardGrid = ({
         savingsCurrent={savingsCurrent}
         savingsTarget={savingsTarget}
         remaining={remaining}
-      />
-      
-      <DebtTrackerCard 
-        debts={debts} 
-        debtBudget={debtBudget}
-        debtSpent={debtSpent}
-      />
-      
-      <GoalsTrackerCard 
-        goals={goals} 
       />
     </div>
   );

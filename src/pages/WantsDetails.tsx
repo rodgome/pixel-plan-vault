@@ -44,7 +44,7 @@ const WantsDetails = () => {
       <div className="container mx-auto px-4 py-6">
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <div className="p-6">
-            <WantsBreakdown categories={baseData.categories} />
+            <WantsBreakdown categories={baseData.categories} income={baseData.income} />
           </div>
         </Card>
       </div>

@@ -6,14 +6,16 @@ interface WantsBreakdownProps {
     budget: number;
     color: string;
   }>;
+  income?: number;
 }
 
-const WantsBreakdown = ({ categories }: WantsBreakdownProps) => {
+const WantsBreakdown = ({ categories, income = 0 }: WantsBreakdownProps) => {
   const wantsCategory = categories.find(cat => cat.name === 'WANTS');
   
   if (!wantsCategory) return null;
 
   const percentage = wantsCategory.budget > 0 ? (wantsCategory.amount / wantsCategory.budget) * 100 : 0;
+  const incomeMinusBudget = income - wantsCategory.budget;
 
   return (
     <div className="space-y-4">
@@ -35,6 +37,22 @@ const WantsBreakdown = ({ categories }: WantsBreakdownProps) => {
           }`}
           style={{ width: `${Math.min(percentage, 100)}%` }}
         />
+      </div>
+
+      {/* Income - Budget Section */}
+      <div className="bg-slate-700/50 p-3 rounded border border-slate-600">
+        <div className="text-slate-400 text-sm mb-1">Income - Budget</div>
+        <div className={`text-lg font-bold ${incomeMinusBudget >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+          ${incomeMinusBudget.toLocaleString()}
+        </div>
+      </div>
+
+      {/* Spent So Far Section */}
+      <div className="bg-slate-700/50 p-3 rounded border border-slate-600">
+        <div className="text-slate-400 text-sm mb-1">Spent So Far</div>
+        <div className="text-lg font-bold text-blue-400">
+          ${wantsCategory.amount.toLocaleString()}
+        </div>
       </div>
 
       <div className="space-y-3">

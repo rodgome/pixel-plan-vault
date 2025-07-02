@@ -4,21 +4,31 @@ import { BaseData } from './DashboardData';
 
 export const useDashboardCalculations = (baseData: BaseData) => {
   return useMemo(() => {
+    // Calculate actual debt payments from individual debt items
+    const actualDebtPayments = baseData.debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
+    
+    // Update the debt category amount to reflect actual payments
+    const updatedCategories = baseData.categories.map(cat => 
+      cat.name === 'DEBT' 
+        ? { ...cat, amount: actualDebtPayments }
+        : cat
+    );
+
     // Reactive calculations - all derived from base data
     const monthlyData = {
       income: baseData.income,
       // Calculate actual amounts from categories - this will update when spending changes
-      expenses: baseData.categories.filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS').reduce((sum, cat) => sum + cat.amount, 0),
-      debt: baseData.categories.find(cat => cat.name === 'DEBT')?.amount || 0,
-      goals: baseData.categories.find(cat => cat.name === 'GOALS')?.amount || 0,
-      categories: baseData.categories,
+      expenses: updatedCategories.filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS').reduce((sum, cat) => sum + cat.amount, 0),
+      debt: actualDebtPayments, // Use calculated debt payments directly
+      goals: updatedCategories.find(cat => cat.name === 'GOALS')?.amount || 0,
+      categories: updatedCategories, // Use updated categories with actual debt payments
       debts: baseData.debts,
       goalItems: baseData.goals
     };
 
     // Reactive financial calculations - these will update when spending changes
     const totalBudget = monthlyData.income;
-    const totalSpent = monthlyData.categories.reduce((sum, cat) => sum + cat.amount, 0);
+    const totalSpent = updatedCategories.reduce((sum, cat) => sum + cat.amount, 0);
     const remaining = monthlyData.income - totalSpent;
 
     // Debt calculations
@@ -34,7 +44,7 @@ export const useDashboardCalculations = (baseData: BaseData) => {
     const isBudgetBalanced = totalBudgetAmount <= monthlyData.income;
 
     // Include all categories for spending analysis - this allows debt progress to update live
-    const spendingCategories = monthlyData.categories;
+    const spendingCategories = updatedCategories;
 
     return {
       monthlyData,

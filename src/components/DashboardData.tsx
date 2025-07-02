@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
+import { usePersistedState } from '@/hooks/usePersistedState';
 
 export interface Category {
   name: string;
@@ -26,7 +27,7 @@ export interface BaseData {
 }
 
 export const useDashboardData = () => {
-  const [baseData, setBaseData] = useState<BaseData>({
+  const defaultData: BaseData = {
     income: 5000,
     categories: [{
       name: 'NEEDS',
@@ -105,6 +106,40 @@ export const useDashboardData = () => {
       plannedContribution: 600,
       type: 'investment' as const
     }]
+  };
+
+  // Migration function for handling data structure changes
+  const migrateData = (oldData: any, oldVersion: number): BaseData => {
+    console.log(`Migrating data from version ${oldVersion} to current version`);
+    
+    // Add migration logic here as data structure evolves
+    if (oldVersion < 2) {
+      // Example: Add new fields that didn't exist in version 1
+      if (oldData.goals) {
+        oldData.goals = oldData.goals.map((goal: any) => ({
+          ...goal,
+          plannedContribution: goal.plannedContribution || goal.monthlyContribution
+        }));
+      }
+    }
+    
+    return {
+      ...defaultData,
+      ...oldData
+    };
+  };
+
+  const {
+    state: baseData,
+    setState: setBaseData,
+    exportData,
+    importData,
+    clearPersistedData
+  } = usePersistedState<BaseData>({
+    key: 'vault-dashboard-data',
+    defaultValue: defaultData,
+    version: 2,
+    migrate: migrateData
   });
 
   const [debtStrategy, setDebtStrategy] = useState<'snowball' | 'avalanche'>('snowball');
@@ -147,6 +182,9 @@ export const useDashboardData = () => {
     handleDataUpdate,
     handleSpentUpdate,
     handleDebtUpdate,
-    handleDebtStrategyChange
+    handleDebtStrategyChange,
+    exportData,
+    importData,
+    clearPersistedData
   };
 };

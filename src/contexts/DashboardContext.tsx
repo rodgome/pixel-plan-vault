@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, ReactNode } from 'react';
 import { DebtItem } from '@/types/debt';
 import { useDashboardData, BaseData, Category, GoalItem } from '@/components/DashboardData';
@@ -21,6 +20,9 @@ interface DashboardContextType {
   handleAddGoal: (newGoal: GoalItem) => void;
   handleDeleteDebt: (index: number) => void;
   handleAddDebt: (newDebt: DebtItem) => void;
+  exportData: () => void;
+  importData: (file: File) => Promise<boolean>;
+  clearPersistedData: () => void;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -81,6 +83,9 @@ export const DashboardProvider = ({ children }: DashboardProviderProps) => {
     handleAddGoal,
     handleDeleteDebt,
     handleAddDebt,
+    exportData: dashboardData.exportData,
+    importData: dashboardData.importData,
+    clearPersistedData: dashboardData.clearPersistedData,
   };
 
   return (

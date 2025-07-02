@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,12 +12,16 @@ interface DebtAllocationCardProps {
 }
 
 const DebtAllocationCard = ({ debts, totalPaidAmount, onUpdateDebt }: DebtAllocationCardProps) => {
-  const [allocations, setAllocations] = useState<{ [key: number]: number }>(
-    debts.reduce((acc, debt, index) => {
+  const [allocations, setAllocations] = useState<{ [key: number]: number }>({});
+
+  // Initialize allocations from actual debt totalPaid values
+  useEffect(() => {
+    const initialAllocations = debts.reduce((acc, debt, index) => {
       acc[index] = debt.totalPaid || 0;
       return acc;
-    }, {} as { [key: number]: number })
-  );
+    }, {} as { [key: number]: number });
+    setAllocations(initialAllocations);
+  }, [debts]);
 
   const totalAllocated = Object.values(allocations).reduce((sum, amount) => sum + amount, 0);
   const remainingToAllocate = totalPaidAmount - totalAllocated;
@@ -32,20 +36,43 @@ const DebtAllocationCard = ({ debts, totalPaidAmount, onUpdateDebt }: DebtAlloca
   };
 
   const handleAutoAllocate = () => {
-    if (remainingToAllocate <= 0) return;
+    // If there's a mismatch, first sync the current allocations
+    const currentTotal = Object.values(allocations).reduce((sum, amount) => sum + amount, 0);
     
-    // Simple auto-allocation: distribute remaining amount proportionally based on minimum payments
+    // Calculate how much we need to distribute
+    const amountToDistribute = totalPaidAmount;
+    
+    if (amountToDistribute <= 0 || debts.length === 0) return;
+    
+    // Use minimum payments as the basis for proportional distribution
     const totalMinPayments = debts.reduce((sum, debt) => sum + debt.minPayment, 0);
     
-    debts.forEach((debt, index) => {
-      if (totalMinPayments > 0) {
-        const proportion = debt.minPayment / totalMinPayments;
-        const suggestedAmount = Math.round(remainingToAllocate * proportion);
-        const currentAllocation = allocations[index] || 0;
-        const newAmount = currentAllocation + suggestedAmount;
-        handleAllocationChange(index, newAmount);
-      }
-    });
+    if (totalMinPayments === 0) {
+      // If no min payments, distribute equally
+      const equalAmount = Math.floor(amountToDistribute / debts.length);
+      const remainder = amountToDistribute % debts.length;
+      
+      debts.forEach((debt, index) => {
+        const amount = equalAmount + (index < remainder ? 1 : 0);
+        handleAllocationChange(index, amount);
+      });
+    } else {
+      // Distribute proportionally based on minimum payments
+      let distributedSoFar = 0;
+      
+      debts.forEach((debt, index) => {
+        if (index === debts.length - 1) {
+          // Last item gets the remainder to ensure exact total
+          const amount = amountToDistribute - distributedSoFar;
+          handleAllocationChange(index, Math.max(0, amount));
+        } else {
+          const proportion = debt.minPayment / totalMinPayments;
+          const amount = Math.floor(amountToDistribute * proportion);
+          distributedSoFar += amount;
+          handleAllocationChange(index, amount);
+        }
+      });
+    }
   };
 
   return (
@@ -58,7 +85,6 @@ const DebtAllocationCard = ({ debts, totalPaidAmount, onUpdateDebt }: DebtAlloca
             size="sm"
             variant="outline"
             className="bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600"
-            disabled={remainingToAllocate <= 0}
           >
             Auto Allocate
           </Button>

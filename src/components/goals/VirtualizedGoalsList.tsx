@@ -91,6 +91,7 @@ const VirtualizedGoalsList = React.memo(({
   return (
     <List
       height={Math.min(height, goals.length * itemHeight)}
+      width="100%"
       itemCount={goals.length}
       itemSize={itemHeight}
       itemData={listData}

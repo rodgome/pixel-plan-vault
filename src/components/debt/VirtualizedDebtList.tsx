@@ -113,6 +113,7 @@ const VirtualizedDebtList = React.memo(({
   return (
     <List
       height={Math.min(height, debts.length * itemHeight)}
+      width="100%"
       itemCount={debts.length}
       itemSize={itemHeight}
       itemData={listData}

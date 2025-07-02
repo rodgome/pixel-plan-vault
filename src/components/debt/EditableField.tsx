@@ -37,6 +37,18 @@ const EditableField = ({
 }: EditableFieldProps) => {
   const isEditing = editingField === fieldName;
   
+  const handleIncrement = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onIncrement(fieldName);
+  };
+
+  const handleDecrement = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDecrement(fieldName);
+  };
+  
   return (
     <div 
       className="cursor-pointer" 
@@ -50,7 +62,7 @@ const EditableField = ({
       <div className={`font-bold ${colorClass}`}>${value.toLocaleString()}</div>
       
       {isEditing && canEdit && (
-        <div className="mt-2 space-y-2">
+        <div className="mt-2 space-y-2" onClick={(e) => e.stopPropagation()}>
           <Input
             type="number"
             value={localEditValue}
@@ -70,10 +82,7 @@ const EditableField = ({
             <Button 
               size="sm" 
               variant="outline" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onDecrement(fieldName);
-              }} 
+              onClick={handleDecrement}
               className="bg-red-600 hover:bg-red-700 text-white border-red-600 h-7 px-2"
             >
               <Minus className="w-3 h-3" />
@@ -82,10 +91,7 @@ const EditableField = ({
             <Button 
               size="sm" 
               variant="outline" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onIncrement(fieldName);
-              }} 
+              onClick={handleIncrement}
               className="bg-green-600 hover:bg-green-700 text-white border-green-600 h-7 px-2"
             >
               <Plus className="w-3 h-3" />

@@ -38,12 +38,14 @@ const EditableField = ({
   const isEditing = editingField === fieldName;
   
   const handleIncrement = (e: React.MouseEvent) => {
+    console.log('Increment clicked for field:', fieldName);
     e.preventDefault();
     e.stopPropagation();
     onIncrement(fieldName);
   };
 
   const handleDecrement = (e: React.MouseEvent) => {
+    console.log('Decrement clicked for field:', fieldName);
     e.preventDefault();
     e.stopPropagation();
     onDecrement(fieldName);

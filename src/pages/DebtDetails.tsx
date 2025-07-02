@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import DebtBreakdown from '../components/DebtBreakdown';
 import { useDashboard } from '../contexts/DashboardContext';
+import { useNavigate } from 'react-router-dom';
 
 const DebtDetails = () => {
   const {
@@ -17,8 +18,10 @@ const DebtDetails = () => {
     setBaseData
   } = useDashboard();
 
+  const navigate = useNavigate();
+
   const handleBack = () => {
-    window.history.back();
+    navigate(-1);
   };
 
   const handleBudgetUpdate = (newBudgetAmount: number) => {

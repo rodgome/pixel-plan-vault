@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
@@ -40,16 +41,22 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
   const maxPayment = Math.max(debt.minPayment, plannedPayment, totalPaid);
 
   const handleDoubleClick = (fieldName: string, currentValue: number | string) => {
+    console.log('Debt field double click:', fieldName, currentValue);
     setEditingField(fieldName);
     setLocalEditValue(currentValue.toString());
   };
 
   const handleLocalValueChange = (value: string) => {
+    console.log('Debt local value change:', value);
     setLocalEditValue(value);
   };
 
-  const commitEdit = (fieldName: string) => {
-    if (!onUpdate) return;
+  const handleFieldBlur = (fieldName: string) => {
+    console.log('Debt field blur:', fieldName, localEditValue);
+    if (!onUpdate) {
+      setEditingField(null);
+      return;
+    }
     
     const updatedDebt = { ...debt };
     
@@ -71,20 +78,21 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
           case 'totalPaid':
             updatedDebt.totalPaid = numValue;
             break;
+          case 'interestRate':
+            updatedDebt.interestRate = numValue;
+            break;
         }
+        console.log('Updating debt with:', updatedDebt);
+        onUpdate(index, updatedDebt);
       }
     }
     
-    onUpdate(index, updatedDebt);
     setEditingField(null);
     setLocalEditValue('');
   };
 
-  const handleFieldBlur = (fieldName: string) => {
-    commitEdit(fieldName);
-  };
-
   const handleIncrement = (fieldName: string) => {
+    console.log('Debt increment:', fieldName);
     if (!onUpdate) return;
     
     const updatedDebt = { ...debt };
@@ -101,11 +109,20 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
       case 'totalPaid':
         updatedDebt.totalPaid += increment;
         break;
+      case 'interestRate':
+        updatedDebt.interestRate += 0.5; // Smaller increment for interest rate
+        break;
     }
+    console.log('Debt after increment:', updatedDebt);
     onUpdate(index, updatedDebt);
+    
+    // Update local edit value to reflect the change
+    const newValue = updatedDebt[fieldName as keyof DebtItem];
+    setLocalEditValue(newValue?.toString() || '');
   };
 
   const handleDecrement = (fieldName: string) => {
+    console.log('Debt decrement:', fieldName);
     if (!onUpdate) return;
     
     const updatedDebt = { ...debt };
@@ -122,13 +139,26 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
       case 'totalPaid':
         updatedDebt.totalPaid = Math.max(0, updatedDebt.totalPaid - increment);
         break;
+      case 'interestRate':
+        updatedDebt.interestRate = Math.max(0, updatedDebt.interestRate - 0.5);
+        break;
     }
+    console.log('Debt after decrement:', updatedDebt);
     onUpdate(index, updatedDebt);
+    
+    // Update local edit value to reflect the change
+    const newValue = updatedDebt[fieldName as keyof DebtItem];
+    setLocalEditValue(newValue?.toString() || '');
   };
 
-  const handleClickOutside = () => {
-    if (editingField) {
-      commitEdit(editingField);
+  const handleClickOutside = (e: React.MouseEvent) => {
+    // Only close editing if clicking on the card background itself
+    if (e.target === e.currentTarget && editingField) {
+      if (editingField !== 'icon') {
+        handleFieldBlur(editingField);
+      } else {
+        setEditingField(null);
+      }
     }
   };
 

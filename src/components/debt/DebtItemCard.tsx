@@ -1,11 +1,12 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { Plus, Minus, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { DebtItem } from '@/types/debt';
 import { DebtWithStrategy } from '@/utils/debtStrategies';
+import EditableField from './EditableField';
+import EditableName from './EditableName';
+import EditableIcon from './EditableIcon';
+import DebtProgressBars from './DebtProgressBars';
 
 interface DebtItemCardProps {
   debt: DebtItem | DebtWithStrategy;
@@ -20,15 +21,6 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
   const [editingField, setEditingField] = useState<string | null>(null);
   const [localEditValue, setLocalEditValue] = useState<string>('');
   const [increment, setIncrement] = useState(100);
-
-  const getDebtIcon = (type: string) => {
-    switch (type) {
-      case 'credit_card': return '💳';
-      case 'loan': return '🏦';
-      case 'mortgage': return '🏠';
-      default: return '💸';
-    }
-  };
 
   const getDebtColor = (interestRate: number) => {
     if (interestRate > 20) return 'text-red-400';
@@ -46,9 +38,6 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
   const plannedPayment = isStrategicDebt ? debt.recommendedPayment : debt.plannedPayment;
   const totalPaid = debt.totalPaid;
   const maxPayment = Math.max(debt.minPayment, plannedPayment, totalPaid);
-  
-  // Calculate individual monthly payment progress for this debt
-  const individualMonthlyProgress = plannedPayment > 0 ? Math.min((totalPaid / plannedPayment) * 100, 100) : 0;
 
   const handleDoubleClick = (fieldName: string, currentValue: number | string) => {
     setEditingField(fieldName);
@@ -149,145 +138,11 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
     }
   };
 
-  const renderEditableField = (fieldName: string, value: number, label: string, colorClass: string) => {
-    const isEditing = editingField === fieldName;
-    
-    return (
-      <div 
-        className="cursor-pointer" 
-        onDoubleClick={(e) => {
-          e.stopPropagation();
-          if (onUpdate) handleDoubleClick(fieldName, value);
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="text-xs text-slate-400">{label}</div>
-        <div className={`font-bold ${colorClass}`}>${value.toLocaleString()}</div>
-        
-        {isEditing && onUpdate && (
-          <div className="mt-2 space-y-2">
-            <Input
-              type="number"
-              value={localEditValue}
-              onChange={(e) => handleLocalValueChange(e.target.value)}
-              onBlur={() => handleFieldBlur(fieldName)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleFieldBlur(fieldName);
-                }
-              }}
-              className="text-sm bg-slate-700 border-slate-600 text-white h-8"
-              placeholder="Enter amount"
-              onClick={(e) => e.stopPropagation()}
-              autoFocus
-            />
-            <div className="flex items-center justify-center gap-2">
-              <Button 
-                size="sm" 
-                variant="outline" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDecrement(fieldName);
-                }} 
-                className="bg-red-600 hover:bg-red-700 text-white border-red-600 h-7 px-2"
-              >
-                <Minus className="w-3 h-3" />
-              </Button>
-              <span className="text-white text-xs">±{increment}</span>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleIncrement(fieldName);
-                }} 
-                className="bg-green-600 hover:bg-green-700 text-white border-green-600 h-7 px-2"
-              >
-                <Plus className="w-3 h-3" />
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderEditableName = () => {
-    const isEditing = editingField === 'name';
-    
-    return (
-      <div 
-        className="cursor-pointer flex-1" 
-        onDoubleClick={(e) => {
-          e.stopPropagation();
-          if (onUpdate) handleDoubleClick('name', debt.name);
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <span className="font-bold text-slate-200">{debt.name}</span>
-        
-        {isEditing && onUpdate && (
-          <div className="mt-2">
-            <Input
-              type="text"
-              value={localEditValue}
-              onChange={(e) => handleLocalValueChange(e.target.value)}
-              onBlur={() => handleFieldBlur('name')}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleFieldBlur('name');
-                }
-              }}
-              className="text-sm bg-slate-700 border-slate-600 text-white h-8"
-              placeholder="Enter debt name"
-              onClick={(e) => e.stopPropagation()}
-              autoFocus
-            />
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderEditableIcon = () => {
-    const isEditing = editingField === 'icon';
-    
-    return (
-      <div 
-        className="cursor-pointer" 
-        onDoubleClick={(e) => {
-          e.stopPropagation();
-          if (onUpdate) {
-            setEditingField('icon');
-            setLocalEditValue(debt.type);
-          }
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <span className="text-lg">{getDebtIcon(debt.type)}</span>
-        
-        {isEditing && onUpdate && (
-          <div className="mt-2">
-            <select
-              value={localEditValue}
-              onChange={(e) => {
-                const updatedDebt = { ...debt };
-                updatedDebt.type = e.target.value as 'credit_card' | 'loan' | 'mortgage' | 'other';
-                onUpdate(index, updatedDebt);
-                setEditingField(null);
-              }}
-              className="text-sm bg-slate-700 border-slate-600 text-white h-8 rounded px-2"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <option value="credit_card">💳 Credit Card</option>
-              <option value="loan">🏦 Loan</option>
-              <option value="mortgage">🏠 Mortgage</option>
-              <option value="other">💸 Other</option>
-            </select>
-          </div>
-        )}
-      </div>
-    );
+  const handleTypeChange = (newType: string) => {
+    if (!onUpdate) return;
+    const updatedDebt = { ...debt };
+    updatedDebt.type = newType as 'credit_card' | 'loan' | 'mortgage' | 'other';
+    onUpdate(index, updatedDebt);
   };
 
   return (
@@ -309,8 +164,24 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
 
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          {renderEditableIcon()}
-          {renderEditableName()}
+          <EditableIcon
+            type={debt.type}
+            editingField={editingField}
+            localEditValue={localEditValue}
+            onDoubleClick={handleDoubleClick}
+            onTypeChange={handleTypeChange}
+            onEditingFieldChange={setEditingField}
+            canEdit={!!onUpdate}
+          />
+          <EditableName
+            name={debt.name}
+            editingField={editingField}
+            localEditValue={localEditValue}
+            onDoubleClick={handleDoubleClick}
+            onLocalValueChange={handleLocalValueChange}
+            onFieldBlur={handleFieldBlur}
+            canEdit={!!onUpdate}
+          />
           {showStrategy && isStrategicDebt && (
             <span className={`text-xs px-2 py-1 rounded ${getPriorityColor(debt.priority)}`}>
               Priority #{debt.priority}
@@ -325,8 +196,36 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
       </div>
       
       <div className="grid grid-cols-2 gap-4 text-sm mb-3">
-        {renderEditableField('balance', debt.balance, 'BALANCE', 'text-red-400')}
-        {renderEditableField('minPayment', debt.minPayment, 'MIN PAYMENT', 'text-orange-400')}
+        <EditableField
+          fieldName="balance"
+          value={debt.balance}
+          label="BALANCE"
+          colorClass="text-red-400"
+          editingField={editingField}
+          localEditValue={localEditValue}
+          increment={increment}
+          onDoubleClick={handleDoubleClick}
+          onLocalValueChange={handleLocalValueChange}
+          onFieldBlur={handleFieldBlur}
+          onIncrement={handleIncrement}
+          onDecrement={handleDecrement}
+          canEdit={!!onUpdate}
+        />
+        <EditableField
+          fieldName="minPayment"
+          value={debt.minPayment}
+          label="MIN PAYMENT"
+          colorClass="text-orange-400"
+          editingField={editingField}
+          localEditValue={localEditValue}
+          increment={increment}
+          onDoubleClick={handleDoubleClick}
+          onLocalValueChange={handleLocalValueChange}
+          onFieldBlur={handleFieldBlur}
+          onIncrement={handleIncrement}
+          onDecrement={handleDecrement}
+          canEdit={!!onUpdate}
+        />
       </div>
 
       {/* Strategy Recommendation */}
@@ -339,60 +238,45 @@ const DebtItemCard = ({ debt, index, onEdit, onUpdate, onDelete, showStrategy = 
 
       {/* Planned Payment and Total Paid Fields */}
       <div className="grid grid-cols-2 gap-4 text-sm mb-3">
-        {renderEditableField('plannedPayment', debt.plannedPayment, 'PLANNED PAYMENT', 'text-blue-400')}
-        {renderEditableField('totalPaid', debt.totalPaid, 'TOTAL PAID', 'text-green-400')}
-      </div>
-
-      {/* Individual Monthly Payment Progress */}
-      <div className="space-y-2 mb-3">
-        <div className="text-xs text-slate-400">THIS MONTH'S PAYMENT PROGRESS</div>
-        <Progress 
-          value={individualMonthlyProgress} 
-          className="h-2 bg-slate-700 [&>div]:bg-blue-500" 
+        <EditableField
+          fieldName="plannedPayment"
+          value={debt.plannedPayment}
+          label="PLANNED PAYMENT"
+          colorClass="text-blue-400"
+          editingField={editingField}
+          localEditValue={localEditValue}
+          increment={increment}
+          onDoubleClick={handleDoubleClick}
+          onLocalValueChange={handleLocalValueChange}
+          onFieldBlur={handleFieldBlur}
+          onIncrement={handleIncrement}
+          onDecrement={handleDecrement}
+          canEdit={!!onUpdate}
         />
-        <div className="flex justify-between text-xs">
-          <span className="text-slate-400">Paid: ${totalPaid.toLocaleString()}</span>
-          <span className="text-blue-400">Target: ${plannedPayment.toLocaleString()}</span>
-        </div>
+        <EditableField
+          fieldName="totalPaid"
+          value={debt.totalPaid}
+          label="TOTAL PAID"
+          colorClass="text-green-400"
+          editingField={editingField}
+          localEditValue={localEditValue}
+          increment={increment}
+          onDoubleClick={handleDoubleClick}
+          onLocalValueChange={handleLocalValueChange}
+          onFieldBlur={handleFieldBlur}
+          onIncrement={handleIncrement}
+          onDecrement={handleDecrement}
+          canEdit={!!onUpdate}
+        />
       </div>
 
-      {/* Payment Progress Bar */}
-      <div className="space-y-2">
-        <div className="text-xs text-slate-400 mb-1">OVERALL PAYMENT PROGRESS</div>
-        <div className="relative">
-          <div className="flex justify-between text-xs mb-1">
-            <span className="text-orange-400">Min: ${debt.minPayment}</span>
-            <span className="text-blue-400">
-              {showStrategy && isStrategicDebt ? 'Recommended' : 'Planned'}: ${plannedPayment}
-            </span>
-            <span className="text-green-400">Paid: ${totalPaid}</span>
-          </div>
-          
-          <div className="relative h-4 bg-slate-700 rounded overflow-hidden">
-            {/* Min Payment Bar */}
-            <div 
-              className="absolute top-0 left-0 h-full bg-orange-500/60"
-              style={{ width: `${(debt.minPayment / maxPayment) * 100}%` }}
-            />
-            {/* Planned Payment Bar */}
-            <div 
-              className="absolute top-0 left-0 h-full bg-blue-500/60"
-              style={{ width: `${(plannedPayment / maxPayment) * 100}%` }}
-            />
-            {/* Total Paid Bar */}
-            <div 
-              className="absolute top-0 left-0 h-full bg-green-500"
-              style={{ width: `${(totalPaid / maxPayment) * 100}%` }}
-            />
-            
-            {/* Dotted line for minimum payment */}
-            <div 
-              className="absolute top-0 h-full w-1 border-l-4 border-dashed border-red-500"
-              style={{ left: `${(debt.minPayment / maxPayment) * 100}%` }}
-            />
-          </div>
-        </div>
-      </div>
+      <DebtProgressBars
+        plannedPayment={plannedPayment}
+        totalPaid={totalPaid}
+        minPayment={debt.minPayment}
+        maxPayment={maxPayment}
+        showStrategy={showStrategy}
+      />
     </div>
   );
 };

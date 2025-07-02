@@ -2,73 +2,47 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { DebtItem } from '@/types/debt';
 import DebtBreakdown from '../components/DebtBreakdown';
+import { useDashboard } from '../contexts/DashboardContext';
 
-interface DebtDetailsProps {
-  dashboardData: any;
-}
-
-const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
-  const { baseData, debtStrategy, handleDebtUpdate, handleDebtStrategyChange, setBaseData, handleSpentUpdate } = dashboardData;
+const DebtDetails = () => {
+  const {
+    baseData,
+    debtStrategy,
+    handleDebtUpdate,
+    handleDebtStrategyChange,
+    handleSpentUpdate,
+    handleDeleteDebt,
+    handleAddDebt,
+    setBaseData
+  } = useDashboard();
 
   const handleBack = () => {
     window.history.back();
   };
 
-  const handleUpdateDebt = (index: number, updatedDebt: DebtItem) => {
-    if (handleDebtUpdate) {
-      handleDebtUpdate(index, updatedDebt);
-    }
-  };
-
-  const handleDeleteDebt = (index: number) => {
-    const updatedDebts = baseData.debts.filter((_, i) => i !== index);
-    if (setBaseData) {
-      setBaseData({
-        ...baseData,
-        debts: updatedDebts
-      });
-    }
-  };
-
-  const handleAddDebt = (newDebt: DebtItem) => {
-    // Add the new debt to the existing debts array
-    const updatedDebts = [...baseData.debts, newDebt];
-    if (setBaseData) {
-      setBaseData({
-        ...baseData,
-        debts: updatedDebts
-      });
-    }
-  };
-
   const handleBudgetUpdate = (newBudgetAmount: number) => {
-    if (setBaseData) {
-      const updatedCategories = baseData.categories.map(cat => 
-        cat.name === 'DEBT' 
-          ? { ...cat, budget: newBudgetAmount }
-          : cat
-      );
-      setBaseData({
-        ...baseData,
-        categories: updatedCategories
-      });
-    }
+    const updatedCategories = baseData.categories.map(cat => 
+      cat.name === 'DEBT' 
+        ? { ...cat, budget: newBudgetAmount }
+        : cat
+    );
+    setBaseData({
+      ...baseData,
+      categories: updatedCategories
+    });
   };
 
   const handleSpentUpdateLocal = (newSpentAmount: number) => {
-    if (handleSpentUpdate) {
-      // Update the debt category spent amount
-      const updatedCategories = baseData.categories.map(cat => 
-        cat.name === 'DEBT' 
-          ? { ...cat, amount: newSpentAmount }
-          : cat
-      );
-      handleSpentUpdate({
-        categories: updatedCategories
-      });
-    }
+    // Update the debt category spent amount
+    const updatedCategories = baseData.categories.map(cat => 
+      cat.name === 'DEBT' 
+        ? { ...cat, amount: newSpentAmount }
+        : cat
+    );
+    handleSpentUpdate({
+      categories: updatedCategories
+    });
   };
 
   const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
@@ -108,7 +82,7 @@ const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
           <div className="p-6">
             <DebtBreakdown 
               debts={baseData.debts} 
-              onUpdateDebt={handleUpdateDebt}
+              onUpdateDebt={handleDebtUpdate}
               onDeleteDebt={handleDeleteDebt}
               onAddDebt={handleAddDebt}
               onBudgetUpdate={handleBudgetUpdate}

@@ -1,13 +1,10 @@
 
 import { useDashboardCalculations } from './DashboardCalculations';
 import DashboardLayout from './DashboardLayout';
+import { useDashboard } from '@/contexts/DashboardContext';
 
-interface DashboardProps {
-  dashboardData: any;
-}
-
-const Dashboard = ({ dashboardData }: DashboardProps) => {
-  const { baseData, handleDataUpdate, handleSpentUpdate } = dashboardData;
+const Dashboard = () => {
+  const { baseData, handleDataUpdate, handleSpentUpdate } = useDashboard();
   
   const {
     monthlyData,

@@ -2,11 +2,11 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { useDashboardData } from '../components/DashboardData';
 import WantsBreakdown from '../components/WantsBreakdown';
+import { useDashboard } from '../contexts/DashboardContext';
 
 const WantsDetails = () => {
-  const { baseData } = useDashboardData();
+  const { baseData } = useDashboard();
 
   const handleBack = () => {
     window.history.back();

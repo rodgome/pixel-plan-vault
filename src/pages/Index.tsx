@@ -2,13 +2,11 @@
 import { useState } from 'react';
 import Dashboard from '../components/Dashboard';
 import BudgetSimulator from '../components/BudgetSimulator';
+import { useDashboard } from '../contexts/DashboardContext';
 
-interface IndexProps {
-  dashboardData: any;
-}
-
-const Index = ({ dashboardData }: IndexProps) => {
+const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { baseData } = useDashboard();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-green-400 font-mono">
@@ -57,8 +55,8 @@ const Index = ({ dashboardData }: IndexProps) => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
-        {activeTab === 'dashboard' && <Dashboard dashboardData={dashboardData} />}
-        {activeTab === 'simulator' && <BudgetSimulator baseData={dashboardData.baseData} />}
+        {activeTab === 'dashboard' && <Dashboard />}
+        {activeTab === 'simulator' && <BudgetSimulator baseData={baseData} />}
       </div>
 
       {/* Footer */}

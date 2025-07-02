@@ -2,30 +2,19 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { useDashboardData } from '../components/DashboardData';
 import GoalsBreakdown from '../components/GoalsBreakdown';
+import { useDashboard } from '../contexts/DashboardContext';
 
 const GoalsDetails = () => {
-  const { baseData, setBaseData } = useDashboardData();
+  const {
+    baseData,
+    handleGoalUpdate,
+    handleDeleteGoal,
+    handleAddGoal
+  } = useDashboard();
 
   const handleBack = () => {
     window.history.back();
-  };
-
-  const handleUpdateGoal = (index: number, updatedGoal: any) => {
-    const updatedGoals = [...baseData.goals];
-    updatedGoals[index] = updatedGoal;
-    setBaseData(prev => ({ ...prev, goals: updatedGoals }));
-  };
-
-  const handleDeleteGoal = (index: number) => {
-    const updatedGoals = baseData.goals.filter((_, i) => i !== index);
-    setBaseData(prev => ({ ...prev, goals: updatedGoals }));
-  };
-
-  const handleAddGoal = (newGoal: any) => {
-    const updatedGoals = [...baseData.goals, newGoal];
-    setBaseData(prev => ({ ...prev, goals: updatedGoals }));
   };
 
   return (
@@ -62,7 +51,7 @@ const GoalsDetails = () => {
           <div className="p-6">
             <GoalsBreakdown 
               goals={baseData.goals}
-              onUpdateGoal={handleUpdateGoal}
+              onUpdateGoal={handleGoalUpdate}
               onDeleteGoal={handleDeleteGoal}
               onAddGoal={handleAddGoal}
             />

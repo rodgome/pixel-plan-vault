@@ -1,6 +1,9 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { BaseData } from '@/types/dashboard';
+import { Simulation } from '@/types/simulation';
+import { Category } from '@/types/categories';
 
 interface SimulationChange {
   category: string;
@@ -9,8 +12,8 @@ interface SimulationChange {
 }
 
 interface SimulationControlsProps {
-  baseData: any;
-  simulation: any;
+  baseData: BaseData;
+  simulation: Simulation;
   onUpdate: (changes: SimulationChange[]) => void;
 }
 
@@ -33,7 +36,7 @@ const SimulationControls = ({ baseData, simulation, onUpdate }: SimulationContro
 
   const removeChange = (index: number) => {
     const existingChanges = simulation.changes || [];
-    const updatedChanges = existingChanges.filter((_: any, i: number) => i !== index);
+    const updatedChanges = existingChanges.filter((_, i) => i !== index);
     onUpdate(updatedChanges);
   };
 
@@ -51,7 +54,7 @@ const SimulationControls = ({ baseData, simulation, onUpdate }: SimulationContro
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm text-green-400"
             >
-              {baseData.categories.map((cat: any) => (
+              {baseData.categories.map((cat: Category) => (
                 <option key={cat.name} value={cat.name}>{cat.name}</option>
               ))}
             </select>

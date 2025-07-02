@@ -7,6 +7,8 @@ import EditableFinancialData from './EditableFinancialData';
 import DashboardGrid from './DashboardGrid';
 import SpentTracker from './SpentTracker';
 import { BaseData } from './DashboardData';
+import { DebtItem } from '@/types/debt';
+import { GoalItem } from '@/types/goals';
 import ImportExportControls from './ImportExportControls';
 import { useDashboard } from '@/contexts/DashboardContext';
 
@@ -23,8 +25,8 @@ interface DashboardLayoutProps {
       budget: number;
       color: string;
     }>;
-    debts: Array<any>;
-    goalItems: Array<any>;
+    debts: DebtItem[];
+    goalItems: GoalItem[];
   };
   totalBudget: number;
   totalSpent: number;

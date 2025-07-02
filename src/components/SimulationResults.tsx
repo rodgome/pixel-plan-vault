@@ -1,17 +1,21 @@
 
+import { BaseData } from '@/types/dashboard';
+import { Simulation, SimulationChange } from '@/types/simulation';
+import { Category } from '@/types/categories';
+
 interface SimulationResultsProps {
-  baseData: any;
-  simulation: any;
+  baseData: BaseData;
+  simulation: Simulation;
 }
 
 const SimulationResults = ({ baseData, simulation }: SimulationResultsProps) => {
   // Calculate the modified budget based on changes
   const calculateModifiedData = () => {
-    const modifiedCategories = baseData.categories.map((cat: any) => {
-      const categoryChanges = (simulation.changes || []).filter((change: any) => change.category === cat.name);
+    const modifiedCategories = baseData.categories.map((cat: Category) => {
+      const categoryChanges = (simulation.changes || []).filter((change: SimulationChange) => change.category === cat.name);
       let newAmount = cat.amount;
-      
-      categoryChanges.forEach((change: any) => {
+
+      categoryChanges.forEach((change: SimulationChange) => {
         if (change.type === 'increase') {
           newAmount += change.change;
         } else {
@@ -22,8 +26,8 @@ const SimulationResults = ({ baseData, simulation }: SimulationResultsProps) => 
       return { ...cat, amount: Math.max(0, newAmount) };
     });
 
-    const originalTotal = baseData.categories.reduce((sum: number, cat: any) => sum + cat.amount, 0);
-    const newTotal = modifiedCategories.reduce((sum: number, cat: any) => sum + cat.amount, 0);
+    const originalTotal = baseData.categories.reduce((sum: number, cat: Category) => sum + cat.amount, 0);
+    const newTotal = modifiedCategories.reduce((sum: number, cat: Category) => sum + cat.amount, 0);
     const savings = originalTotal - newTotal;
     const newRemaining = baseData.income - newTotal;
 
@@ -36,7 +40,7 @@ const SimulationResults = ({ baseData, simulation }: SimulationResultsProps) => 
   };
 
   const modifiedData = calculateModifiedData();
-  const originalTotal = baseData.categories.reduce((sum: number, cat: any) => sum + cat.amount, 0);
+  const originalTotal = baseData.categories.reduce((sum: number, cat: Category) => sum + cat.amount, 0);
   const originalRemaining = baseData.income - originalTotal;
 
   return (
@@ -66,7 +70,7 @@ const SimulationResults = ({ baseData, simulation }: SimulationResultsProps) => 
       <div className="bg-black/30 p-4 rounded border border-slate-600">
         <h3 className="text-sm font-bold text-amber-400 mb-3">CATEGORY CHANGES</h3>
         <div className="space-y-2">
-          {modifiedData.categories.map((cat: any, index: number) => {
+          {modifiedData.categories.map((cat: Category, index: number) => {
             const originalCat = baseData.categories[index];
             const hasChanged = cat.amount !== originalCat.amount;
             const change = cat.amount - originalCat.amount;

@@ -6,10 +6,26 @@ import { useDashboardData } from '../components/DashboardData';
 import GoalsBreakdown from '../components/GoalsBreakdown';
 
 const GoalsDetails = () => {
-  const { baseData } = useDashboardData();
+  const { baseData, handleDataUpdate } = useDashboardData();
 
   const handleBack = () => {
     window.history.back();
+  };
+
+  const handleUpdateGoal = (index: number, updatedGoal: any) => {
+    const updatedGoals = [...baseData.goals];
+    updatedGoals[index] = updatedGoal;
+    handleDataUpdate({ goals: updatedGoals });
+  };
+
+  const handleDeleteGoal = (index: number) => {
+    const updatedGoals = baseData.goals.filter((_, i) => i !== index);
+    handleDataUpdate({ goals: updatedGoals });
+  };
+
+  const handleAddGoal = (newGoal: any) => {
+    const updatedGoals = [...baseData.goals, newGoal];
+    handleDataUpdate({ goals: updatedGoals });
   };
 
   return (
@@ -44,7 +60,12 @@ const GoalsDetails = () => {
       <div className="container mx-auto px-4 py-6">
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <div className="p-6">
-            <GoalsBreakdown goals={baseData.goals} />
+            <GoalsBreakdown 
+              goals={baseData.goals}
+              onUpdateGoal={handleUpdateGoal}
+              onDeleteGoal={handleDeleteGoal}
+              onAddGoal={handleAddGoal}
+            />
           </div>
         </Card>
       </div>

@@ -42,31 +42,15 @@ const GoalsBreakdown = ({
     }
   };
 
-  const handleDeleteGoal = (goal: GoalItem) => {
+  const handleDeleteGoal = (index: number) => {
     if (onDeleteGoal) {
-      // Find the original index of this goal in the base goals array
-      const originalIndex = goals.findIndex(g => 
-        g.name === goal.name && 
-        g.target === goal.target && 
-        g.current === goal.current
-      );
-      if (originalIndex !== -1) {
-        onDeleteGoal(originalIndex);
-      }
+      onDeleteGoal(index);
     }
   };
 
-  const handleUpdateGoal = (goal: GoalItem, updatedGoal: GoalItem) => {
+  const handleUpdateGoal = (index: number, updatedGoal: GoalItem) => {
     if (onUpdateGoal) {
-      // Find the original index of this goal in the base goals array
-      const originalIndex = goals.findIndex(g => 
-        g.name === goal.name && 
-        g.target === goal.target && 
-        g.current === goal.current
-      );
-      if (originalIndex !== -1) {
-        onUpdateGoal(originalIndex, updatedGoal);
-      }
+      onUpdateGoal(index, updatedGoal);
     }
   };
 
@@ -95,11 +79,11 @@ const GoalsBreakdown = ({
       <div className="space-y-3">
         {goals.map((goal, index) => (
           <GoalItemCard
-            key={`${goal.name}-${goal.target}-${goal.current}`}
+            key={`${goal.name}-${goal.target}-${goal.current}-${index}`}
             goal={goal}
             index={index}
-            onUpdate={(_, updatedGoal) => handleUpdateGoal(goal, updatedGoal)}
-            onDelete={() => handleDeleteGoal(goal)}
+            onUpdate={onUpdateGoal ? handleUpdateGoal : undefined}
+            onDelete={onDeleteGoal ? () => handleDeleteGoal(index) : undefined}
           />
         ))}
       </div>

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
 import { GoalItem } from '@/types/goals';
@@ -7,7 +6,7 @@ import { BaseData } from '@/types/dashboard';
 import { usePersistedState } from '@/hooks/usePersistedState';
 import { toast } from '@/components/ui/sonner';
 
-export { Category, GoalItem, BaseData };
+export type { Category, GoalItem, BaseData };
 
 export const useDashboardData = () => {
   const defaultData: BaseData = {

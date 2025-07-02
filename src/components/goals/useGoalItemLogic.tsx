@@ -31,7 +31,7 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
 
   const percentage = goal.target > 0 ? (goal.current / goal.target) * 100 : 0;
 
-  const handleDoubleClick = (fieldName: string, currentValue: number | string) => {
+  const handleFieldClick = (fieldName: string, currentValue: number | string) => {
     setEditingField(fieldName);
     setLocalEditValue(currentValue.toString());
   };
@@ -55,6 +55,7 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
         break;
     }
     onUpdate(index, updatedGoal);
+    setLocalEditValue(updatedGoal[fieldName as keyof GoalItem]?.toString() || '');
   };
 
   const handleDecrement = (fieldName: string) => {
@@ -76,6 +77,7 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
         break;
     }
     onUpdate(index, updatedGoal);
+    setLocalEditValue(updatedGoal[fieldName as keyof GoalItem]?.toString() || '');
   };
 
   const handleLocalValueChange = (value: string) => {
@@ -122,7 +124,8 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
   };
 
   const handleClickOutside = (e: React.MouseEvent) => {
-    if (editingField && e.target === e.currentTarget) {
+    // Only close editing if clicking on the card background itself
+    if (e.target === e.currentTarget && editingField) {
       if (editingField !== 'icon') {
         handleFieldBlur(editingField);
       } else {
@@ -138,7 +141,7 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
     increment,
     getGoalColor,
     percentage,
-    handleDoubleClick,
+    handleFieldClick,
     handleIncrement,
     handleDecrement,
     handleLocalValueChange,

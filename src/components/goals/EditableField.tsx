@@ -11,7 +11,7 @@ interface EditableFieldProps {
   isEditing: boolean;
   localEditValue: string;
   increment: number;
-  onDoubleClick: (fieldName: string, value: number | string) => void;
+  onFieldClick: (fieldName: string, value: number | string) => void;
   onLocalValueChange: (value: string) => void;
   onFieldBlur: (fieldName: string) => void;
   onIncrement: (fieldName: string) => void;
@@ -27,7 +27,7 @@ const EditableField = ({
   isEditing, 
   localEditValue, 
   increment, 
-  onDoubleClick, 
+  onFieldClick, 
   onLocalValueChange, 
   onFieldBlur,
   onIncrement, 
@@ -41,11 +41,10 @@ const EditableField = ({
   return (
     <div 
       className="cursor-pointer" 
-      onDoubleClick={(e) => {
+      onClick={(e) => {
         e.stopPropagation();
-        onDoubleClick(fieldName, value);
+        onFieldClick(fieldName, value);
       }}
-      onClick={(e) => e.stopPropagation()}
     >
       <div className="text-xs text-slate-400">{label}</div>
       <div className={`font-bold ${colorClass}`}>
@@ -53,7 +52,7 @@ const EditableField = ({
       </div>
       
       {isEditing && (
-        <div className="mt-2 space-y-2">
+        <div className="mt-2 space-y-2" onClick={(e) => e.stopPropagation()}>
           <Input
             type={isNumber ? "number" : "text"}
             value={localEditValue}
@@ -66,7 +65,6 @@ const EditableField = ({
             }}
             className="text-sm bg-slate-700 border-slate-600 text-white h-8"
             placeholder={isNumber ? "Enter amount" : "Enter value"}
-            onClick={(e) => e.stopPropagation()}
             autoFocus
           />
           {isNumber && (

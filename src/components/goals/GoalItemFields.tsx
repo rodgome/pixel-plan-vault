@@ -45,7 +45,7 @@ const GoalItemFields = ({
           isEditing={editingField === 'current'}
           localEditValue={localEditValue}
           increment={increment}
-          onDoubleClick={onDoubleClick}
+          onFieldClick={onDoubleClick}
           onLocalValueChange={onLocalValueChange}
           onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
@@ -59,7 +59,7 @@ const GoalItemFields = ({
           isEditing={editingField === 'target'}
           localEditValue={localEditValue}
           increment={increment}
-          onDoubleClick={onDoubleClick}
+          onFieldClick={onDoubleClick}
           onLocalValueChange={onLocalValueChange}
           onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
@@ -77,7 +77,7 @@ const GoalItemFields = ({
           isEditing={editingField === 'monthlyContribution'}
           localEditValue={localEditValue}
           increment={increment}
-          onDoubleClick={onDoubleClick}
+          onFieldClick={onDoubleClick}
           onLocalValueChange={onLocalValueChange}
           onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
@@ -91,7 +91,7 @@ const GoalItemFields = ({
           isEditing={editingField === 'plannedContribution'}
           localEditValue={localEditValue}
           increment={increment}
-          onDoubleClick={onDoubleClick}
+          onFieldClick={onDoubleClick}
           onLocalValueChange={onLocalValueChange}
           onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}

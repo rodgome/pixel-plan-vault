@@ -87,7 +87,7 @@ const GoalItemHeader = ({
             isEditing={editingField === 'name'}
             localEditValue={localEditValue}
             increment={increment}
-            onDoubleClick={onDoubleClick}
+            onFieldClick={onDoubleClick}
             onLocalValueChange={onLocalValueChange}
             onFieldBlur={onFieldBlur}
             onIncrement={onIncrement}

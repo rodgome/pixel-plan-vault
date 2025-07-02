@@ -29,7 +29,7 @@ const GoalItemCard = ({ goal, index, onUpdate, onDelete }: GoalItemCardProps) =>
     increment,
     getGoalColor,
     percentage,
-    handleDoubleClick,
+    handleFieldClick,
     handleIncrement,
     handleDecrement,
     handleLocalValueChange,
@@ -48,7 +48,7 @@ const GoalItemCard = ({ goal, index, onUpdate, onDelete }: GoalItemCardProps) =>
         setEditingField={setEditingField}
         localEditValue={localEditValue}
         increment={increment}
-        onDoubleClick={handleDoubleClick}
+        onDoubleClick={handleFieldClick}
         onLocalValueChange={handleLocalValueChange}
         onFieldBlur={handleFieldBlur}
         onIncrement={handleIncrement}
@@ -62,7 +62,7 @@ const GoalItemCard = ({ goal, index, onUpdate, onDelete }: GoalItemCardProps) =>
         editingField={editingField}
         localEditValue={localEditValue}
         increment={increment}
-        onDoubleClick={handleDoubleClick}
+        onDoubleClick={handleFieldClick}
         onLocalValueChange={handleLocalValueChange}
         onFieldBlur={handleFieldBlur}
         onIncrement={handleIncrement}

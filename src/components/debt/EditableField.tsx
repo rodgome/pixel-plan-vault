@@ -1,8 +1,5 @@
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Plus, Minus } from 'lucide-react';
+import EditableField from '@/components/ui/EditableField';
 
 interface EditableFieldProps {
   fieldName: string;
@@ -21,7 +18,7 @@ interface EditableFieldProps {
   showButtons?: boolean;
 }
 
-const EditableField = ({
+const DebtEditableField = ({
   fieldName,
   value,
   label,
@@ -39,97 +36,34 @@ const EditableField = ({
 }: EditableFieldProps) => {
   const isEditing = editingField === fieldName;
   
-  const handleIncrement = (e: React.MouseEvent) => {
-    console.log('Increment clicked for field:', fieldName);
-    e.preventDefault();
-    e.stopPropagation();
-    onIncrement(fieldName);
+  const getFieldType = () => {
+    if (fieldName === 'interestRate') return 'percentage';
+    return 'currency';
   };
 
-  const handleDecrement = (e: React.MouseEvent) => {
-    console.log('Decrement clicked for field:', fieldName);
-    e.preventDefault();
-    e.stopPropagation();
-    onDecrement(fieldName);
+  const handleFieldClick = (fieldName: string, value: string | number) => {
+    onDoubleClick(fieldName, typeof value === 'string' ? parseFloat(value) : value);
   };
 
-  const handleInputKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      onFieldBlur(fieldName);
-    }
-    // Prevent other key events from bubbling up
-    e.stopPropagation();
-  };
-
-  const handleInputBlur = (e: React.FocusEvent) => {
-    // Only blur if we're not clicking on one of our buttons
-    const relatedTarget = e.relatedTarget as HTMLElement;
-    if (relatedTarget && relatedTarget.closest('.increment-decrement-buttons')) {
-      return; // Don't blur if clicking on our buttons
-    }
-    onFieldBlur(fieldName);
-  };
-
-  const displayValue = fieldName === 'interestRate' ? `${value}%` : `$${value.toLocaleString()}`;
-  
   return (
-    <div 
-      className="cursor-pointer" 
-      onDoubleClick={(e) => {
-        e.stopPropagation();
-        if (canEdit) onDoubleClick(fieldName, value);
-      }}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (!isEditing && canEdit) {
-          onDoubleClick(fieldName, value);
-        }
-      }}
-    >
-      <div className="text-xs text-slate-400">{label}</div>
-      <div className={`font-bold ${colorClass}`}>{displayValue}</div>
-      
-      {isEditing && canEdit && (
-        <div className="mt-2 space-y-2" onClick={(e) => e.stopPropagation()}>
-          <Input
-            type="number"
-            value={localEditValue}
-            onChange={(e) => onLocalValueChange(e.target.value)}
-            onBlur={handleInputBlur}
-            onKeyDown={handleInputKeyDown}
-            className="text-sm bg-slate-700 border-slate-600 text-white h-8"
-            placeholder="Enter amount"
-            onClick={(e) => e.stopPropagation()}
-            autoFocus
-            step={fieldName === 'interestRate' ? '0.01' : '1'}
-          />
-          {showButtons && (
-            <div className="flex items-center justify-center gap-2 increment-decrement-buttons">
-              <Button 
-                size="sm" 
-                variant="outline" 
-                onClick={handleDecrement}
-                className="bg-red-600 hover:bg-red-700 text-white border-red-600 h-7 px-2"
-                type="button"
-              >
-                <Minus className="w-3 h-3" />
-              </Button>
-              <span className="text-white text-xs">±{increment}</span>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                onClick={handleIncrement}
-                className="bg-green-600 hover:bg-green-700 text-white border-green-600 h-7 px-2"
-                type="button"
-              >
-                <Plus className="w-3 h-3" />
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+    <EditableField
+      fieldName={fieldName}
+      value={value}
+      label={label}
+      type={getFieldType()}
+      colorClass={colorClass}
+      isEditing={isEditing}
+      localEditValue={localEditValue}
+      increment={increment}
+      onFieldClick={handleFieldClick}
+      onLocalValueChange={onLocalValueChange}
+      onFieldBlur={onFieldBlur}
+      onIncrement={onIncrement}
+      onDecrement={onDecrement}
+      canEdit={canEdit}
+      showButtons={showButtons}
+    />
   );
 };
 
-export default EditableField;
+export default DebtEditableField;

@@ -1,4 +1,6 @@
 
+import EditableField from '@/components/ui/EditableField';
+
 interface EditableIconProps {
   type: string;
   editingField: string | null;
@@ -18,47 +20,36 @@ const EditableIcon = ({
   onEditingFieldChange,
   canEdit = true
 }: EditableIconProps) => {
-  const getDebtIcon = (debtType: string) => {
-    switch (debtType) {
-      case 'credit_card': return '💳';
-      case 'loan': return '🏦';
-      case 'mortgage': return '🏠';
-      default: return '💸';
-    }
-  };
-
   const isEditing = editingField === 'icon';
   
+  const handleFieldClick = (fieldName: string, value: string | number) => {
+    onDoubleClick(fieldName, value.toString());
+  };
+
+  const iconOptions = [
+    { value: 'credit_card', label: 'Credit Card', icon: '💳' },
+    { value: 'loan', label: 'Loan', icon: '🏦' },
+    { value: 'mortgage', label: 'Mortgage', icon: '🏠' },
+    { value: 'other', label: 'Other', icon: '💸' }
+  ];
+
   return (
-    <div 
-      className="cursor-pointer" 
-      onDoubleClick={(e) => {
-        e.stopPropagation();
-        if (canEdit) onDoubleClick('icon', type);
-      }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <span className="text-lg">{getDebtIcon(type)}</span>
-      
-      {isEditing && canEdit && (
-        <div className="mt-2">
-          <select
-            value={localEditValue}
-            onChange={(e) => {
-              onTypeChange(e.target.value);
-              onEditingFieldChange(null);
-            }}
-            className="text-sm bg-slate-700 border-slate-600 text-white h-8 rounded px-2"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <option value="credit_card">💳 Credit Card</option>
-            <option value="loan">🏦 Loan</option>
-            <option value="mortgage">🏠 Mortgage</option>
-            <option value="other">💸 Other</option>
-          </select>
-        </div>
-      )}
-    </div>
+    <EditableField
+      fieldName="icon"
+      value={type}
+      type="icon"
+      colorClass="text-lg"
+      isEditing={isEditing}
+      localEditValue={localEditValue}
+      onFieldClick={handleFieldClick}
+      onLocalValueChange={() => {}} // Not used for icon type
+      onFieldBlur={() => {}} // Not used for icon type
+      onTypeChange={onTypeChange}
+      onEditingFieldChange={onEditingFieldChange}
+      canEdit={canEdit}
+      showButtons={false}
+      iconOptions={iconOptions}
+    />
   );
 };
 

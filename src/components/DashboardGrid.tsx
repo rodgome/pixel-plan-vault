@@ -23,6 +23,7 @@ interface DashboardGridProps {
   spendingCategories: Category[];
   debts: DebtItem[];
   goals: GoalItem[];
+  totalBudget: number;
   totalMinPayments: number;
   totalPlannedPayments: number;
   totalPaid: number;
@@ -33,6 +34,7 @@ const DashboardGrid = ({
   spendingCategories,
   debts,
   goals,
+  totalBudget,
   totalMinPayments,
   totalPlannedPayments,
   totalPaid,
@@ -41,7 +43,8 @@ const DashboardGrid = ({
   // Calculate savings progress (simplified)
   const savingsCurrent = goals.reduce((sum, goal) => sum + goal.current, 0);
   const savingsTarget = goals.reduce((sum, goal) => sum + goal.target, 0);
-  const remaining = spendingCategories.reduce((sum, cat) => sum - cat.amount, 0);
+  const totalSpent = spendingCategories.reduce((sum, cat) => sum + cat.amount, 0);
+  const remaining = totalBudget - totalSpent;
 
   return (
     <div className="grid grid-cols-1 gap-6">

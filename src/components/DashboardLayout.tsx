@@ -130,10 +130,11 @@ const DashboardLayout = ({
       />
 
       {/* Main Content Grid - Will update based on spending changes */}
-      <DashboardGrid 
+      <DashboardGrid
         spendingCategories={spendingCategories}
         debts={monthlyData.debts}
         goals={monthlyData.goalItems}
+        totalBudget={totalBudget}
         totalMinPayments={totalMinPayments}
         totalPlannedPayments={totalPlannedPayments}
         totalPaid={totalPaid}

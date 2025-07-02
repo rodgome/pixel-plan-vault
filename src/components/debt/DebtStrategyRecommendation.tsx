@@ -16,6 +16,10 @@ const DebtStrategyRecommendation = ({ debt, showStrategy }: DebtStrategyRecommen
     return null;
   }
 
+  if (isMinimized) {
+    return null;
+  }
+
   return (
     <div className="bg-black/30 p-3 rounded border border-slate-500 mb-3">
       <div className="flex items-center justify-between mb-1">
@@ -32,9 +36,7 @@ const DebtStrategyRecommendation = ({ debt, showStrategy }: DebtStrategyRecommen
           <Minimize className="w-3 h-3" />
         </Button>
       </div>
-      {!isMinimized && (
-        <div className="font-bold text-amber-400">${debt.recommendedPayment.toLocaleString()}</div>
-      )}
+      <div className="font-bold text-amber-400">${debt.recommendedPayment.toLocaleString()}</div>
     </div>
   );
 };

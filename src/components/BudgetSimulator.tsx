@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import SimulationControls from './SimulationControls';
 import SimulationResults from './SimulationResults';
 import { BaseData } from './DashboardData';
+import { defaultBaseData } from '@/data/defaultBaseData';
 
 interface BudgetSimulatorProps {
   baseData?: BaseData;
@@ -12,17 +13,7 @@ interface BudgetSimulatorProps {
 
 const BudgetSimulator = ({ baseData: propBaseData }: BudgetSimulatorProps) => {
   // Use prop data if available, otherwise fall back to default data
-  const [baseData] = useState(propBaseData || {
-    income: 5000,
-    categories: [
-      { name: 'NEEDS', amount: 2000, budget: 2500, color: 'bg-red-500' },
-      { name: 'WANTS', amount: 800, budget: 1000, color: 'bg-orange-500' },
-      { name: 'DEBT', amount: 300, budget: 400, color: 'bg-yellow-500' },
-      { name: 'GOALS', amount: 1200, budget: 1800, color: 'bg-green-500' }
-    ],
-    debts: [],
-    goals: []
-  });
+  const [baseData] = useState(propBaseData || defaultBaseData);
 
   const [simulations, setSimulations] = useState([
     {

@@ -105,7 +105,9 @@ const DashboardLayout = ({
         income={monthlyData.income} 
         expenses={monthlyData.expenses} 
         debt={monthlyData.debt} 
-        goals={monthlyData.goals} 
+        goals={monthlyData.goals}
+        categories={baseData.categories}
+        totalIncome={baseData.income}
       />
 
       {/* Validation Alerts - Now based on budget vs actual requirements */}

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import DebtSummaryCards from './debt/DebtSummaryCards';
 import MonthlyDebtProgress from './debt/MonthlyDebtProgress';
+import DebtAllocationCard from './debt/DebtAllocationCard';
 import VirtualizedDebtList from './debt/VirtualizedDebtList';
 
 interface DebtBreakdownProps {
@@ -83,14 +84,6 @@ const DebtBreakdown = ({
     }
   };
 
-  const handleSpentUpdate = (newSpentAmount: number) => {
-    if (onSpentUpdate) {
-      // Calculate total spent from all debts
-      const totalSpent = debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
-      onSpentUpdate(totalSpent);
-    }
-  };
-
   return (
     <div className="space-y-4">
       {/* Strategy Selector and Add Button */}
@@ -136,17 +129,25 @@ const DebtBreakdown = ({
         spentAmount={debtSpent}
       />
 
-      {/* Virtualized Debt Items */}
+      {/* NEW: Debt Payment Allocation Card */}
+      {onUpdateDebt && (
+        <DebtAllocationCard
+          debts={debts}
+          totalPaidAmount={debtSpent}
+          onUpdateDebt={onUpdateDebt}
+        />
+      )}
+
+      {/* Virtualized Debt Items - Remove individual editing capabilities for totalPaid */}
       <VirtualizedDebtList
         debts={strategicDebts}
         onUpdate={handleUpdateDebt}
         onDelete={handleDeleteDebt}
         onBudgetUpdate={onBudgetUpdate}
-        onSpentUpdate={handleSpentUpdate}
-        debtBudget={debtBudget}
         showStrategy={true}
         height={600}
         itemHeight={180}
+        hidePaymentEdit={true}
       />
     </div>
   );

@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import GoalSummaryCards from './goals/GoalSummaryCards';
+import GoalAllocationCard from './goals/GoalAllocationCard';
 import VirtualizedGoalsList from './goals/VirtualizedGoalsList';
 
 interface GoalItem {
@@ -19,13 +20,15 @@ interface GoalsBreakdownProps {
   onUpdateGoal?: (index: number, updatedGoal: GoalItem) => void;
   onDeleteGoal?: (index: number) => void;
   onAddGoal?: (newGoal: GoalItem) => void;
+  goalsSpent?: number;
 }
 
 const GoalsBreakdown = ({ 
   goals, 
   onUpdateGoal,
   onDeleteGoal,
-  onAddGoal
+  onAddGoal,
+  goalsSpent = 0
 }: GoalsBreakdownProps) => {
 
   const handleAddGoal = () => {
@@ -75,13 +78,23 @@ const GoalsBreakdown = ({
       {/* Summary */}
       <GoalSummaryCards goals={goals} />
 
-      {/* Virtualized Goal Items */}
+      {/* NEW: Goal Allocation Card */}
+      {onUpdateGoal && (
+        <GoalAllocationCard
+          goals={goals}
+          totalPaidAmount={goalsSpent}
+          onUpdateGoal={onUpdateGoal}
+        />
+      )}
+
+      {/* Virtualized Goal Items - Remove individual editing capabilities for current amount */}
       <VirtualizedGoalsList
         goals={goals}
         onUpdate={onUpdateGoal ? handleUpdateGoal : undefined}
         onDelete={onDeleteGoal ? handleDeleteGoal : undefined}
         height={600}
         itemHeight={160}
+        hideCurrentEdit={true}
       />
     </div>
   );

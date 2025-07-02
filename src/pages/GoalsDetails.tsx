@@ -17,6 +17,9 @@ const GoalsDetails = () => {
     window.history.back();
   };
 
+  // Get the goals spent amount from the GOALS category
+  const goalsSpent = baseData.categories.find(cat => cat.name === 'GOALS')?.amount || 0;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-green-400 font-mono">
       {/* Header */}
@@ -54,6 +57,7 @@ const GoalsDetails = () => {
               onUpdateGoal={handleGoalUpdate}
               onDeleteGoal={handleDeleteGoal}
               onAddGoal={handleAddGoal}
+              goalsSpent={goalsSpent}
             />
           </div>
         </Card>

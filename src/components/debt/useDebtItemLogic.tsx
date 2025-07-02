@@ -1,5 +1,6 @@
-import { useState } from 'react';
+
 import { DebtItem } from '@/types/debt';
+import { useEditableField } from '@/hooks/useEditableField';
 
 interface UseDebtItemLogicProps {
   debt: DebtItem | any;
@@ -8,163 +9,30 @@ interface UseDebtItemLogicProps {
 }
 
 export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProps) => {
-  const [editingField, setEditingField] = useState<string | null>(null);
-  const [localEditValue, setLocalEditValue] = useState<string>('');
-  const [increment] = useState(100);
-
-  const handleDoubleClick = (fieldName: string, currentValue: number | string) => {
-    console.log('Debt field double click:', fieldName, currentValue);
-    setEditingField(fieldName);
-    setLocalEditValue(currentValue.toString());
-  };
-
-  const handleLocalValueChange = (value: string) => {
-    console.log('Debt local value change:', value);
-    setLocalEditValue(value);
-  };
-
-  const handleFieldBlur = (fieldName: string) => {
-    console.log('Debt field blur:', fieldName, localEditValue);
-    if (!onUpdate) {
-      setEditingField(null);
-      return;
+  const {
+    editingField,
+    setEditingField,
+    localEditValue,
+    increment,
+    handleDoubleClick,
+    handleLocalValueChange,
+    handleFieldBlur,
+    handleIncrement,
+    handleDecrement,
+    handleTypeChange,
+    handleClickOutside
+  } = useEditableField({
+    item: debt,
+    index,
+    onUpdate,
+    increment: 100,
+    onTypeChange: (newType: string) => {
+      if (!onUpdate) return;
+      const updatedDebt = { ...debt };
+      updatedDebt.type = newType as 'credit_card' | 'loan' | 'mortgage' | 'other';
+      onUpdate(index, updatedDebt);
     }
-    
-    const updatedDebt = { ...debt };
-    
-    if (fieldName === 'name') {
-      updatedDebt.name = localEditValue;
-    } else {
-      const numValue = parseFloat(localEditValue);
-      if (!isNaN(numValue) && numValue >= 0) {
-        switch (fieldName) {
-          case 'balance':
-            updatedDebt.balance = numValue;
-            console.log('Balance field blur - updating balance to:', numValue);
-            console.log('Updated debt object:', updatedDebt);
-            break;
-          case 'minPayment':
-            updatedDebt.minPayment = numValue;
-            break;
-          case 'plannedPayment':
-            updatedDebt.plannedPayment = numValue;
-            break;
-          case 'totalPaid':
-            updatedDebt.totalPaid = numValue;
-            break;
-          case 'interestRate':
-            updatedDebt.interestRate = numValue;
-            break;
-        }
-        console.log('Calling onUpdate with:', updatedDebt);
-        onUpdate(index, updatedDebt);
-      } else {
-        console.log('Invalid number value for field:', fieldName, localEditValue);
-      }
-    }
-    
-    setEditingField(null);
-    setLocalEditValue('');
-  };
-
-  const handleIncrement = (fieldName: string) => {
-    console.log('Debt increment:', fieldName);
-    if (!onUpdate) return;
-    
-    const updatedDebt = { ...debt };
-    let newValue;
-    
-    switch (fieldName) {
-      case 'balance':
-        newValue = (updatedDebt.balance || 0) + increment;
-        updatedDebt.balance = newValue;
-        console.log('Incrementing balance from', debt.balance, 'to', updatedDebt.balance);
-        break;
-      case 'minPayment':
-        newValue = (updatedDebt.minPayment || 0) + increment;
-        updatedDebt.minPayment = newValue;
-        break;
-      case 'plannedPayment':
-        newValue = (updatedDebt.plannedPayment || 0) + increment;
-        updatedDebt.plannedPayment = newValue;
-        break;
-      case 'totalPaid':
-        newValue = (updatedDebt.totalPaid || 0) + increment;
-        updatedDebt.totalPaid = newValue;
-        break;
-      case 'interestRate':
-        newValue = (updatedDebt.interestRate || 0) + 0.5;
-        updatedDebt.interestRate = newValue;
-        break;
-    }
-    
-    console.log('Debt after increment:', updatedDebt);
-    console.log('Calling onUpdate with incremented debt:', updatedDebt);
-    onUpdate(index, updatedDebt);
-    
-    // Update local edit value to reflect the new value
-    if (newValue !== undefined) {
-      setLocalEditValue(newValue.toString());
-    }
-  };
-
-  const handleDecrement = (fieldName: string) => {
-    console.log('Debt decrement:', fieldName);
-    if (!onUpdate) return;
-    
-    const updatedDebt = { ...debt };
-    let newValue;
-    
-    switch (fieldName) {
-      case 'balance':
-        newValue = Math.max(0, (updatedDebt.balance || 0) - increment);
-        updatedDebt.balance = newValue;
-        console.log('Decrementing balance from', debt.balance, 'to', updatedDebt.balance);
-        break;
-      case 'minPayment':
-        newValue = Math.max(0, (updatedDebt.minPayment || 0) - increment);
-        updatedDebt.minPayment = newValue;
-        break;
-      case 'plannedPayment':
-        newValue = Math.max(0, (updatedDebt.plannedPayment || 0) - increment);
-        updatedDebt.plannedPayment = newValue;
-        break;
-      case 'totalPaid':
-        newValue = Math.max(0, (updatedDebt.totalPaid || 0) - increment);
-        updatedDebt.totalPaid = newValue;
-        break;
-      case 'interestRate':
-        newValue = Math.max(0, (updatedDebt.interestRate || 0) - 0.5);
-        updatedDebt.interestRate = newValue;
-        break;
-    }
-    
-    console.log('Debt after decrement:', updatedDebt);
-    console.log('Calling onUpdate with decremented debt:', updatedDebt);
-    onUpdate(index, updatedDebt);
-    
-    // Update local edit value to reflect the new value
-    if (newValue !== undefined) {
-      setLocalEditValue(newValue.toString());
-    }
-  };
-
-  const handleTypeChange = (newType: string) => {
-    if (!onUpdate) return;
-    const updatedDebt = { ...debt };
-    updatedDebt.type = newType as 'credit_card' | 'loan' | 'mortgage' | 'other';
-    onUpdate(index, updatedDebt);
-  };
-
-  const handleClickOutside = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && editingField) {
-      if (editingField !== 'icon') {
-        handleFieldBlur(editingField);
-      } else {
-        setEditingField(null);
-      }
-    }
-  };
+  });
 
   return {
     editingField,

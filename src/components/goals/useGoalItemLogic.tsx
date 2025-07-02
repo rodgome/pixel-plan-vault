@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useEditableField } from '@/hooks/useEditableField';
 
 interface GoalItem {
   name: string;
@@ -18,9 +19,23 @@ interface UseGoalItemLogicProps {
 }
 
 export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProps) => {
-  const [editingField, setEditingField] = useState<string | null>(null);
-  const [localEditValue, setLocalEditValue] = useState<string>('');
-  const [increment, setIncrement] = useState(100);
+  const {
+    editingField,
+    setEditingField,
+    localEditValue,
+    increment,
+    handleDoubleClick: baseHandleDoubleClick,
+    handleLocalValueChange,
+    handleFieldBlur: baseHandleFieldBlur,
+    handleIncrement: baseHandleIncrement,
+    handleDecrement: baseHandleDecrement,
+    handleClickOutside
+  } = useEditableField({
+    item: goal,
+    index,
+    onUpdate,
+    increment: 100
+  });
 
   const getGoalColor = (percentage: number) => {
     if (percentage >= 80) return 'text-green-400';
@@ -31,11 +46,12 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
 
   const percentage = goal.target > 0 ? (goal.current / goal.target) * 100 : 0;
 
+  // Custom field click handler that converts string|number to number|string
   const handleFieldClick = (fieldName: string, currentValue: number | string) => {
-    setEditingField(fieldName);
-    setLocalEditValue(currentValue.toString());
+    baseHandleDoubleClick(fieldName, currentValue);
   };
 
+  // Custom increment handler for goals-specific fields
   const handleIncrement = (fieldName: string) => {
     if (!onUpdate) return;
     
@@ -53,11 +69,14 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
       case 'plannedContribution':
         updatedGoal.plannedContribution = (updatedGoal.plannedContribution || 0) + increment;
         break;
+      default:
+        baseHandleIncrement(fieldName);
+        return;
     }
     onUpdate(index, updatedGoal);
-    setLocalEditValue(updatedGoal[fieldName as keyof GoalItem]?.toString() || '');
   };
 
+  // Custom decrement handler for goals-specific fields
   const handleDecrement = (fieldName: string) => {
     if (!onUpdate) return;
     
@@ -75,15 +94,14 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
       case 'plannedContribution':
         updatedGoal.plannedContribution = Math.max(0, (updatedGoal.plannedContribution || 0) - increment);
         break;
+      default:
+        baseHandleDecrement(fieldName);
+        return;
     }
     onUpdate(index, updatedGoal);
-    setLocalEditValue(updatedGoal[fieldName as keyof GoalItem]?.toString() || '');
   };
 
-  const handleLocalValueChange = (value: string) => {
-    setLocalEditValue(value);
-  };
-
+  // Custom field blur handler for goals-specific validation
   const handleFieldBlur = (fieldName: string) => {
     if (!onUpdate) return;
     
@@ -111,6 +129,9 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
         case 'plannedContribution':
           updatedGoal.plannedContribution = numValue;
           break;
+        default:
+          baseHandleFieldBlur(fieldName);
+          return;
       }
       onUpdate(index, updatedGoal);
     }
@@ -121,17 +142,6 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
     if (!onUpdate) return;
     const updatedGoal = { ...goal, type };
     onUpdate(index, updatedGoal);
-  };
-
-  const handleClickOutside = (e: React.MouseEvent) => {
-    // Only close editing if clicking on the card background itself
-    if (e.target === e.currentTarget && editingField) {
-      if (editingField !== 'icon') {
-        handleFieldBlur(editingField);
-      } else {
-        setEditingField(null);
-      }
-    }
   };
 
   return {

@@ -19,6 +19,7 @@ export const usePersistedState = <T,>({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const loadedRef = useRef(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load initial data
   useEffect(() => {
@@ -55,6 +56,15 @@ export const usePersistedState = <T,>({
     loadData();
   }, [key, defaultValue, version, migrate]);
 
+  // Clear any pending timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   // Debounced persistence to prevent rapid writes
   const persistData = useCallback((newState: T) => {
     try {
@@ -73,13 +83,16 @@ export const usePersistedState = <T,>({
   // Optimistic update with debounced persistence
   const setStateWithPersistence = useCallback((updater: React.SetStateAction<T>) => {
     setState(prev => {
-      const newState = typeof updater === 'function' 
+      const newState = typeof updater === 'function'
         ? (updater as (prevState: T) => T)(prev)
         : updater;
-      
+
       // Debounce persistence to prevent flickering
-      setTimeout(() => persistData(newState), 100);
-      
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => persistData(newState), 100);
+
       return newState;
     });
   }, [persistData]);

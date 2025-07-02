@@ -12,6 +12,10 @@ interface MoneyPlanCardProps {
     value: number;
     color: string;
   }>;
+  wantsData?: {
+    incomeMinusBudget: number;
+    spentSoFar: number;
+  };
 }
 
 const MoneyPlanCard = ({
@@ -20,7 +24,8 @@ const MoneyPlanCard = ({
   icon,
   color,
   bgColor,
-  additionalSections
+  additionalSections,
+  wantsData
 }: MoneyPlanCardProps) => {
   return (
     <Card className={`${bgColor} border-slate-700 backdrop-blur-sm hover:bg-opacity-80 transition-all duration-200 hover:scale-105`}>
@@ -32,6 +37,24 @@ const MoneyPlanCard = ({
         <div className={`text-2xl font-bold ${color} mb-3`}>
           ${amount.toLocaleString()}
         </div>
+        
+        {/* Special WANTS card content */}
+        {wantsData && (
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-slate-400 text-sm">Income - Budget</span>
+              <span className={`text-sm font-bold ${wantsData.incomeMinusBudget >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                ${wantsData.incomeMinusBudget.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-slate-400 text-sm">Spent So Far</span>
+              <span className="text-sm font-bold text-blue-400">
+                ${wantsData.spentSoFar.toLocaleString()}
+              </span>
+            </div>
+          </div>
+        )}
         
         {additionalSections && additionalSections.length > 0 && (
           <div className="space-y-2 border-t border-slate-600 pt-3">

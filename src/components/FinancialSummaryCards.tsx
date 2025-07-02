@@ -25,19 +25,7 @@ const FinancialSummaryCards = ({
 }: FinancialSummaryCardsProps) => {
   // Find the WANTS category to get additional info
   const wantsCategory = categories.find(cat => cat.name === 'WANTS');
-  const wantsAdditionalSections = wantsCategory ? [
-    {
-      label: 'Income - Budget',
-      value: totalIncome - wantsCategory.budget,
-      color: (totalIncome - wantsCategory.budget) >= 0 ? 'text-green-400' : 'text-red-400'
-    },
-    {
-      label: 'Spent So Far',
-      value: wantsCategory.amount,
-      color: 'text-blue-400'
-    }
-  ] : undefined;
-
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <MoneyPlanCard
@@ -53,7 +41,6 @@ const FinancialSummaryCards = ({
         icon="💸"
         color="text-red-400"
         bgColor="bg-red-900/20"
-        additionalSections={wantsAdditionalSections}
       />
       <MoneyPlanCard
         title="DEBT"
@@ -63,11 +50,22 @@ const FinancialSummaryCards = ({
         bgColor="bg-orange-900/20"
       />
       <MoneyPlanCard
+        title="WANTS"
+        amount={wantsCategory?.budget || 0}
+        icon="🎮"
+        color="text-blue-400"
+        bgColor="bg-blue-900/20"
+        wantsData={wantsCategory ? {
+          incomeMinusBudget: totalIncome - wantsCategory.budget,
+          spentSoFar: wantsCategory.amount
+        } : undefined}
+      />
+      <MoneyPlanCard
         title="GOALS"
         amount={goals}
         icon="🎯"
-        color="text-blue-400"
-        bgColor="bg-blue-900/20"
+        color="text-purple-400"
+        bgColor="bg-purple-900/20"
       />
     </div>
   );

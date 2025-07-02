@@ -17,7 +17,18 @@ const DebtStrategyRecommendation = ({ debt, showStrategy }: DebtStrategyRecommen
   }
 
   if (isMinimized) {
-    return null;
+    return (
+      <div className="flex justify-end mb-3">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsMinimized(false)}
+          className="h-6 w-6 p-0 text-amber-400 hover:text-amber-300 hover:bg-slate-700/50"
+        >
+          <Lightbulb className="w-3 h-3" />
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -30,7 +41,7 @@ const DebtStrategyRecommendation = ({ debt, showStrategy }: DebtStrategyRecommen
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setIsMinimized(!isMinimized)}
+          onClick={() => setIsMinimized(true)}
           className="h-6 w-6 p-0 text-amber-400 hover:text-amber-300 hover:bg-slate-700/50"
         >
           <Minimize className="w-3 h-3" />

@@ -1,19 +1,9 @@
-
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { GoalItem } from '@/types/goals';
 import GoalSummaryCards from './goals/GoalSummaryCards';
 import GoalAllocationCard from './goals/GoalAllocationCard';
 import VirtualizedGoalsList from './goals/VirtualizedGoalsList';
-
-interface GoalItem {
-  name: string;
-  target: number;
-  current: number;
-  monthlyContribution: number;
-  plannedContribution?: number;
-  type: 'emergency_fund' | 'retirement' | 'investment' | 'vacation' | 'other';
-  deadline?: string;
-}
 
 interface GoalsBreakdownProps {
   goals: GoalItem[];

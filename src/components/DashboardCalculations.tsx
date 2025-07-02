@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { BaseData } from '@/components/DashboardData';
+import { BaseData } from '@/types/dashboard';
 import { DashboardCalculations } from '@/types/dashboard';
 
 /**

@@ -1,52 +1,34 @@
+
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
+import { GoalItem } from '@/types/goals';
+import { Category } from '@/types/categories';
+import { BaseData } from '@/types/dashboard';
 import { usePersistedState } from '@/hooks/usePersistedState';
 import { toast } from '@/components/ui/sonner';
 
-export interface Category {
-  name: string;
-  amount: number;
-  budget: number;
-  color: string;
-}
-
-export interface GoalItem {
-  name: string;
-  target: number;
-  current: number;
-  monthlyContribution: number;
-  plannedContribution: number;
-  type: 'emergency_fund' | 'retirement' | 'investment' | 'vacation' | 'other';
-  deadline?: string;
-}
-
-export interface BaseData {
-  income: number;
-  categories: Category[];
-  debts: DebtItem[];
-  goals: GoalItem[];
-}
+export { Category, GoalItem, BaseData };
 
 export const useDashboardData = () => {
   const defaultData: BaseData = {
     income: 5000,
     categories: [{
-      name: 'NEEDS',
+      name: 'NEEDS' as const,
       amount: 0,
       budget: 2500,
       color: 'bg-red-500'
     }, {
-      name: 'WANTS',
+      name: 'WANTS' as const,
       amount: 0,
       budget: 1000,
       color: 'bg-orange-500'
     }, {
-      name: 'DEBT',
+      name: 'DEBT' as const,
       amount: 0,
       budget: 400,
       color: 'bg-yellow-500'
     }, {
-      name: 'GOALS',
+      name: 'GOALS' as const,
       amount: 0,
       budget: 1800,
       color: 'bg-green-500'

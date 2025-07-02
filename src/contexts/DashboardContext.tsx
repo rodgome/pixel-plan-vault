@@ -1,7 +1,10 @@
 
 import React, { createContext, useContext, ReactNode } from 'react';
 import { DebtItem } from '@/types/debt';
-import { useDashboardData, BaseData, Category, GoalItem } from '@/components/DashboardData';
+import { GoalItem } from '@/types/goals';
+import { Category } from '@/types/categories';
+import { BaseData } from '@/types/dashboard';
+import { useDashboardData } from '@/components/DashboardData';
 
 interface DashboardContextType {
   baseData: BaseData;

@@ -88,6 +88,11 @@ const DebtItemCard = React.memo(({
     originalHandleFieldBlur(fieldName);
   };
 
+  // Fix the function signature to match the expected type
+  const handleDoubleClickWrapper = (fieldName: string, currentValue: string | number): void => {
+    handleDoubleClick(fieldName, currentValue.toString());
+  };
+
   const handleConfirmBudgetChange = () => {
     if (pendingPaymentChange !== null && originalDebt && onUpdate && onBudgetUpdate) {
       // Calculate the difference and update the budget
@@ -126,7 +131,7 @@ const DebtItemCard = React.memo(({
           localEditValue={localEditValue}
           showStrategy={showStrategy}
           canEdit={!!onUpdate}
-          onDoubleClick={handleDoubleClick}
+          onDoubleClick={handleDoubleClickWrapper}
           onLocalValueChange={handleLocalValueChange}
           onFieldBlur={handleFieldBlur}
           onTypeChange={handleTypeChange}
@@ -140,7 +145,7 @@ const DebtItemCard = React.memo(({
           localEditValue={localEditValue}
           increment={increment}
           canEdit={!!onUpdate}
-          onDoubleClick={handleDoubleClick}
+          onDoubleClick={handleDoubleClickWrapper}
           onLocalValueChange={handleLocalValueChange}
           onFieldBlur={handleFieldBlur}
           onIncrement={handleIncrement}

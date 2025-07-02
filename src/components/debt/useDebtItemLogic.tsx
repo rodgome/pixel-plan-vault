@@ -19,7 +19,7 @@ interface UseDebtItemLogicReturn {
   handleIncrement: (fieldName: string) => void;
   handleDecrement: (fieldName: string) => void;
   handleTypeChange: (newType: string) => void;
-  handleClickOutside: () => void;
+  handleClickOutside: (e: React.MouseEvent) => void;
 }
 
 /**
@@ -35,12 +35,12 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
     setEditingField,
     localEditValue,
     increment,
-    handleDoubleClick,
+    handleDoubleClick: originalHandleDoubleClick,
     handleLocalValueChange,
     handleFieldBlur,
     handleIncrement,
     handleDecrement,
-    handleTypeChange,
+    handleTypeChange: originalHandleTypeChange,
     handleClickOutside
   } = useEditableField({
     item: debt,
@@ -54,6 +54,16 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
       onUpdate(index, updatedDebt);
     }
   });
+
+  // Wrap the double click handler to match expected signature
+  const handleDoubleClick = (fieldName: string, currentValue: string): void => {
+    originalHandleDoubleClick(fieldName, currentValue);
+  };
+
+  // Wrap the type change handler
+  const handleTypeChange = (newType: string): void => {
+    originalHandleTypeChange(newType);
+  };
 
   return {
     editingField,

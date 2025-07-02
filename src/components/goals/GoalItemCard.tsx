@@ -214,7 +214,7 @@ const GoalItemCard = ({ goal, index, onUpdate, onDelete }: GoalItemCardProps) =>
         <EditableField
           fieldName="monthlyContribution"
           value={goal.monthlyContribution}
-          label="MONTHLY CONTRIBUTION"
+          label="MONTHLY CONTRIBUTED"
           colorClass="text-orange-400"
           isEditing={editingField === 'monthlyContribution'}
           directEditValue={directEditValue}

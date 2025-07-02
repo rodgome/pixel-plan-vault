@@ -41,6 +41,7 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
         switch (fieldName) {
           case 'balance':
             updatedDebt.balance = numValue;
+            console.log('Updating balance to:', numValue);
             break;
           case 'minPayment':
             updatedDebt.minPayment = numValue;
@@ -71,24 +72,26 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
     const updatedDebt = { ...debt };
     switch (fieldName) {
       case 'balance':
-        updatedDebt.balance += increment;
+        updatedDebt.balance = (updatedDebt.balance || 0) + increment;
+        console.log('Incrementing balance from', debt.balance, 'to', updatedDebt.balance);
         break;
       case 'minPayment':
-        updatedDebt.minPayment += increment;
+        updatedDebt.minPayment = (updatedDebt.minPayment || 0) + increment;
         break;
       case 'plannedPayment':
-        updatedDebt.plannedPayment += increment;
+        updatedDebt.plannedPayment = (updatedDebt.plannedPayment || 0) + increment;
         break;
       case 'totalPaid':
-        updatedDebt.totalPaid += increment;
+        updatedDebt.totalPaid = (updatedDebt.totalPaid || 0) + increment;
         break;
       case 'interestRate':
-        updatedDebt.interestRate += 0.5;
+        updatedDebt.interestRate = (updatedDebt.interestRate || 0) + 0.5;
         break;
     }
     console.log('Debt after increment:', updatedDebt);
     onUpdate(index, updatedDebt);
     
+    // Update local edit value to reflect the new value
     const newValue = updatedDebt[fieldName as keyof DebtItem];
     setLocalEditValue(newValue?.toString() || '');
   };
@@ -100,24 +103,26 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
     const updatedDebt = { ...debt };
     switch (fieldName) {
       case 'balance':
-        updatedDebt.balance = Math.max(0, updatedDebt.balance - increment);
+        updatedDebt.balance = Math.max(0, (updatedDebt.balance || 0) - increment);
+        console.log('Decrementing balance from', debt.balance, 'to', updatedDebt.balance);
         break;
       case 'minPayment':
-        updatedDebt.minPayment = Math.max(0, updatedDebt.minPayment - increment);
+        updatedDebt.minPayment = Math.max(0, (updatedDebt.minPayment || 0) - increment);
         break;
       case 'plannedPayment':
-        updatedDebt.plannedPayment = Math.max(0, updatedDebt.plannedPayment - increment);
+        updatedDebt.plannedPayment = Math.max(0, (updatedDebt.plannedPayment || 0) - increment);
         break;
       case 'totalPaid':
-        updatedDebt.totalPaid = Math.max(0, updatedDebt.totalPaid - increment);
+        updatedDebt.totalPaid = Math.max(0, (updatedDebt.totalPaid || 0) - increment);
         break;
       case 'interestRate':
-        updatedDebt.interestRate = Math.max(0, updatedDebt.interestRate - 0.5);
+        updatedDebt.interestRate = Math.max(0, (updatedDebt.interestRate || 0) - 0.5);
         break;
     }
     console.log('Debt after decrement:', updatedDebt);
     onUpdate(index, updatedDebt);
     
+    // Update local edit value to reflect the new value
     const newValue = updatedDebt[fieldName as keyof DebtItem];
     setLocalEditValue(newValue?.toString() || '');
   };

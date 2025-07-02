@@ -6,7 +6,7 @@ import { useDashboardData } from '../components/DashboardData';
 import GoalsBreakdown from '../components/GoalsBreakdown';
 
 const GoalsDetails = () => {
-  const { baseData, handleDataUpdate } = useDashboardData();
+  const { baseData, setBaseData } = useDashboardData();
 
   const handleBack = () => {
     window.history.back();
@@ -15,17 +15,17 @@ const GoalsDetails = () => {
   const handleUpdateGoal = (index: number, updatedGoal: any) => {
     const updatedGoals = [...baseData.goals];
     updatedGoals[index] = updatedGoal;
-    handleDataUpdate({ goals: updatedGoals });
+    setBaseData(prev => ({ ...prev, goals: updatedGoals }));
   };
 
   const handleDeleteGoal = (index: number) => {
     const updatedGoals = baseData.goals.filter((_, i) => i !== index);
-    handleDataUpdate({ goals: updatedGoals });
+    setBaseData(prev => ({ ...prev, goals: updatedGoals }));
   };
 
   const handleAddGoal = (newGoal: any) => {
     const updatedGoals = [...baseData.goals, newGoal];
-    handleDataUpdate({ goals: updatedGoals });
+    setBaseData(prev => ({ ...prev, goals: updatedGoals }));
   };
 
   return (

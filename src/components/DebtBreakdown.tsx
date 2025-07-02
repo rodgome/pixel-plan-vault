@@ -15,6 +15,7 @@ interface DebtBreakdownProps {
   onDeleteDebt?: (index: number) => void;
   onAddDebt?: (newDebt: DebtItem) => void;
   onBudgetUpdate?: (newBudgetAmount: number) => void;
+  onSpentUpdate?: (newSpentAmount: number) => void;
   debtBudget?: number;
   debtSpent?: number;
   strategy?: DebtStrategy;
@@ -27,6 +28,7 @@ const DebtBreakdown = ({
   onDeleteDebt,
   onAddDebt,
   onBudgetUpdate,
+  onSpentUpdate,
   debtBudget = 0, 
   debtSpent = 0,
   strategy = 'snowball',
@@ -77,6 +79,14 @@ const DebtBreakdown = ({
       if (originalIndex !== -1) {
         onUpdateDebt(originalIndex, updatedDebt);
       }
+    }
+  };
+
+  const handleSpentUpdate = (newSpentAmount: number) => {
+    if (onSpentUpdate) {
+      // Calculate total spent from all debts
+      const totalSpent = debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);
+      onSpentUpdate(totalSpent);
     }
   };
 
@@ -135,6 +145,7 @@ const DebtBreakdown = ({
             onUpdate={(_, updatedDebt) => handleUpdateDebt(debt, updatedDebt)}
             onDelete={() => handleDeleteDebt(debt)}
             onBudgetUpdate={onBudgetUpdate}
+            onSpentUpdate={handleSpentUpdate}
             debtBudget={debtBudget}
             showStrategy={true}
           />

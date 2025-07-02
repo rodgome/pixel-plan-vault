@@ -16,6 +16,7 @@ interface DebtItemCardProps {
   onUpdate?: (index: number, updatedDebt: DebtItem) => void;
   onDelete?: () => void;
   onBudgetUpdate?: (newBudgetAmount: number) => void;
+  onSpentUpdate?: (newSpentAmount: number) => void;
   showStrategy?: boolean;
   debtBudget?: number;
 }
@@ -27,6 +28,7 @@ const DebtItemCard = ({
   onUpdate, 
   onDelete, 
   onBudgetUpdate,
+  onSpentUpdate,
   showStrategy = false,
   debtBudget = 0
 }: DebtItemCardProps) => {
@@ -54,6 +56,20 @@ const DebtItemCard = ({
   const maxPayment = Math.max(debt.minPayment, plannedPayment, totalPaid);
 
   const handleFieldBlur = (fieldName: string) => {
+    if (fieldName === 'totalPaid' && onUpdate && onSpentUpdate) {
+      // When totalPaid changes, update the spending tracker
+      const newPaidAmount = parseFloat(localEditValue);
+      if (!isNaN(newPaidAmount) && newPaidAmount >= 0) {
+        const updatedDebt = { ...debt } as DebtItem;
+        updatedDebt.totalPaid = newPaidAmount;
+        onUpdate(index, updatedDebt);
+        
+        // Trigger spent update to sync with dashboard
+        onSpentUpdate(newPaidAmount);
+        return;
+      }
+    }
+
     if (fieldName === 'plannedPayment' && onUpdate && onBudgetUpdate) {
       const newPaymentValue = parseFloat(localEditValue);
       if (!isNaN(newPaymentValue) && newPaymentValue >= 0) {

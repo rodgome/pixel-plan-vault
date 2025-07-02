@@ -10,7 +10,7 @@ interface DebtDetailsProps {
 }
 
 const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
-  const { baseData, debtStrategy, handleDebtUpdate, handleDebtStrategyChange, setBaseData } = dashboardData;
+  const { baseData, debtStrategy, handleDebtUpdate, handleDebtStrategyChange, setBaseData, handleSpentUpdate } = dashboardData;
 
   const handleBack = () => {
     window.history.back();
@@ -57,6 +57,20 @@ const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
     }
   };
 
+  const handleSpentUpdateLocal = (newSpentAmount: number) => {
+    if (handleSpentUpdate) {
+      // Update the debt category spent amount
+      const updatedCategories = baseData.categories.map(cat => 
+        cat.name === 'DEBT' 
+          ? { ...cat, amount: newSpentAmount }
+          : cat
+      );
+      handleSpentUpdate({
+        categories: updatedCategories
+      });
+    }
+  };
+
   const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
   const debtSpent = baseData.categories.find(cat => cat.name === 'DEBT')?.amount || 0;
 
@@ -98,6 +112,7 @@ const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
               onDeleteDebt={handleDeleteDebt}
               onAddDebt={handleAddDebt}
               onBudgetUpdate={handleBudgetUpdate}
+              onSpentUpdate={handleSpentUpdateLocal}
               debtBudget={debtBudget}
               debtSpent={debtSpent}
               strategy={debtStrategy}

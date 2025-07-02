@@ -17,6 +17,8 @@ interface EditableFieldProps {
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
   isNumber?: boolean;
+  isSelected?: boolean;
+  onSelect?: (fieldName: string) => void;
 }
 
 const EditableField = ({ 
@@ -32,7 +34,9 @@ const EditableField = ({
   onFieldBlur,
   onIncrement, 
   onDecrement,
-  isNumber = true
+  isNumber = true,
+  isSelected = false,
+  onSelect
 }: EditableFieldProps) => {
   const displayValue = isNumber && typeof value === 'number' ? 
     `$${value.toLocaleString()}` : 
@@ -45,7 +49,12 @@ const EditableField = ({
         e.stopPropagation();
         onDoubleClick(fieldName, value);
       }}
-      onClick={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (onSelect) {
+          onSelect(fieldName);
+        }
+      }}
     >
       <div className="text-xs text-slate-400">{label}</div>
       <div className={`font-bold ${colorClass}`}>
@@ -99,9 +108,9 @@ const EditableField = ({
         </div>
       )}
       
-      {/* Always show increment/decrement buttons for number fields, even when not editing */}
-      {!isEditing && isNumber && (
-        <div className="flex items-center justify-center gap-2 mt-2 opacity-60 hover:opacity-100 transition-opacity">
+      {/* Show increment/decrement buttons when field is selected but not editing */}
+      {!isEditing && isSelected && isNumber && (
+        <div className="flex items-center justify-center gap-2 mt-2">
           <Button 
             size="sm" 
             variant="outline" 

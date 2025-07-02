@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FixedSizeList as List } from 'react-window';
 import GoalItemCard from './GoalItemCard';
@@ -19,6 +18,7 @@ interface VirtualizedGoalsListProps {
   onDelete?: (index: number) => void;
   height?: number;
   itemHeight?: number;
+  hideCurrentEdit?: boolean;
 }
 
 interface GoalItemProps {
@@ -63,7 +63,8 @@ const VirtualizedGoalsList = React.memo(({
   onUpdate,
   onDelete,
   height = 400,
-  itemHeight = 160
+  itemHeight = 160,
+  hideCurrentEdit = false
 }: VirtualizedGoalsListProps) => {
   // Don't use virtualization for small lists
   if (goals.length <= 5) {

@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { DebtItem } from '@/types/debt';
 import { DebtStrategy, calculateDebtStrategy } from '@/utils/debtStrategies';
@@ -147,7 +146,6 @@ const DebtBreakdown = ({
         showStrategy={true}
         height={600}
         itemHeight={180}
-        hidePaymentEdit={true}
       />
     </div>
   );

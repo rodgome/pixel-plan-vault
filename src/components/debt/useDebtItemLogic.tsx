@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DebtItem } from '@/types/debt';
 
@@ -57,7 +56,7 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
             updatedDebt.interestRate = numValue;
             break;
         }
-        console.log('Updating debt with:', updatedDebt);
+        console.log('Calling onUpdate with:', updatedDebt);
         onUpdate(index, updatedDebt);
       } else {
         console.log('Invalid number value for field:', fieldName, localEditValue);
@@ -73,30 +72,40 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
     if (!onUpdate) return;
     
     const updatedDebt = { ...debt };
+    let newValue;
+    
     switch (fieldName) {
       case 'balance':
-        updatedDebt.balance = (updatedDebt.balance || 0) + increment;
+        newValue = (updatedDebt.balance || 0) + increment;
+        updatedDebt.balance = newValue;
         console.log('Incrementing balance from', debt.balance, 'to', updatedDebt.balance);
         break;
       case 'minPayment':
-        updatedDebt.minPayment = (updatedDebt.minPayment || 0) + increment;
+        newValue = (updatedDebt.minPayment || 0) + increment;
+        updatedDebt.minPayment = newValue;
         break;
       case 'plannedPayment':
-        updatedDebt.plannedPayment = (updatedDebt.plannedPayment || 0) + increment;
+        newValue = (updatedDebt.plannedPayment || 0) + increment;
+        updatedDebt.plannedPayment = newValue;
         break;
       case 'totalPaid':
-        updatedDebt.totalPaid = (updatedDebt.totalPaid || 0) + increment;
+        newValue = (updatedDebt.totalPaid || 0) + increment;
+        updatedDebt.totalPaid = newValue;
         break;
       case 'interestRate':
-        updatedDebt.interestRate = (updatedDebt.interestRate || 0) + 0.5;
+        newValue = (updatedDebt.interestRate || 0) + 0.5;
+        updatedDebt.interestRate = newValue;
         break;
     }
+    
     console.log('Debt after increment:', updatedDebt);
+    console.log('Calling onUpdate with incremented debt:', updatedDebt);
     onUpdate(index, updatedDebt);
     
     // Update local edit value to reflect the new value
-    const newValue = updatedDebt[fieldName as keyof DebtItem];
-    setLocalEditValue(newValue?.toString() || '');
+    if (newValue !== undefined) {
+      setLocalEditValue(newValue.toString());
+    }
   };
 
   const handleDecrement = (fieldName: string) => {
@@ -104,30 +113,40 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
     if (!onUpdate) return;
     
     const updatedDebt = { ...debt };
+    let newValue;
+    
     switch (fieldName) {
       case 'balance':
-        updatedDebt.balance = Math.max(0, (updatedDebt.balance || 0) - increment);
+        newValue = Math.max(0, (updatedDebt.balance || 0) - increment);
+        updatedDebt.balance = newValue;
         console.log('Decrementing balance from', debt.balance, 'to', updatedDebt.balance);
         break;
       case 'minPayment':
-        updatedDebt.minPayment = Math.max(0, (updatedDebt.minPayment || 0) - increment);
+        newValue = Math.max(0, (updatedDebt.minPayment || 0) - increment);
+        updatedDebt.minPayment = newValue;
         break;
       case 'plannedPayment':
-        updatedDebt.plannedPayment = Math.max(0, (updatedDebt.plannedPayment || 0) - increment);
+        newValue = Math.max(0, (updatedDebt.plannedPayment || 0) - increment);
+        updatedDebt.plannedPayment = newValue;
         break;
       case 'totalPaid':
-        updatedDebt.totalPaid = Math.max(0, (updatedDebt.totalPaid || 0) - increment);
+        newValue = Math.max(0, (updatedDebt.totalPaid || 0) - increment);
+        updatedDebt.totalPaid = newValue;
         break;
       case 'interestRate':
-        updatedDebt.interestRate = Math.max(0, (updatedDebt.interestRate || 0) - 0.5);
+        newValue = Math.max(0, (updatedDebt.interestRate || 0) - 0.5);
+        updatedDebt.interestRate = newValue;
         break;
     }
+    
     console.log('Debt after decrement:', updatedDebt);
+    console.log('Calling onUpdate with decremented debt:', updatedDebt);
     onUpdate(index, updatedDebt);
     
     // Update local edit value to reflect the new value
-    const newValue = updatedDebt[fieldName as keyof DebtItem];
-    setLocalEditValue(newValue?.toString() || '');
+    if (newValue !== undefined) {
+      setLocalEditValue(newValue.toString());
+    }
   };
 
   const handleTypeChange = (newType: string) => {

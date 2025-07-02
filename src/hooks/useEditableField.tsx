@@ -20,18 +20,24 @@ export const useEditableField = <T extends Record<string, any>>({
   const [localEditValue, setLocalEditValue] = useState<string>('');
 
   const handleDoubleClick = useCallback((fieldName: string, currentValue: number | string) => {
-    console.log('Field double click:', fieldName, currentValue);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Field double click:', fieldName, currentValue);
+    }
     setEditingField(fieldName);
     setLocalEditValue(currentValue.toString());
   }, []);
 
   const handleLocalValueChange = useCallback((value: string) => {
-    console.log('Local value change:', value);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Local value change:', value);
+    }
     setLocalEditValue(value);
   }, []);
 
   const handleFieldBlur = useCallback((fieldName: string) => {
-    console.log('Field blur:', fieldName, localEditValue);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Field blur:', fieldName, localEditValue);
+    }
     if (!onUpdate) {
       setEditingField(null);
       setLocalEditValue('');
@@ -53,11 +59,15 @@ export const useEditableField = <T extends Record<string, any>>({
     const numValue = parseFloat(localEditValue);
     if (!isNaN(numValue) && numValue >= 0) {
       (updatedItem as any)[fieldName] = numValue;
-      console.log(`${fieldName} field blur - updating to:`, numValue);
-      console.log('Updated item object:', updatedItem);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`${fieldName} field blur - updating to:`, numValue);
+        console.log('Updated item object:', updatedItem);
+      }
       onUpdate(index, updatedItem);
     } else {
-      console.log('Invalid number value for field:', fieldName, localEditValue);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Invalid number value for field:', fieldName, localEditValue);
+      }
     }
     
     setEditingField(null);
@@ -65,7 +75,9 @@ export const useEditableField = <T extends Record<string, any>>({
   }, [item, index, onUpdate, localEditValue]);
 
   const handleIncrement = useCallback((fieldName: string) => {
-    console.log('Increment:', fieldName);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Increment:', fieldName);
+    }
     if (!onUpdate) return;
     
     const updatedItem = { ...item } as T;
@@ -79,7 +91,9 @@ export const useEditableField = <T extends Record<string, any>>({
     }
     
     (updatedItem as any)[fieldName] = newValue;
-    console.log(`Incrementing ${fieldName} from`, item[fieldName], 'to', (updatedItem as any)[fieldName]);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Incrementing ${fieldName} from`, item[fieldName], 'to', (updatedItem as any)[fieldName]);
+    }
     onUpdate(index, updatedItem);
     
     // Update local edit value if currently editing
@@ -89,7 +103,9 @@ export const useEditableField = <T extends Record<string, any>>({
   }, [item, index, onUpdate, increment, editingField]);
 
   const handleDecrement = useCallback((fieldName: string) => {
-    console.log('Decrement:', fieldName);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Decrement:', fieldName);
+    }
     if (!onUpdate) return;
     
     const updatedItem = { ...item } as T;
@@ -103,7 +119,9 @@ export const useEditableField = <T extends Record<string, any>>({
     }
     
     (updatedItem as any)[fieldName] = newValue;
-    console.log(`Decrementing ${fieldName} from`, item[fieldName], 'to', (updatedItem as any)[fieldName]);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Decrementing ${fieldName} from`, item[fieldName], 'to', (updatedItem as any)[fieldName]);
+    }
     onUpdate(index, updatedItem);
     
     // Update local edit value if currently editing

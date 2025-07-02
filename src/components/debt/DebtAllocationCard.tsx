@@ -5,14 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { DebtItem } from '@/types/debt';
+import { DebtStrategy } from '@/utils/debtStrategies';
 
 interface DebtAllocationCardProps {
   debts: DebtItem[];
   totalPaidAmount: number;
+  strategy?: DebtStrategy;
   onUpdateDebt: (index: number, updatedDebt: DebtItem) => void;
 }
 
-const DebtAllocationCard = ({ debts, totalPaidAmount, onUpdateDebt }: DebtAllocationCardProps) => {
+const DebtAllocationCard = ({ debts, totalPaidAmount, strategy = 'snowball', onUpdateDebt }: DebtAllocationCardProps) => {
   const [allocations, setAllocations] = useState<{ [key: number]: number }>({});
 
   // Initialize allocations from actual debt totalPaid values
@@ -38,43 +40,36 @@ const DebtAllocationCard = ({ debts, totalPaidAmount, onUpdateDebt }: DebtAlloca
   };
 
   const handleAutoAllocate = () => {
-    // If there's a mismatch, first sync the current allocations
-    const currentTotal = Object.values(allocations).reduce((sum, amount) => sum + amount, 0);
+    if (totalPaidAmount <= 0 || debts.length === 0) return;
     
-    // Calculate how much we need to distribute
-    const amountToDistribute = totalPaidAmount;
-    
-    if (amountToDistribute <= 0 || debts.length === 0) return;
-    
-    // Use minimum payments as the basis for proportional distribution
+    // Calculate total minimum payments
     const totalMinPayments = debts.reduce((sum, debt) => sum + debt.minPayment, 0);
+    const extraBudget = Math.max(0, totalPaidAmount - totalMinPayments);
     
-    if (totalMinPayments === 0) {
-      // If no min payments, distribute equally
-      const equalAmount = Math.floor(amountToDistribute / debts.length);
-      const remainder = amountToDistribute % debts.length;
+    // Sort debts based on strategy
+    const sortedDebts = [...debts].map((debt, originalIndex) => ({ debt, originalIndex }));
+    
+    sortedDebts.sort((a, b) => {
+      if (strategy === 'snowball') {
+        // Snowball: smallest balance first
+        return a.debt.balance - b.debt.balance;
+      } else {
+        // Avalanche: highest interest rate first
+        return b.debt.interestRate - a.debt.interestRate;
+      }
+    });
+    
+    // Allocate payments: minimum payments for all, then extra to highest priority
+    sortedDebts.forEach(({ debt, originalIndex }, priorityIndex) => {
+      let payment = debt.minPayment;
       
-      debts.forEach((debt, index) => {
-        const amount = equalAmount + (index < remainder ? 1 : 0);
-        handleAllocationChange(index, amount);
-      });
-    } else {
-      // Distribute proportionally based on minimum payments
-      let distributedSoFar = 0;
+      // Give all extra budget to the highest priority debt (first in sorted array)
+      if (priorityIndex === 0 && extraBudget > 0) {
+        payment += extraBudget;
+      }
       
-      debts.forEach((debt, index) => {
-        if (index === debts.length - 1) {
-          // Last item gets the remainder to ensure exact total
-          const amount = amountToDistribute - distributedSoFar;
-          handleAllocationChange(index, Math.max(0, amount));
-        } else {
-          const proportion = debt.minPayment / totalMinPayments;
-          const amount = Math.floor(amountToDistribute * proportion);
-          distributedSoFar += amount;
-          handleAllocationChange(index, amount);
-        }
-      });
-    }
+      handleAllocationChange(originalIndex, payment);
+    });
   };
 
   return (
@@ -88,7 +83,7 @@ const DebtAllocationCard = ({ debts, totalPaidAmount, onUpdateDebt }: DebtAlloca
             variant="outline"
             className="bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600"
           >
-            Auto Allocate
+            Auto Allocate ({strategy})
           </Button>
         </div>
         

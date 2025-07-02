@@ -133,6 +133,7 @@ const DebtBreakdown = ({
         <DebtAllocationCard
           debts={debts}
           totalPaidAmount={debtSpent}
+          strategy={strategy}
           onUpdateDebt={onUpdateDebt}
         />
       )}

@@ -98,6 +98,35 @@ const EditableField = ({
           )}
         </div>
       )}
+      
+      {/* Always show increment/decrement buttons for number fields, even when not editing */}
+      {!isEditing && isNumber && (
+        <div className="flex items-center justify-center gap-2 mt-2 opacity-60 hover:opacity-100 transition-opacity">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onDecrement(fieldName);
+            }} 
+            className="bg-red-600/80 hover:bg-red-700 text-white border-red-600 h-6 px-1"
+          >
+            <Minus className="w-2 h-2" />
+          </Button>
+          <span className="text-white text-xs">±{increment}</span>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onIncrement(fieldName);
+            }} 
+            className="bg-green-600/80 hover:bg-green-700 text-white border-green-600 h-6 px-1"
+          >
+            <Plus className="w-2 h-2" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -45,6 +45,25 @@ const DebtItemFields = ({
           canEdit={canEdit}
         />
         <EditableField
+          fieldName="interestRate"
+          value={debt.interestRate}
+          label="INTEREST RATE (%)"
+          colorClass="text-yellow-400"
+          editingField={editingField}
+          localEditValue={localEditValue}
+          increment={0.5}
+          onDoubleClick={onDoubleClick}
+          onLocalValueChange={onLocalValueChange}
+          onFieldBlur={onFieldBlur}
+          onIncrement={onIncrement}
+          onDecrement={onDecrement}
+          canEdit={canEdit}
+          showButtons={false}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+        <EditableField
           fieldName="minPayment"
           value={debt.minPayment}
           label="MIN PAYMENT"
@@ -59,9 +78,6 @@ const DebtItemFields = ({
           onDecrement={onDecrement}
           canEdit={canEdit}
         />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 text-sm mb-3">
         <EditableField
           fieldName="plannedPayment"
           value={debt.plannedPayment}
@@ -77,6 +93,9 @@ const DebtItemFields = ({
           onDecrement={onDecrement}
           canEdit={canEdit}
         />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 text-sm mb-3">
         <EditableField
           fieldName="totalPaid"
           value={debt.totalPaid}
@@ -92,6 +111,7 @@ const DebtItemFields = ({
           onDecrement={onDecrement}
           canEdit={canEdit}
         />
+        <div></div>
       </div>
     </>
   );

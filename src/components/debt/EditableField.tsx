@@ -18,6 +18,7 @@ interface EditableFieldProps {
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
   canEdit?: boolean;
+  showButtons?: boolean;
 }
 
 const EditableField = ({
@@ -33,7 +34,8 @@ const EditableField = ({
   onFieldBlur,
   onIncrement,
   onDecrement,
-  canEdit = true
+  canEdit = true,
+  showButtons = true
 }: EditableFieldProps) => {
   const isEditing = editingField === fieldName;
   
@@ -67,6 +69,8 @@ const EditableField = ({
     }
     onFieldBlur(fieldName);
   };
+
+  const displayValue = fieldName === 'interestRate' ? `${value}%` : `$${value.toLocaleString()}`;
   
   return (
     <div 
@@ -83,7 +87,7 @@ const EditableField = ({
       }}
     >
       <div className="text-xs text-slate-400">{label}</div>
-      <div className={`font-bold ${colorClass}`}>${value.toLocaleString()}</div>
+      <div className={`font-bold ${colorClass}`}>{displayValue}</div>
       
       {isEditing && canEdit && (
         <div className="mt-2 space-y-2" onClick={(e) => e.stopPropagation()}>
@@ -97,28 +101,31 @@ const EditableField = ({
             placeholder="Enter amount"
             onClick={(e) => e.stopPropagation()}
             autoFocus
+            step={fieldName === 'interestRate' ? '0.01' : '1'}
           />
-          <div className="flex items-center justify-center gap-2 increment-decrement-buttons">
-            <Button 
-              size="sm" 
-              variant="outline" 
-              onClick={handleDecrement}
-              className="bg-red-600 hover:bg-red-700 text-white border-red-600 h-7 px-2"
-              type="button"
-            >
-              <Minus className="w-3 h-3" />
-            </Button>
-            <span className="text-white text-xs">±{increment}</span>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              onClick={handleIncrement}
-              className="bg-green-600 hover:bg-green-700 text-white border-green-600 h-7 px-2"
-              type="button"
-            >
-              <Plus className="w-3 h-3" />
-            </Button>
-          </div>
+          {showButtons && (
+            <div className="flex items-center justify-center gap-2 increment-decrement-buttons">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={handleDecrement}
+                className="bg-red-600 hover:bg-red-700 text-white border-red-600 h-7 px-2"
+                type="button"
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <span className="text-white text-xs">±{increment}</span>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={handleIncrement}
+                className="bg-green-600 hover:bg-green-700 text-white border-green-600 h-7 px-2"
+                type="button"
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

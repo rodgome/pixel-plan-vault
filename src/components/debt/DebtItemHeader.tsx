@@ -31,12 +31,6 @@ const DebtItemHeader = ({
   onEditingFieldChange,
   onDelete
 }: DebtItemHeaderProps) => {
-  const getDebtColor = (interestRate: number) => {
-    if (interestRate > 20) return 'text-red-400';
-    if (interestRate > 10) return 'text-orange-400';
-    return 'text-yellow-400';
-  };
-
   const getPriorityColor = (priority: number) => {
     if (priority === 1) return 'text-red-400 font-bold';
     if (priority === 2) return 'text-orange-400';
@@ -87,11 +81,6 @@ const DebtItemHeader = ({
               Priority #{debt.priority}
             </span>
           )}
-        </div>
-        <div className="flex items-center gap-2 mr-8">
-          <div className={`text-sm font-bold ${getDebtColor(debt.interestRate)}`}>
-            {debt.interestRate}% APR
-          </div>
         </div>
       </div>
     </>

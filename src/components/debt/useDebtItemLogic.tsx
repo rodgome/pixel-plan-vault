@@ -41,7 +41,8 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
         switch (fieldName) {
           case 'balance':
             updatedDebt.balance = numValue;
-            console.log('Updating balance to:', numValue);
+            console.log('Balance field blur - updating balance to:', numValue);
+            console.log('Updated debt object:', updatedDebt);
             break;
           case 'minPayment':
             updatedDebt.minPayment = numValue;
@@ -58,6 +59,8 @@ export const useDebtItemLogic = ({ debt, index, onUpdate }: UseDebtItemLogicProp
         }
         console.log('Updating debt with:', updatedDebt);
         onUpdate(index, updatedDebt);
+      } else {
+        console.log('Invalid number value for field:', fieldName, localEditValue);
       }
     }
     

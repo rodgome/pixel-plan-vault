@@ -50,6 +50,8 @@ const GoalItemFields = ({
           onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
+          canEdit={false}
+          showButtons={false}
         />
         <EditableField
           fieldName="target"

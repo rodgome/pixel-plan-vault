@@ -46,22 +46,28 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
 
   const percentage = goal.target > 0 ? (goal.current / goal.target) * 100 : 0;
 
-  // Custom field click handler that converts string|number to number|string
+  // Custom field click handler that blocks editing of current field
   const handleFieldClick = (fieldName: string, currentValue: number | string) => {
+    // Block editing of current - it should only be changed through allocation
+    if (fieldName === 'current') {
+      return;
+    }
     baseHandleDoubleClick(fieldName, currentValue);
   };
 
   // Custom increment handler for goals-specific fields
   const handleIncrement = (fieldName: string) => {
+    // Block editing of current - it should only be changed through allocation
+    if (fieldName === 'current') {
+      return;
+    }
+    
     if (!onUpdate) return;
     
     const updatedGoal = { ...goal };
     switch (fieldName) {
       case 'target':
         updatedGoal.target += increment;
-        break;
-      case 'current':
-        updatedGoal.current += increment;
         break;
       case 'monthlyContribution':
         updatedGoal.monthlyContribution += increment;
@@ -78,15 +84,17 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
 
   // Custom decrement handler for goals-specific fields
   const handleDecrement = (fieldName: string) => {
+    // Block editing of current - it should only be changed through allocation
+    if (fieldName === 'current') {
+      return;
+    }
+    
     if (!onUpdate) return;
     
     const updatedGoal = { ...goal };
     switch (fieldName) {
       case 'target':
         updatedGoal.target = Math.max(0, updatedGoal.target - increment);
-        break;
-      case 'current':
-        updatedGoal.current = Math.max(0, updatedGoal.current - increment);
         break;
       case 'monthlyContribution':
         updatedGoal.monthlyContribution = Math.max(0, updatedGoal.monthlyContribution - increment);
@@ -103,6 +111,12 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
 
   // Custom field blur handler for goals-specific validation
   const handleFieldBlur = (fieldName: string) => {
+    // Block editing of current - it should only be changed through allocation
+    if (fieldName === 'current') {
+      setEditingField(null);
+      return;
+    }
+    
     if (!onUpdate) return;
     
     const updatedGoal = { ...goal };
@@ -119,9 +133,6 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
       switch (fieldName) {
         case 'target':
           updatedGoal.target = numValue;
-          break;
-        case 'current':
-          updatedGoal.current = numValue;
           break;
         case 'monthlyContribution':
           updatedGoal.monthlyContribution = numValue;

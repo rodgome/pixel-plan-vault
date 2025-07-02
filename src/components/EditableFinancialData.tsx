@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Minus, Settings } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import BudgetBalance from './BudgetBalance';
 
 interface EditableFinancialDataProps {
   income: number;
@@ -241,6 +241,9 @@ const EditableFinancialData = ({
               </div>
             </div>
           ))}
+
+          {/* Budget Balance Component */}
+          <BudgetBalance income={income} categories={categories} />
         </div>
       </div>
     </Card>

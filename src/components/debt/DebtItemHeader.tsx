@@ -1,11 +1,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
+import { DebtItem } from '@/types/debt';
+import { DebtWithStrategy } from '@/utils/debtStrategies';
 import EditableIcon from './EditableIcon';
 import EditableName from './EditableName';
 
 interface DebtItemHeaderProps {
-  debt: any;
+  debt: DebtItem | DebtWithStrategy;
   editingField: string | null;
   localEditValue: string;
   showStrategy: boolean;
@@ -18,6 +20,11 @@ interface DebtItemHeaderProps {
   onDelete?: () => void;
 }
 
+/**
+ * Header component for debt items with editable name, icon, and delete functionality
+ * @param props - The component props
+ * @returns DebtItemHeader component
+ */
 const DebtItemHeader = ({
   debt,
   editingField,
@@ -31,7 +38,12 @@ const DebtItemHeader = ({
   onEditingFieldChange,
   onDelete
 }: DebtItemHeaderProps) => {
-  const getPriorityColor = (priority: number) => {
+  /**
+   * Gets the appropriate CSS class for priority display
+   * @param priority - The priority number
+   * @returns CSS class string for priority styling
+   */
+  const getPriorityColor = (priority: number): string => {
     if (priority === 1) return 'text-red-400 font-bold';
     if (priority === 2) return 'text-orange-400';
     return 'text-slate-400';
@@ -77,8 +89,8 @@ const DebtItemHeader = ({
             canEdit={canEdit}
           />
           {showStrategy && isStrategicDebt && (
-            <span className={`text-xs px-2 py-1 rounded ${getPriorityColor(debt.priority)}`}>
-              Priority #{debt.priority}
+            <span className={`text-xs px-2 py-1 rounded ${getPriorityColor((debt as DebtWithStrategy).priority)}`}>
+              Priority #{(debt as DebtWithStrategy).priority}
             </span>
           )}
         </div>

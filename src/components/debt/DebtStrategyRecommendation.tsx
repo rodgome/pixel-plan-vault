@@ -2,12 +2,19 @@
 import { useState } from 'react';
 import { Lightbulb, Minimize } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { DebtItem } from '@/types/debt';
+import { DebtWithStrategy } from '@/utils/debtStrategies';
 
 interface DebtStrategyRecommendationProps {
-  debt: any;
+  debt: DebtItem | DebtWithStrategy;
   showStrategy: boolean;
 }
 
+/**
+ * Component for displaying debt strategy recommendations
+ * @param props - The component props
+ * @returns DebtStrategyRecommendation component
+ */
 const DebtStrategyRecommendation = ({ debt, showStrategy }: DebtStrategyRecommendationProps) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const isStrategicDebt = 'recommendedPayment' in debt;
@@ -31,6 +38,8 @@ const DebtStrategyRecommendation = ({ debt, showStrategy }: DebtStrategyRecommen
     );
   }
 
+  const strategicDebt = debt as DebtWithStrategy;
+
   return (
     <div className="bg-black/30 p-3 rounded border border-slate-500 mb-3">
       <div className="flex items-center justify-between mb-1">
@@ -47,7 +56,7 @@ const DebtStrategyRecommendation = ({ debt, showStrategy }: DebtStrategyRecommen
           <Minimize className="w-3 h-3" />
         </Button>
       </div>
-      <div className="font-bold text-amber-400">${debt.recommendedPayment.toLocaleString()}</div>
+      <div className="font-bold text-amber-400">${strategicDebt.recommendedPayment.toLocaleString()}</div>
     </div>
   );
 };

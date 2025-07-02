@@ -1,7 +1,8 @@
 
 import EditableField from '@/components/ui/EditableField';
+import { FieldType } from '@/types/editable';
 
-interface EditableFieldProps {
+interface GoalsEditableFieldProps {
   fieldName: string;
   value: number | string;
   label: string;
@@ -17,6 +18,11 @@ interface EditableFieldProps {
   isNumber?: boolean;
 }
 
+/**
+ * Editable field component specifically designed for goals
+ * @param props - The component props
+ * @returns GoalsEditableField component
+ */
 const GoalsEditableField = ({ 
   fieldName, 
   value, 
@@ -31,8 +37,12 @@ const GoalsEditableField = ({
   onIncrement, 
   onDecrement,
   isNumber = true
-}: EditableFieldProps) => {
-  const getFieldType = () => {
+}: GoalsEditableFieldProps) => {
+  /**
+   * Determines the appropriate field type based on whether it's a number field
+   * @returns The field type for the EditableField component
+   */
+  const getFieldType = (): FieldType => {
     if (!isNumber) return 'text';
     return 'currency';
   };

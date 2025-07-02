@@ -1,8 +1,10 @@
 
+import { DebtItem } from '@/types/debt';
+import { DebtWithStrategy } from '@/utils/debtStrategies';
 import EditableField from './EditableField';
 
 interface DebtItemFieldsProps {
-  debt: any;
+  debt: DebtItem | DebtWithStrategy;
   editingField: string | null;
   localEditValue: string;
   increment: number;
@@ -14,6 +16,11 @@ interface DebtItemFieldsProps {
   onDecrement: (fieldName: string) => void;
 }
 
+/**
+ * Component for rendering editable debt item fields
+ * @param props - The component props
+ * @returns DebtItemFields component
+ */
 const DebtItemFields = ({
   debt,
   editingField,

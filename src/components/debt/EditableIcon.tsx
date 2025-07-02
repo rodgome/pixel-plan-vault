@@ -1,5 +1,6 @@
 
 import EditableField from '@/components/ui/EditableField';
+import { IconOption } from '@/types/editable';
 
 interface EditableIconProps {
   type: string;
@@ -11,6 +12,11 @@ interface EditableIconProps {
   canEdit?: boolean;
 }
 
+/**
+ * Component for editing debt item icons/types
+ * @param props - The component props
+ * @returns EditableIcon component
+ */
 const EditableIcon = ({
   type,
   editingField,
@@ -22,11 +28,11 @@ const EditableIcon = ({
 }: EditableIconProps) => {
   const isEditing = editingField === 'icon';
   
-  const handleFieldClick = (fieldName: string, value: string | number) => {
+  const handleFieldClick = (fieldName: string, value: string | number): void => {
     onDoubleClick(fieldName, value.toString());
   };
 
-  const iconOptions = [
+  const iconOptions: IconOption[] = [
     { value: 'credit_card', label: 'Credit Card', icon: '💳' },
     { value: 'loan', label: 'Loan', icon: '🏦' },
     { value: 'mortgage', label: 'Mortgage', icon: '🏠' },

@@ -11,6 +11,11 @@ interface EditableNameProps {
   canEdit?: boolean;
 }
 
+/**
+ * Component for editing debt item names
+ * @param props - The component props
+ * @returns EditableName component
+ */
 const EditableName = ({
   name,
   editingField,
@@ -22,7 +27,7 @@ const EditableName = ({
 }: EditableNameProps) => {
   const isEditing = editingField === 'name';
   
-  const handleFieldClick = (fieldName: string, value: string | number) => {
+  const handleFieldClick = (fieldName: string, value: string | number): void => {
     onDoubleClick(fieldName, value.toString());
   };
 

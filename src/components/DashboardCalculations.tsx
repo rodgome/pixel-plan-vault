@@ -1,8 +1,15 @@
 
 import { useMemo } from 'react';
-import { BaseData } from './DashboardData';
+import { BaseData } from '@/components/DashboardData';
+import { DashboardCalculations } from '@/types/dashboard';
 
-export const useDashboardCalculations = (baseData: BaseData) => {
+/**
+ * Custom hook for calculating dashboard metrics and derived data
+ * Memoizes calculations for performance optimization
+ * @param baseData - The base dashboard data
+ * @returns Calculated dashboard metrics
+ */
+export const useDashboardCalculations = (baseData: BaseData): DashboardCalculations => {
   // Memoize debt calculations separately
   const debtCalculations = useMemo(() => {
     const actualDebtPayments = baseData.debts.reduce((sum, debt) => sum + (debt.totalPaid || 0), 0);

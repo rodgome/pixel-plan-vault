@@ -19,7 +19,7 @@ interface UseGoalItemLogicProps {
 
 export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProps) => {
   const [editingField, setEditingField] = useState<string | null>(null);
-  const [directEditValue, setDirectEditValue] = useState<string>('');
+  const [localEditValue, setLocalEditValue] = useState<string>('');
   const [increment, setIncrement] = useState(100);
 
   const getGoalColor = (percentage: number) => {
@@ -33,7 +33,7 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
 
   const handleDoubleClick = (fieldName: string, currentValue: number | string) => {
     setEditingField(fieldName);
-    setDirectEditValue(currentValue.toString());
+    setLocalEditValue(currentValue.toString());
   };
 
   const handleIncrement = (fieldName: string) => {
@@ -78,9 +78,8 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
     onUpdate(index, updatedGoal);
   };
 
-  const handleDirectValueChange = (fieldName: string, value: string) => {
-    // Only update the local state, don't trigger onUpdate yet
-    setDirectEditValue(value);
+  const handleLocalValueChange = (value: string) => {
+    setLocalEditValue(value);
   };
 
   const handleFieldBlur = (fieldName: string) => {
@@ -89,13 +88,13 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
     const updatedGoal = { ...goal };
     
     if (fieldName === 'name') {
-      updatedGoal.name = directEditValue;
+      updatedGoal.name = localEditValue;
       onUpdate(index, updatedGoal);
       setEditingField(null);
       return;
     }
     
-    const numValue = parseFloat(directEditValue);
+    const numValue = parseFloat(localEditValue);
     if (!isNaN(numValue) && numValue >= 0) {
       switch (fieldName) {
         case 'target':
@@ -135,14 +134,14 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
   return {
     editingField,
     setEditingField,
-    directEditValue,
+    localEditValue,
     increment,
     getGoalColor,
     percentage,
     handleDoubleClick,
     handleIncrement,
     handleDecrement,
-    handleDirectValueChange,
+    handleLocalValueChange,
     handleFieldBlur,
     handleTypeChange,
     handleClickOutside,

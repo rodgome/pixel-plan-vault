@@ -9,10 +9,10 @@ interface EditableFieldProps {
   label: string;
   colorClass: string;
   isEditing: boolean;
-  directEditValue: string;
+  localEditValue: string;
   increment: number;
   onDoubleClick: (fieldName: string, value: number | string) => void;
-  onDirectValueChange: (fieldName: string, value: string) => void;
+  onLocalValueChange: (value: string) => void;
   onFieldBlur: (fieldName: string) => void;
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
@@ -25,10 +25,10 @@ const EditableField = ({
   label, 
   colorClass, 
   isEditing, 
-  directEditValue, 
+  localEditValue, 
   increment, 
   onDoubleClick, 
-  onDirectValueChange, 
+  onLocalValueChange, 
   onFieldBlur,
   onIncrement, 
   onDecrement,
@@ -56,8 +56,8 @@ const EditableField = ({
         <div className="mt-2 space-y-2">
           <Input
             type={isNumber ? "number" : "text"}
-            value={directEditValue}
-            onChange={(e) => onDirectValueChange(fieldName, e.target.value)}
+            value={localEditValue}
+            onChange={(e) => onLocalValueChange(e.target.value)}
             onBlur={() => onFieldBlur(fieldName)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {

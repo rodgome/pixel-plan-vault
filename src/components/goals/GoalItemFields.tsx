@@ -14,10 +14,10 @@ interface GoalItem {
 interface GoalItemFieldsProps {
   goal: GoalItem;
   editingField: string | null;
-  directEditValue: string;
+  localEditValue: string;
   increment: number;
   onDoubleClick: (fieldName: string, currentValue: number | string) => void;
-  onDirectValueChange: (fieldName: string, value: string) => void;
+  onLocalValueChange: (value: string) => void;
   onFieldBlur: (fieldName: string) => void;
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
@@ -26,10 +26,10 @@ interface GoalItemFieldsProps {
 const GoalItemFields = ({
   goal,
   editingField,
-  directEditValue,
+  localEditValue,
   increment,
   onDoubleClick,
-  onDirectValueChange,
+  onLocalValueChange,
   onFieldBlur,
   onIncrement,
   onDecrement
@@ -43,10 +43,10 @@ const GoalItemFields = ({
           label="CURRENT"
           colorClass="text-green-400"
           isEditing={editingField === 'current'}
-          directEditValue={directEditValue}
+          localEditValue={localEditValue}
           increment={increment}
           onDoubleClick={onDoubleClick}
-          onDirectValueChange={onDirectValueChange}
+          onLocalValueChange={onLocalValueChange}
           onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
@@ -57,10 +57,10 @@ const GoalItemFields = ({
           label="TARGET"
           colorClass="text-blue-400"
           isEditing={editingField === 'target'}
-          directEditValue={directEditValue}
+          localEditValue={localEditValue}
           increment={increment}
           onDoubleClick={onDoubleClick}
-          onDirectValueChange={onDirectValueChange}
+          onLocalValueChange={onLocalValueChange}
           onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
@@ -75,10 +75,10 @@ const GoalItemFields = ({
           label="MONTHLY CONTRIBUTED"
           colorClass="text-orange-400"
           isEditing={editingField === 'monthlyContribution'}
-          directEditValue={directEditValue}
+          localEditValue={localEditValue}
           increment={increment}
           onDoubleClick={onDoubleClick}
-          onDirectValueChange={onDirectValueChange}
+          onLocalValueChange={onLocalValueChange}
           onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
@@ -89,10 +89,10 @@ const GoalItemFields = ({
           label="PLANNED CONTRIBUTION"
           colorClass="text-purple-400"
           isEditing={editingField === 'plannedContribution'}
-          directEditValue={directEditValue}
+          localEditValue={localEditValue}
           increment={increment}
           onDoubleClick={onDoubleClick}
-          onDirectValueChange={onDirectValueChange}
+          onLocalValueChange={onLocalValueChange}
           onFieldBlur={onFieldBlur}
           onIncrement={onIncrement}
           onDecrement={onDecrement}

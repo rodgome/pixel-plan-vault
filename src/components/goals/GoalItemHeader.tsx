@@ -20,10 +20,10 @@ interface GoalItemHeaderProps {
   getGoalColor: (percentage: number) => string;
   editingField: string | null;
   setEditingField: (field: string | null) => void;
-  directEditValue: string;
+  localEditValue: string;
   increment: number;
   onDoubleClick: (fieldName: string, currentValue: number | string) => void;
-  onDirectValueChange: (fieldName: string, value: string) => void;
+  onLocalValueChange: (value: string) => void;
   onFieldBlur: (fieldName: string) => void;
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
@@ -37,10 +37,10 @@ const GoalItemHeader = ({
   getGoalColor,
   editingField,
   setEditingField,
-  directEditValue,
+  localEditValue,
   increment,
   onDoubleClick,
-  onDirectValueChange,
+  onLocalValueChange,
   onFieldBlur,
   onIncrement,
   onDecrement,
@@ -85,10 +85,10 @@ const GoalItemHeader = ({
             label=""
             colorClass="font-bold text-slate-200"
             isEditing={editingField === 'name'}
-            directEditValue={directEditValue}
+            localEditValue={localEditValue}
             increment={increment}
             onDoubleClick={onDoubleClick}
-            onDirectValueChange={onDirectValueChange}
+            onLocalValueChange={onLocalValueChange}
             onFieldBlur={onFieldBlur}
             onIncrement={onIncrement}
             onDecrement={onDecrement}

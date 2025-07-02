@@ -1,16 +1,7 @@
 
 import { Card } from '@/components/ui/card';
+import { GoalItem } from '@/types/goals';
 import GoalsBreakdown from './GoalsBreakdown';
-
-interface GoalItem {
-  name: string;
-  target: number;
-  current: number;
-  monthlyContribution: number;
-  plannedContribution?: number;
-  type: 'emergency_fund' | 'retirement' | 'investment' | 'vacation' | 'other';
-  deadline?: string;
-}
 
 interface GoalsTrackerCardProps {
   goals: GoalItem[];

@@ -56,18 +56,10 @@ const DebtItemCard = React.memo(({
   const maxPayment = Math.max(debt.minPayment, plannedPayment, totalPaid);
 
   const handleFieldBlur = (fieldName: string) => {
-    if (fieldName === 'totalPaid' && onUpdate && onSpentUpdate) {
-      // When totalPaid changes, update the spending tracker
-      const newPaidAmount = parseFloat(localEditValue);
-      if (!isNaN(newPaidAmount) && newPaidAmount >= 0) {
-        const updatedDebt = { ...debt } as DebtItem;
-        updatedDebt.totalPaid = newPaidAmount;
-        onUpdate(index, updatedDebt);
-        
-        // Trigger spent update to sync with dashboard
-        onSpentUpdate(newPaidAmount);
-        return;
-      }
+    // Block editing of totalPaid - it should only be changed through allocation
+    if (fieldName === 'totalPaid') {
+      setEditingField(null);
+      return;
     }
 
     if (fieldName === 'plannedPayment' && onUpdate && onBudgetUpdate) {
@@ -90,6 +82,10 @@ const DebtItemCard = React.memo(({
 
   // Fix the function signature to match the expected type
   const handleDoubleClickWrapper = (fieldName: string, currentValue: string | number): void => {
+    // Block editing of totalPaid - it should only be changed through allocation
+    if (fieldName === 'totalPaid') {
+      return;
+    }
     handleDoubleClick(fieldName, currentValue.toString());
   };
 

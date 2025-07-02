@@ -19,7 +19,6 @@ interface UseGoalItemLogicProps {
 
 export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProps) => {
   const [editingField, setEditingField] = useState<string | null>(null);
-  const [selectedField, setSelectedField] = useState<string | null>(null);
   const [localEditValue, setLocalEditValue] = useState<string>('');
   const [increment, setIncrement] = useState(100);
 
@@ -34,14 +33,7 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
 
   const handleDoubleClick = (fieldName: string, currentValue: number | string) => {
     setEditingField(fieldName);
-    setSelectedField(fieldName);
     setLocalEditValue(currentValue.toString());
-  };
-
-  const handleSelect = (fieldName: string) => {
-    if (editingField !== fieldName) {
-      setSelectedField(fieldName);
-    }
   };
 
   const handleIncrement = (fieldName: string) => {
@@ -137,22 +129,16 @@ export const useGoalItemLogic = ({ goal, index, onUpdate }: UseGoalItemLogicProp
         setEditingField(null);
       }
     }
-    // Clear selected field when clicking outside
-    if (e.target === e.currentTarget) {
-      setSelectedField(null);
-    }
   };
 
   return {
     editingField,
     setEditingField,
-    selectedField,
     localEditValue,
     increment,
     getGoalColor,
     percentage,
     handleDoubleClick,
-    handleSelect,
     handleIncrement,
     handleDecrement,
     handleLocalValueChange,

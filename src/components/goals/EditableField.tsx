@@ -17,8 +17,6 @@ interface EditableFieldProps {
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
   isNumber?: boolean;
-  isSelected?: boolean;
-  onSelect?: (fieldName: string) => void;
 }
 
 const EditableField = ({ 
@@ -34,9 +32,7 @@ const EditableField = ({
   onFieldBlur,
   onIncrement, 
   onDecrement,
-  isNumber = true,
-  isSelected = false,
-  onSelect
+  isNumber = true
 }: EditableFieldProps) => {
   const displayValue = isNumber && typeof value === 'number' ? 
     `$${value.toLocaleString()}` : 
@@ -49,12 +45,7 @@ const EditableField = ({
         e.stopPropagation();
         onDoubleClick(fieldName, value);
       }}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (onSelect) {
-          onSelect(fieldName);
-        }
-      }}
+      onClick={(e) => e.stopPropagation()}
     >
       <div className="text-xs text-slate-400">{label}</div>
       <div className={`font-bold ${colorClass}`}>
@@ -105,35 +96,6 @@ const EditableField = ({
               </Button>
             </div>
           )}
-        </div>
-      )}
-      
-      {/* Show increment/decrement buttons when field is selected but not editing */}
-      {!isEditing && isSelected && isNumber && (
-        <div className="flex items-center justify-center gap-2 mt-2">
-          <Button 
-            size="sm" 
-            variant="outline" 
-            onClick={(e) => {
-              e.stopPropagation();
-              onDecrement(fieldName);
-            }} 
-            className="bg-red-600/80 hover:bg-red-700 text-white border-red-600 h-6 px-1"
-          >
-            <Minus className="w-2 h-2" />
-          </Button>
-          <span className="text-white text-xs">±{increment}</span>
-          <Button 
-            size="sm" 
-            variant="outline" 
-            onClick={(e) => {
-              e.stopPropagation();
-              onIncrement(fieldName);
-            }} 
-            className="bg-green-600/80 hover:bg-green-700 text-white border-green-600 h-6 px-1"
-          >
-            <Plus className="w-2 h-2" />
-          </Button>
         </div>
       )}
     </div>

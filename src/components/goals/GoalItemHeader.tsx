@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import GoalTypeSelector from './GoalTypeSelector';
@@ -19,11 +20,9 @@ interface GoalItemHeaderProps {
   getGoalColor: (percentage: number) => string;
   editingField: string | null;
   setEditingField: (field: string | null) => void;
-  selectedField: string | null;
   localEditValue: string;
   increment: number;
   onDoubleClick: (fieldName: string, currentValue: number | string) => void;
-  onSelect: (fieldName: string) => void;
   onLocalValueChange: (value: string) => void;
   onFieldBlur: (fieldName: string) => void;
   onIncrement: (fieldName: string) => void;
@@ -38,11 +37,9 @@ const GoalItemHeader = ({
   getGoalColor,
   editingField,
   setEditingField,
-  selectedField,
   localEditValue,
   increment,
   onDoubleClick,
-  onSelect,
   onLocalValueChange,
   onFieldBlur,
   onIncrement,
@@ -88,11 +85,9 @@ const GoalItemHeader = ({
             label=""
             colorClass="font-bold text-slate-200"
             isEditing={editingField === 'name'}
-            isSelected={selectedField === 'name'}
             localEditValue={localEditValue}
             increment={increment}
             onDoubleClick={onDoubleClick}
-            onSelect={onSelect}
             onLocalValueChange={onLocalValueChange}
             onFieldBlur={onFieldBlur}
             onIncrement={onIncrement}

@@ -43,6 +43,20 @@ const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
     }
   };
 
+  const handleBudgetUpdate = (newBudgetAmount: number) => {
+    if (setBaseData) {
+      const updatedCategories = baseData.categories.map(cat => 
+        cat.name === 'DEBT' 
+          ? { ...cat, budget: newBudgetAmount }
+          : cat
+      );
+      setBaseData({
+        ...baseData,
+        categories: updatedCategories
+      });
+    }
+  };
+
   const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
   const debtSpent = baseData.categories.find(cat => cat.name === 'DEBT')?.amount || 0;
 
@@ -83,6 +97,7 @@ const DebtDetails = ({ dashboardData }: DebtDetailsProps) => {
               onUpdateDebt={handleUpdateDebt}
               onDeleteDebt={handleDeleteDebt}
               onAddDebt={handleAddDebt}
+              onBudgetUpdate={handleBudgetUpdate}
               debtBudget={debtBudget}
               debtSpent={debtSpent}
               strategy={debtStrategy}

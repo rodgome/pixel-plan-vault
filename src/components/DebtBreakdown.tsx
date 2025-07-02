@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { DebtItem } from '@/types/debt';
 import { DebtStrategy, calculateDebtStrategy } from '@/utils/debtStrategies';
@@ -13,6 +14,7 @@ interface DebtBreakdownProps {
   onUpdateDebt?: (index: number, updatedDebt: DebtItem) => void;
   onDeleteDebt?: (index: number) => void;
   onAddDebt?: (newDebt: DebtItem) => void;
+  onBudgetUpdate?: (newBudgetAmount: number) => void;
   debtBudget?: number;
   debtSpent?: number;
   strategy?: DebtStrategy;
@@ -24,6 +26,7 @@ const DebtBreakdown = ({
   onUpdateDebt,
   onDeleteDebt,
   onAddDebt,
+  onBudgetUpdate,
   debtBudget = 0, 
   debtSpent = 0,
   strategy = 'snowball',
@@ -131,6 +134,8 @@ const DebtBreakdown = ({
             index={index}
             onUpdate={(_, updatedDebt) => handleUpdateDebt(debt, updatedDebt)}
             onDelete={() => handleDeleteDebt(debt)}
+            onBudgetUpdate={onBudgetUpdate}
+            debtBudget={debtBudget}
             showStrategy={true}
           />
         ))}

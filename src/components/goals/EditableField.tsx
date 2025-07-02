@@ -16,6 +16,8 @@ interface GoalsEditableFieldProps {
   onIncrement: (fieldName: string) => void;
   onDecrement: (fieldName: string) => void;
   isNumber?: boolean;
+  canEdit?: boolean;
+  showButtons?: boolean;
 }
 
 /**
@@ -36,7 +38,9 @@ const GoalsEditableField = ({
   onFieldBlur,
   onIncrement, 
   onDecrement,
-  isNumber = true
+  isNumber = true,
+  canEdit = true,
+  showButtons = true
 }: GoalsEditableFieldProps) => {
   /**
    * Determines the appropriate field type based on whether it's a number field
@@ -62,8 +66,8 @@ const GoalsEditableField = ({
       onFieldBlur={onFieldBlur}
       onIncrement={onIncrement}
       onDecrement={onDecrement}
-      canEdit={true}
-      showButtons={isNumber}
+      canEdit={canEdit}
+      showButtons={showButtons}
     />
   );
 };

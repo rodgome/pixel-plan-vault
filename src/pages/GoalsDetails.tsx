@@ -19,8 +19,11 @@ const GoalsDetails = () => {
     navigate(-1);
   };
 
-  // Get the goals spent amount from the GOALS category
-  const goalsSpent = baseData.categories.find(cat => cat.name === 'GOALS')?.amount || 0;
+  // Sum this month's contributions from all goals
+  const goalsSpent = baseData.goals.reduce(
+    (sum, goal) => sum + goal.monthlyContribution,
+    0
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-green-400 font-mono">

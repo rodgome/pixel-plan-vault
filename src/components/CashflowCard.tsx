@@ -22,6 +22,11 @@ const CashflowCard = () => {
   const spentPercentage =
     totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
 
+  const monthlyBudgeted = spendingCategories.reduce(
+    (sum, cat) => sum + cat.budget,
+    0,
+  );
+
   // Editable field logic for income
   const {
     editingField,
@@ -87,6 +92,14 @@ const CashflowCard = () => {
             </div>
             <div className="bg-black/40 p-4 rounded-lg border border-slate-600">
               <div className="text-xs text-slate-400 mb-1 uppercase tracking-wide">
+                Monthly Budgeted
+              </div>
+              <div className="text-2xl font-bold text-blue-400">
+                ${monthlyBudgeted.toLocaleString()}
+              </div>
+            </div>
+            <div className="bg-black/40 p-4 rounded-lg border border-slate-600">
+              <div className="text-xs text-slate-400 mb-1 uppercase tracking-wide">
                 Total Spent
               </div>
               <div className="text-2xl font-bold text-red-400">
@@ -101,16 +114,6 @@ const CashflowCard = () => {
                 className={`text-2xl font-bold ${remaining >= 0 ? "text-green-400" : "text-red-400"}`}
               >
                 ${remaining.toLocaleString()}
-              </div>
-            </div>
-            <div className="bg-black/40 p-4 rounded-lg border border-slate-600">
-              <div className="text-xs text-slate-400 mb-1 uppercase tracking-wide">
-                Usage
-              </div>
-              <div
-                className={`text-2xl font-bold ${spentPercentage <= 100 ? "text-blue-400" : "text-red-400"}`}
-              >
-                {spentPercentage.toFixed(1)}%
               </div>
             </div>
           </div>

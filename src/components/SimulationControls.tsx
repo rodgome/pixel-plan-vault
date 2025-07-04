@@ -18,7 +18,7 @@ interface SimulationControlsProps {
 }
 
 const SimulationControls = ({ baseData, simulation, onUpdate }: SimulationControlsProps) => {
-  const [selectedCategory, setSelectedCategory] = useState(baseData.categories[0].name);
+  const [selectedCategory, setSelectedCategory] = useState<string>(baseData.categories[0].name);
   const [changeAmount, setChangeAmount] = useState(100);
   const [changeType, setChangeType] = useState<'increase' | 'decrease'>('decrease');
 

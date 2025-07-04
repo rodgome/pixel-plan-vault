@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import CategoryBreakdown from "./CategoryBreakdown";
 import { useNavigate } from "react-router-dom";
@@ -6,9 +7,16 @@ import { useDashboard } from "@/contexts/DashboardContext";
 import { useDashboardCalculations } from "./DashboardCalculations";
 import { useEditableField } from "@/hooks/useEditableField";
 import EditableField from "@/components/ui/EditableField";
+import SpentTracker from "./SpentTracker";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const CashflowCard = () => {
-  const { baseData, handleDataUpdate } = useDashboard();
+  const { baseData, handleDataUpdate, handleSpentUpdate } = useDashboard();
   const { spendingCategories, totalBudget, totalSpent, remaining } =
     useDashboardCalculations(baseData);
 
@@ -18,6 +26,8 @@ const CashflowCard = () => {
   const handleWantsClick = () => navigate("/wants");
   const handleDebtClick = () => navigate("/debt");
   const handleGoalsClick = () => navigate("/goals");
+
+  const [showSpent, setShowSpent] = useState(false);
 
   const spentPercentage =
     totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
@@ -98,7 +108,10 @@ const CashflowCard = () => {
                 ${monthlyBudgeted.toLocaleString()}
               </div>
             </div>
-            <div className="bg-black/40 p-4 rounded-lg border border-slate-600">
+            <div
+              className="bg-black/40 p-4 rounded-lg border border-slate-600 cursor-pointer"
+              onClick={() => setShowSpent(true)}
+            >
               <div className="text-xs text-slate-400 mb-1 uppercase tracking-wide">
                 Total Spent
               </div>
@@ -138,6 +151,18 @@ const CashflowCard = () => {
             </div>
           </div>
         </div>
+
+        <Dialog open={showSpent} onOpenChange={setShowSpent}>
+          <DialogContent className="bg-slate-800 border-slate-700 text-slate-200 max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="text-amber-400">Spending Tracker</DialogTitle>
+            </DialogHeader>
+            <SpentTracker
+              categories={baseData.categories}
+              onUpdate={handleSpentUpdate}
+            />
+          </DialogContent>
+        </Dialog>
       </Card>
 
       {/* Category Breakdown Section */}

@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
-import BudgetManager from "../components/BudgetManager";
 import { useNavigate } from "react-router-dom";
 
 const Manage = () => {
@@ -39,7 +38,13 @@ const Manage = () => {
         </div>
       </div>
       <div className="container mx-auto px-4 py-6">
-        <BudgetManager />
+        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm p-6 text-center">
+          <p className="text-sm text-slate-300">
+            Spending entry has moved. Open the dashboard and click on
+            <span className="font-bold text-red-400"> TOTAL SPENT </span>
+            to update your spending.
+          </p>
+        </Card>
       </div>
     </div>
   );

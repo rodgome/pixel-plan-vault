@@ -1,12 +1,11 @@
 import { Card } from "@/components/ui/card";
-import EditableFinancialData from "./EditableFinancialData";
 import SpentTracker from "./SpentTracker";
 import CategoryBreakdown from "./CategoryBreakdown";
 import { useDashboard } from "@/contexts/DashboardContext";
 import { useNavigate } from "react-router-dom";
 
 const BudgetManager = () => {
-  const { baseData, handleDataUpdate, handleSpentUpdate } = useDashboard();
+  const { baseData, handleSpentUpdate } = useDashboard();
   const navigate = useNavigate();
 
   const handleNeedsClick = () => navigate("/needs");
@@ -16,21 +15,6 @@ const BudgetManager = () => {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-blue-400/20 rounded-full flex items-center justify-center">
-              <span className="text-lg">📊</span>
-            </div>
-            <h3 className="text-lg font-bold text-blue-400">BUDGET PLANNING</h3>
-          </div>
-          <EditableFinancialData
-            income={baseData.income}
-            categories={baseData.categories}
-            onUpdate={handleDataUpdate}
-          />
-        </div>
-      </Card>
       <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
         <div className="p-6">
           <div className="flex items-center gap-3 mb-4">

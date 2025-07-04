@@ -11,6 +11,7 @@ import WantsDetails from "./pages/WantsDetails";
 import DebtDetails from "./pages/DebtDetails";
 import GoalsDetails from "./pages/GoalsDetails";
 import Manage from "./pages/Manage";
+import ChatBot from "./components/ChatBot";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => {
         <DashboardProvider>
           <Toaster />
           <Sonner />
+          <ChatBot />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />

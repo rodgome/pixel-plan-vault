@@ -35,14 +35,52 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
     };
   }, [stableBaseData.debts]);
 
+  // Memoize goal calculations separately
+  const goalCalculations = useMemo(() => {
+    const totalMonthlyContributions = stableBaseData.goals.reduce(
+      (sum, goal) => sum + goal.monthlyContribution,
+      0
+    );
+    const totalPlannedContributions = stableBaseData.goals.reduce(
+      (sum, goal) =>
+        sum + (goal.plannedContribution ?? goal.monthlyContribution),
+      0
+    );
+
+    return {
+      totalMonthlyContributions,
+      totalPlannedContributions
+    };
+  }, [stableBaseData.goals]);
+
   // Memoize updated categories separately
   const updatedCategories = useMemo(() => {
-    return stableBaseData.categories.map(cat => 
-      cat.name === 'DEBT' 
-        ? { ...cat, amount: debtCalculations.actualDebtPayments }
-        : cat
-    );
-  }, [stableBaseData.categories, debtCalculations.actualDebtPayments]);
+    return stableBaseData.categories.map(cat => {
+      if (cat.name === 'DEBT') {
+        return {
+          ...cat,
+          amount: debtCalculations.actualDebtPayments,
+          budget: debtCalculations.totalPlannedPayments
+        };
+      }
+
+      if (cat.name === 'GOALS') {
+        return {
+          ...cat,
+          amount: goalCalculations.totalMonthlyContributions,
+          budget: goalCalculations.totalPlannedContributions
+        };
+      }
+
+      return cat;
+    });
+  }, [
+    stableBaseData.categories,
+    debtCalculations.actualDebtPayments,
+    debtCalculations.totalPlannedPayments,
+    goalCalculations.totalMonthlyContributions,
+    goalCalculations.totalPlannedContributions
+  ]);
 
   // Memoize monthly data
   const monthlyData = useMemo(() => {
@@ -78,8 +116,8 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
 
   // Memoize validation checks
   const validationChecks = useMemo(() => {
-    const debtBudget = stableBaseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
-    const totalBudgetAmount = stableBaseData.categories.reduce((sum, cat) => sum + cat.budget, 0);
+    const debtBudget = updatedCategories.find(cat => cat.name === 'DEBT')?.budget || 0;
+    const totalBudgetAmount = updatedCategories.reduce((sum, cat) => sum + cat.budget, 0);
     const isDebtPaymentConsistent = debtBudget >= debtCalculations.totalMinPayments;
     const isBudgetBalanced = totalBudgetAmount <= monthlyData.income;
     
@@ -87,7 +125,11 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
       isDebtPaymentConsistent,
       isBudgetBalanced
     };
-  }, [stableBaseData.categories, debtCalculations.totalMinPayments, monthlyData.income]);
+  }, [
+    updatedCategories,
+    debtCalculations.totalMinPayments,
+    monthlyData.income
+  ]);
 
   // Return memoized final result
   return useMemo(() => ({

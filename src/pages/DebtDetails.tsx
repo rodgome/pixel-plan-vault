@@ -12,10 +12,8 @@ const DebtDetails = () => {
     debtStrategy,
     handleDebtUpdate,
     handleDebtStrategyChange,
-    handleSpentUpdate,
     handleDeleteDebt,
-    handleAddDebt,
-    setBaseData
+    handleAddDebt
   } = useDashboard();
 
   const navigate = useNavigate();
@@ -24,32 +22,14 @@ const DebtDetails = () => {
     navigate(-1);
   };
 
-  const handleBudgetUpdate = (newBudgetAmount: number) => {
-    const updatedCategories = baseData.categories.map(cat => 
-      cat.name === 'DEBT' 
-        ? { ...cat, budget: newBudgetAmount }
-        : cat
-    );
-    setBaseData({
-      ...baseData,
-      categories: updatedCategories
-    });
-  };
-
-  const handleSpentUpdateLocal = (newSpentAmount: number) => {
-    // Update the debt category spent amount
-    const updatedCategories = baseData.categories.map(cat => 
-      cat.name === 'DEBT' 
-        ? { ...cat, amount: newSpentAmount }
-        : cat
-    );
-    handleSpentUpdate({
-      categories: updatedCategories
-    });
-  };
-
-  const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
-  const debtSpent = baseData.categories.find(cat => cat.name === 'DEBT')?.amount || 0;
+  const debtBudget = baseData.debts.reduce(
+    (sum, debt) => sum + (debt.plannedPayment || debt.minPayment),
+    0
+  );
+  const debtSpent = baseData.debts.reduce(
+    (sum, debt) => sum + (debt.totalPaid || 0),
+    0
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-green-400 font-mono">
@@ -88,8 +68,6 @@ const DebtDetails = () => {
               onUpdateDebt={handleDebtUpdate}
               onDeleteDebt={handleDeleteDebt}
               onAddDebt={handleAddDebt}
-              onBudgetUpdate={handleBudgetUpdate}
-              onSpentUpdate={handleSpentUpdateLocal}
               debtBudget={debtBudget}
               debtSpent={debtSpent}
               strategy={debtStrategy}

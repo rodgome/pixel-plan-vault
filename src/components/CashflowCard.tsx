@@ -4,9 +4,11 @@ import CategoryBreakdown from "./CategoryBreakdown";
 import { useNavigate } from "react-router-dom";
 import { useDashboard } from "@/contexts/DashboardContext";
 import { useDashboardCalculations } from "./DashboardCalculations";
+import { useEditableField } from "@/hooks/useEditableField";
+import EditableField from "@/components/ui/EditableField";
 
 const CashflowCard = () => {
-  const { baseData } = useDashboard();
+  const { baseData, handleDataUpdate } = useDashboard();
   const { spendingCategories, totalBudget, totalSpent, remaining } =
     useDashboardCalculations(baseData);
 
@@ -19,6 +21,28 @@ const CashflowCard = () => {
 
   const spentPercentage =
     totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+
+  // Editable field logic for income
+  const {
+    editingField,
+    localEditValue,
+    increment,
+    handleDoubleClick,
+    handleLocalValueChange,
+    handleFieldBlur,
+    handleIncrement,
+    handleDecrement,
+  } = useEditableField({
+    item: baseData,
+    index: 0,
+    onUpdate: (_, updatedData) => {
+      handleDataUpdate({
+        income: updatedData.income,
+        categories: baseData.categories,
+      });
+    },
+    increment: 500,
+  });
 
   return (
     <div className="space-y-6">
@@ -45,9 +69,21 @@ const CashflowCard = () => {
               <div className="text-xs text-slate-400 mb-1 uppercase tracking-wide">
                 Monthly Income
               </div>
-              <div className="text-2xl font-bold text-green-400">
-                ${totalBudget.toLocaleString()}
-              </div>
+              <EditableField
+                fieldName="income"
+                value={totalBudget}
+                type="currency"
+                colorClass="text-green-400"
+                isEditing={editingField === "income"}
+                localEditValue={localEditValue}
+                increment={increment}
+                onFieldClick={handleDoubleClick}
+                onLocalValueChange={handleLocalValueChange}
+                onFieldBlur={handleFieldBlur}
+                onIncrement={handleIncrement}
+                onDecrement={handleDecrement}
+                className="text-2xl font-bold"
+              />
             </div>
             <div className="bg-black/40 p-4 rounded-lg border border-slate-600">
               <div className="text-xs text-slate-400 mb-1 uppercase tracking-wide">

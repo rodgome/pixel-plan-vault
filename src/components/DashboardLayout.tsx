@@ -1,3 +1,4 @@
+
 import { Card } from '@/components/ui/card';
 import FinancialSummaryCards from './FinancialSummaryCards';
 import ValidationAlerts from './ValidationAlerts';
@@ -9,8 +10,6 @@ import SpentTracker from './SpentTracker';
 import { BaseData } from './DashboardData';
 import { DebtItem } from '@/types/debt';
 import { GoalItem } from '@/types/goals';
-import ImportExportControls from './ImportExportControls';
-import { useDashboard } from '@/contexts/DashboardContext';
 
 interface DashboardLayoutProps {
   baseData: BaseData;
@@ -78,7 +77,6 @@ const DashboardLayout = ({
   onDataUpdate,
   onSpentUpdate
 }: DashboardLayoutProps) => {
-  const { exportData, importData, clearPersistedData } = useDashboard();
   const debtBudget = baseData.categories.find(cat => cat.name === 'DEBT')?.budget || 0;
   const totalBudgetAmount = baseData.categories.reduce((sum, cat) => sum + cat.budget, 0);
 
@@ -89,13 +87,6 @@ const DashboardLayout = ({
         totalBudget={totalBudget} 
         totalSpent={totalSpent} 
         remaining={remaining} 
-      />
-
-      {/* Import/Export Controls */}
-      <ImportExportControls
-        onExport={exportData}
-        onImport={importData}
-        onClear={clearPersistedData}
       />
 
       {/* Editable Financial Data */}

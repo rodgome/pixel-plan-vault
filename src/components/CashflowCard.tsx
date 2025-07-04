@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import CategoryBreakdown from "./CategoryBreakdown";
 import { useNavigate } from "react-router-dom";
@@ -22,14 +23,14 @@ const CashflowCard = () => {
   return (
     <div className="space-y-6">
       {/* Header Section with Overview Cards */}
-      <Card className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-slate-600 backdrop-blur-sm">
+      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
         <div className="p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-amber-400/20 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-slate-700/50 rounded-full flex items-center justify-center">
               <span className="text-2xl">💰</span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-amber-400">
+              <h2 className="text-xl font-bold text-slate-300">
                 CASH FLOW DASHBOARD
               </h2>
               <p className="text-sm text-slate-400">
@@ -104,10 +105,10 @@ const CashflowCard = () => {
       <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
         <div className="p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-amber-400/20 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-slate-700/50 rounded-full flex items-center justify-center">
               <span className="text-lg">📈</span>
             </div>
-            <h3 className="text-lg font-bold text-amber-400">
+            <h3 className="text-lg font-bold text-slate-300">
               CATEGORY BREAKDOWN
             </h3>
           </div>

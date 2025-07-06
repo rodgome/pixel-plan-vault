@@ -116,23 +116,35 @@ export const useDashboardData = () => {
     toast.success(`Debt strategy changed to ${strategy}`);
   };
 
-  // Automatically calculate budgets for debt and goals categories
+  // Automatically calculate budgets and spent amounts for debt and goals categories
   useEffect(() => {
     setBaseData((prev) => {
       const debtBudget = prev.debts.reduce(
         (sum, debt) => sum + (debt.plannedPayment || debt.minPayment),
-        0,
+        0
       );
       const goalsBudget = prev.goals.reduce(
         (sum, goal) =>
           sum + (goal.plannedContribution || goal.monthlyContribution),
-        0,
+        0
       );
+      const actualDebtSpent = prev.debts.reduce(
+        (sum, debt) => sum + (debt.totalPaid || 0),
+        0
+      );
+      const goalsSpent = prev.goals.reduce(
+        (sum, goal) => sum + goal.monthlyContribution,
+        0
+      );
+
       const updatedCategories = prev.categories.map((cat) => {
-        if (cat.name === "DEBT") return { ...cat, budget: debtBudget };
-        if (cat.name === "GOALS") return { ...cat, budget: goalsBudget };
+        if (cat.name === "DEBT")
+          return { ...cat, budget: debtBudget, amount: actualDebtSpent };
+        if (cat.name === "GOALS")
+          return { ...cat, budget: goalsBudget, amount: goalsSpent };
         return cat;
       });
+
       if (
         JSON.stringify(updatedCategories) === JSON.stringify(prev.categories)
       ) {

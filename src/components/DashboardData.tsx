@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { DebtItem } from "@/types/debt";
+import { calculateDebtStrategy } from "@/utils/debtStrategies";
 import { GoalItem } from "@/types/goals";
 import { Category } from "@/types/categories";
 import { BaseData } from "@/types/dashboard";
@@ -94,6 +95,22 @@ export const useDashboardData = () => {
     toast.success("Debt information updated!");
   };
 
+  const handleDebtBudgetUpdate = (newBudget: number) => {
+    setBaseData(prev => {
+      const strategicDebts = calculateDebtStrategy(prev.debts, debtStrategy, newBudget);
+      const updatedDebts = prev.debts.map(debt => {
+        const match = strategicDebts.find(d =>
+          d.name === debt.name &&
+          d.balance === debt.balance &&
+          d.interestRate === debt.interestRate
+        );
+        return match ? { ...debt, plannedPayment: match.recommendedPayment } : debt;
+      });
+      return { ...prev, debts: updatedDebts };
+    });
+    toast.success("Debt budget updated!");
+  };
+
   const handleDebtStrategyChange = (strategy: "snowball" | "avalanche") => {
     setDebtStrategy(strategy);
     toast.success(`Debt strategy changed to ${strategy}`);
@@ -134,6 +151,7 @@ export const useDashboardData = () => {
     handleDataUpdate,
     handleSpentUpdate,
     handleDebtUpdate,
+    handleDebtBudgetUpdate,
     handleDebtStrategyChange,
     exportData,
     importData,

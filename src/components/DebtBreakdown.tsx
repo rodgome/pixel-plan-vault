@@ -119,7 +119,7 @@ const DebtBreakdown = ({
       </div>
 
       {/* Summary */}
-      <DebtSummaryCards debts={debts} />
+      <DebtSummaryCards debts={debts} debtBudget={debtBudget} onBudgetUpdate={onBudgetUpdate} />
 
       {/* Monthly Debt Payment Progress - Against Budget */}
       <MonthlyDebtProgress 

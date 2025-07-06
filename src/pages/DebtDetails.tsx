@@ -13,7 +13,8 @@ const DebtDetails = () => {
     handleDebtUpdate,
     handleDebtStrategyChange,
     handleDeleteDebt,
-    handleAddDebt
+    handleAddDebt,
+    handleDebtBudgetUpdate
   } = useDashboard();
 
   const navigate = useNavigate();
@@ -63,11 +64,12 @@ const DebtDetails = () => {
       <div className="container mx-auto px-4 py-6">
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <div className="p-6">
-            <DebtBreakdown 
-              debts={baseData.debts} 
+            <DebtBreakdown
+              debts={baseData.debts}
               onUpdateDebt={handleDebtUpdate}
               onDeleteDebt={handleDeleteDebt}
               onAddDebt={handleAddDebt}
+              onBudgetUpdate={handleDebtBudgetUpdate}
               debtBudget={debtBudget}
               debtSpent={debtSpent}
               strategy={debtStrategy}

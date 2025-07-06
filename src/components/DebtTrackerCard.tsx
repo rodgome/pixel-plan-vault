@@ -10,6 +10,7 @@ interface DebtTrackerCardProps {
   debtBudget?: number;
   debtSpent?: number;
   strategy?: DebtStrategy;
+  onBudgetUpdate?: (newBudget: number) => void;
   onStrategyChange?: (strategy: DebtStrategy) => void;
 }
 
@@ -18,7 +19,8 @@ const DebtTrackerCard = ({
   debtBudget = 0, 
   debtSpent = 0,
   strategy = 'snowball',
-  onStrategyChange 
+  onBudgetUpdate,
+  onStrategyChange
 }: DebtTrackerCardProps) => {
   return (
     <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
@@ -40,8 +42,9 @@ const DebtTrackerCard = ({
             </Select>
           )}
         </div>
-        <DebtBreakdown 
-          debts={debts} 
+        <DebtBreakdown
+          debts={debts}
+          onBudgetUpdate={onBudgetUpdate}
           debtBudget={debtBudget}
           debtSpent={debtSpent}
           strategy={strategy}

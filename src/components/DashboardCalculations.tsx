@@ -53,13 +53,13 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
     };
   }, [stableBaseData.goals]);
 
-  // Memoize updated categories separately
+  // Use the actual category amounts from baseData instead of recalculating
   const updatedCategories = useMemo(() => {
+    // Don't override the amounts - use what's already in the categories
     return stableBaseData.categories.map(cat => {
       if (cat.name === 'DEBT') {
         return {
           ...cat,
-          amount: debtCalculations.actualDebtPayments,
           budget: debtCalculations.totalPlannedPayments
         };
       }
@@ -67,7 +67,6 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
       if (cat.name === 'GOALS') {
         return {
           ...cat,
-          amount: goalCalculations.totalMonthlyContributions,
           budget: goalCalculations.totalPlannedContributions
         };
       }
@@ -76,9 +75,7 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
     });
   }, [
     stableBaseData.categories,
-    debtCalculations.actualDebtPayments,
     debtCalculations.totalPlannedPayments,
-    goalCalculations.totalMonthlyContributions,
     goalCalculations.totalPlannedContributions
   ]);
 
@@ -88,18 +85,19 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
       .filter(cat => cat.name === 'NEEDS' || cat.name === 'WANTS')
       .reduce((sum, cat) => sum + cat.amount, 0);
     
+    const debt = updatedCategories.find(cat => cat.name === 'DEBT')?.amount || 0;
     const goals = updatedCategories.find(cat => cat.name === 'GOALS')?.amount || 0;
 
     return {
       income: stableBaseData.income,
       expenses,
-      debt: debtCalculations.actualDebtPayments,
+      debt,
       goals,
       categories: updatedCategories,
       debts: stableBaseData.debts,
       goalItems: stableBaseData.goals
     };
-  }, [stableBaseData.income, stableBaseData.debts, stableBaseData.goals, updatedCategories, debtCalculations.actualDebtPayments]);
+  }, [stableBaseData.income, stableBaseData.debts, stableBaseData.goals, updatedCategories]);
 
   // Memoize budget calculations
   const budgetCalculations = useMemo(() => {

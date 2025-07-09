@@ -73,6 +73,12 @@ const SpentTracker = ({
         amount: numValue
       } : cat);
       
+      console.log('SpentTracker - Direct amount change:', {
+        itemName,
+        newValue: numValue,
+        updatedCategories: updatedCategories.map(cat => ({ name: cat.name, amount: cat.amount }))
+      });
+      
       onUpdate({
         categories: updatedCategories
       });

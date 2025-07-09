@@ -80,10 +80,19 @@ export const useDashboardData = () => {
   };
 
   const handleSpentUpdate = (newData: { categories: Category[] }) => {
-    setBaseData((prev) => ({
-      ...prev,
-      categories: newData.categories,
-    }));
+    console.log('DashboardData - handleSpentUpdate called with:', {
+      newCategories: newData.categories.map(cat => ({ name: cat.name, amount: cat.amount, budget: cat.budget }))
+    });
+    
+    setBaseData((prev) => {
+      console.log('DashboardData - Previous categories:', prev.categories.map(cat => ({ name: cat.name, amount: cat.amount, budget: cat.budget })));
+      const updated = {
+        ...prev,
+        categories: newData.categories,
+      };
+      console.log('DashboardData - Updated categories:', updated.categories.map(cat => ({ name: cat.name, amount: cat.amount, budget: cat.budget })));
+      return updated;
+    });
     toast.success("Spending updated successfully!");
   };
 
@@ -116,7 +125,7 @@ export const useDashboardData = () => {
     toast.success(`Debt strategy changed to ${strategy}`);
   };
 
-  // Automatically calculate budgets and spent amounts for debt and goals categories
+  // Automatically calculate budgets for debt and goals categories, but preserve manual spending amounts
   useEffect(() => {
     setBaseData((prev) => {
       const debtBudget = prev.debts.reduce(
@@ -128,28 +137,30 @@ export const useDashboardData = () => {
           sum + (goal.plannedContribution || goal.monthlyContribution),
         0
       );
-      const actualDebtSpent = prev.debts.reduce(
-        (sum, debt) => sum + (debt.totalPaid || 0),
-        0
-      );
-      const goalsSpent = prev.goals.reduce(
-        (sum, goal) => sum + goal.monthlyContribution,
-        0
-      );
 
       const updatedCategories = prev.categories.map((cat) => {
         if (cat.name === "DEBT")
-          return { ...cat, budget: debtBudget, amount: actualDebtSpent };
+          return { ...cat, budget: debtBudget };
         if (cat.name === "GOALS")
-          return { ...cat, budget: goalsBudget, amount: goalsSpent };
+          return { ...cat, budget: goalsBudget };
         return cat;
       });
 
-      if (
-        JSON.stringify(updatedCategories) === JSON.stringify(prev.categories)
-      ) {
+      // Only update if budgets actually changed to avoid infinite loops
+      const budgetsChanged = prev.categories.some((cat, index) => 
+        cat.budget !== updatedCategories[index].budget
+      );
+
+      if (!budgetsChanged) {
         return prev;
       }
+      
+      console.log('DashboardData - useEffect updating budgets only:', {
+        debtBudget,
+        goalsBudget,
+        updatedCategories: updatedCategories.map(cat => ({ name: cat.name, budget: cat.budget, amount: cat.amount }))
+      });
+
       return { ...prev, categories: updatedCategories };
     });
   }, [baseData.debts, baseData.goals, setBaseData]);

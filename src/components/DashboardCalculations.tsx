@@ -107,6 +107,14 @@ export const useDashboardCalculations = (baseData: BaseData): DashboardCalculati
     const totalSpent = updatedCategories.reduce((sum, cat) => sum + cat.amount, 0);
     const remaining = monthlyData.income - totalSpent;
     
+    // Debug logging to track calculation issues
+    console.log('Dashboard Calculations - Budget calculations:', {
+      totalBudget,
+      totalSpent,
+      remaining,
+      updatedCategories: updatedCategories.map(cat => ({ name: cat.name, amount: cat.amount, budget: cat.budget }))
+    });
+    
     return {
       totalBudget,
       totalSpent,

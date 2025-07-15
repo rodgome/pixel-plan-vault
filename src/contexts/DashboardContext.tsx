@@ -20,6 +20,7 @@ interface DashboardContextType {
     categories: Category[];
   }) => void;
   handleDebtUpdate: (index: number, updatedDebt: DebtItem) => void;
+  handleDebtSpentUpdate: (newSpent: number) => void;
   handleDebtBudgetUpdate: (newBudget: number) => void;
   handleDebtStrategyChange: (strategy: 'snowball' | 'avalanche') => void;
   handleGoalUpdate: (index: number, updatedGoal: GoalItem) => void;
@@ -81,6 +82,10 @@ export const DashboardProvider = ({ children }: DashboardProviderProps) => {
     dashboardData.handleDebtBudgetUpdate(newBudget);
   };
 
+  const handleDebtSpentUpdate = (newSpent: number) => {
+    dashboardData.handleDebtSpentUpdate(newSpent);
+  };
+
   const contextValue: DashboardContextType = {
     baseData: dashboardData.baseData,
     setBaseData: dashboardData.setBaseData,
@@ -90,6 +95,7 @@ export const DashboardProvider = ({ children }: DashboardProviderProps) => {
     handleDataUpdate: dashboardData.handleDataUpdate,
     handleSpentUpdate: dashboardData.handleSpentUpdate,
     handleDebtUpdate: dashboardData.handleDebtUpdate,
+    handleDebtSpentUpdate,
     handleDebtBudgetUpdate,
     handleDebtStrategyChange: dashboardData.handleDebtStrategyChange,
     handleGoalUpdate,

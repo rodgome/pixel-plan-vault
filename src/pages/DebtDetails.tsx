@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import DebtBreakdown from '../components/DebtBreakdown';
 import { useDashboard } from '../contexts/DashboardContext';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 const DebtDetails = () => {
   const {
@@ -14,7 +15,8 @@ const DebtDetails = () => {
     handleDebtStrategyChange,
     handleDeleteDebt,
     handleAddDebt,
-    handleDebtBudgetUpdate
+    handleDebtBudgetUpdate,
+    handleDebtSpentUpdate
   } = useDashboard();
 
   const navigate = useNavigate();
@@ -23,14 +25,24 @@ const DebtDetails = () => {
     navigate(-1);
   };
 
+  const handleTotalPaidChange = (amount: number) => {
+    setDebtSpent(amount);
+    handleDebtSpentUpdate(amount);
+  };
+
   const debtBudget = baseData.debts.reduce(
     (sum, debt) => sum + (debt.plannedPayment || debt.minPayment),
     0
   );
-  const debtSpent = baseData.debts.reduce(
+  const initialSpent = baseData.debts.reduce(
     (sum, debt) => sum + (debt.totalPaid || 0),
     0
   );
+  const [debtSpent, setDebtSpent] = useState(initialSpent);
+
+  useEffect(() => {
+    setDebtSpent(initialSpent);
+  }, [initialSpent]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-green-400 font-mono">
@@ -72,6 +84,7 @@ const DebtDetails = () => {
               onBudgetUpdate={handleDebtBudgetUpdate}
               debtBudget={debtBudget}
               debtSpent={debtSpent}
+              onSpentUpdate={handleTotalPaidChange}
               strategy={debtStrategy}
               onStrategyChange={handleDebtStrategyChange}
             />

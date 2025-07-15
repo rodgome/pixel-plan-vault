@@ -125,6 +125,18 @@ export const useDashboardData = () => {
     toast.success(`Debt strategy changed to ${strategy}`);
   };
 
+  const handleDebtSpentUpdate = (newSpent: number) => {
+    setBaseData(prev => {
+      if (prev.debts.length === 0) return prev;
+      const currentTotal = prev.debts.reduce((sum, d) => sum + (d.totalPaid || 0), 0);
+      const diff = newSpent - currentTotal;
+      const updatedDebts = [...prev.debts];
+      updatedDebts[0] = { ...updatedDebts[0], totalPaid: Math.max(0, updatedDebts[0].totalPaid + diff) };
+      return { ...prev, debts: updatedDebts };
+    });
+    toast.success("Debt payments updated!");
+  };
+
   // Automatically calculate budgets for debt and goals categories, but preserve manual spending amounts
   useEffect(() => {
     setBaseData((prev) => {
@@ -174,6 +186,7 @@ export const useDashboardData = () => {
     handleDataUpdate,
     handleSpentUpdate,
     handleDebtUpdate,
+    handleDebtSpentUpdate,
     handleDebtBudgetUpdate,
     handleDebtStrategyChange,
     exportData,

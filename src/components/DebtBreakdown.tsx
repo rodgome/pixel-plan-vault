@@ -39,6 +39,26 @@ const DebtBreakdown = ({
     return calculateDebtStrategy(debts, strategy, debtBudget);
   }, [debts, strategy, debtBudget]);
 
+  const [sortOption, setSortOption] = useState<'priority' | 'balance' | 'interest' | 'name'>('priority');
+
+  const sortedDebts = useMemo(() => {
+    const sorted = [...strategicDebts];
+    switch (sortOption) {
+      case 'balance':
+        sorted.sort((a, b) => b.balance - a.balance);
+        break;
+      case 'interest':
+        sorted.sort((a, b) => b.interestRate - a.interestRate);
+        break;
+      case 'name':
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default:
+        sorted.sort((a, b) => (a as any).priority - (b as any).priority);
+    }
+    return sorted;
+  }, [strategicDebts, sortOption]);
+
   const handleAddDebt = () => {
     if (onAddDebt) {
       const newDebt: DebtItem = {
@@ -100,6 +120,20 @@ const DebtBreakdown = ({
                   <SelectItem value="avalanche" className="text-slate-200 hover:bg-slate-600">Avalanche</SelectItem>
                 </SelectContent>
               </Select>
+              <div className="flex items-center gap-2 ml-4">
+                <h3 className="text-sm font-bold text-amber-400">SORT BY</h3>
+                <Select value={sortOption} onValueChange={(v) => setSortOption(v as any)}>
+                  <SelectTrigger className="w-36 h-8 bg-slate-700 border-slate-600 text-slate-200 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-700 border-slate-600">
+                    <SelectItem value="priority" className="text-slate-200 hover:bg-slate-600">Priority</SelectItem>
+                    <SelectItem value="balance" className="text-slate-200 hover:bg-slate-600">Balance</SelectItem>
+                    <SelectItem value="interest" className="text-slate-200 hover:bg-slate-600">Interest Rate</SelectItem>
+                    <SelectItem value="name" className="text-slate-200 hover:bg-slate-600">Name</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </>
           ) : (
             <h3 className="text-sm font-bold text-amber-400">DEBT BREAKDOWN</h3>
@@ -119,7 +153,13 @@ const DebtBreakdown = ({
       </div>
 
       {/* Summary */}
-      <DebtSummaryCards debts={debts} debtBudget={debtBudget} onBudgetUpdate={onBudgetUpdate} />
+      <DebtSummaryCards
+        debts={debts}
+        debtBudget={debtBudget}
+        debtSpent={debtSpent}
+        onBudgetUpdate={onBudgetUpdate}
+        onSpentUpdate={onSpentUpdate}
+      />
 
       {/* Monthly Debt Payment Progress - Against Budget */}
       <MonthlyDebtProgress 
@@ -140,7 +180,7 @@ const DebtBreakdown = ({
 
       {/* Virtualized Debt Items - Remove individual editing capabilities for totalPaid */}
       <VirtualizedDebtList
-        debts={strategicDebts}
+        debts={sortedDebts}
         onUpdate={handleUpdateDebt}
         onDelete={handleDeleteDebt}
         onBudgetUpdate={onBudgetUpdate}
